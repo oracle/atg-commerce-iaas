@@ -1,0 +1,17 @@
+{
+    "description": "Commerce Security Apps",
+    "name": "",
+    "oplans": [
+        {
+            "label": "create_secapps",
+            "obj_type": "secapplication",
+            "objects": [
+                {
+                    "name": "",
+                    "dport": 8989,
+                    "protocol": "tcp"
+                }               
+            ]
+        }
+    ]
+}

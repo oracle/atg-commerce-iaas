@@ -1,0 +1,15 @@
+{
+    "description": "Commerce Security Lists",
+    "name": "",
+    "oplans": [
+        {
+            "label": "create_seclist",
+            "obj_type": "seclist",
+            "objects": [
+                {
+                    "name": ""
+                }            
+            ]
+        }
+    ]
+}

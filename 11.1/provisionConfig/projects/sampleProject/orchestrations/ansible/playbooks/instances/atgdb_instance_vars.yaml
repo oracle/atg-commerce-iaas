@@ -1,0 +1,2 @@
+environmentname: atgdb
+envorchestration: '{{ environmentname }}'

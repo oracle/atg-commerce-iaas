@@ -1,0 +1,42 @@
+---
+- name: cleanup
+  hosts: localhost
+  gather_facts: true
+  vars_files:
+    - oraclecompute_vars.yaml
+    - storage_vars.yaml
+  tasks:
+    - name: authenticate
+      register: cookie
+      oc_authenticate:
+        endpoint: "{{ endpoint }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+
+    - name: stop orchestration
+      register: stopresult
+      oc_orchestration:
+        action: "stop"
+        endpoint: "{{ endpoint }}"
+        cookie: "{{ cookie.cookie }}"
+        resourcename: "{{ resourcebase }}/{{ envorchestration }}"
+
+    - name: monitor orchestartion
+      register: monitor
+      oc_orchestration:
+        action: "list"
+        endpoint: "{{endpoint}}"
+        cookie: "{{cookie.cookie}}"
+        resourcename: "{{resourcebase}}/{{ envorchestration }}"
+      until: monitor.list.result[0].status == "stopped"
+      retries: 20
+      delay: 30
+      when: ( stopresult.list.has_key("status") ) or
+            ( stopresult.list.message.find("already stopped") == 1 )
+
+    - name: delete orchestration
+      oc_orchestration:
+        action: "delete"
+        endpoint: "{{endpoint}}"
+        cookie: "{{cookie.cookie}}"
+        resourcename: "{{resourcebase}}/{{ envorchestration }}"

@@ -1,0 +1,20 @@
+{
+    "description": "Commerce Storage",
+    "name": "",
+    "oplans": [
+        {
+            "label": "create_storage",
+            "obj_type": "storage/volume",
+            "objects": [
+                {
+                    "name": "",
+                    "properties": [
+                        ""
+                    ],
+                    "description": "",
+                    "size": ""
+                }           
+            ]
+        }
+    ]
+}

@@ -1,0 +1,2 @@
+environmentname:   "demo_2"
+envorchestration:  "{{ environmentname }}"
