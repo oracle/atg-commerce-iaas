@@ -62,11 +62,11 @@ Some of the features in the tool set include:
 * Install Oracle Database, and create a new starter database instance
 
 # Components
-common_python contains the python libraries for the provisioning services, and REST api wrappers to talk to OpenStack and Oracle Public Cloud.
-iaas-11.1 contains the entry point to install and configure the Oracle ATG Commerce 11.1 stack
-iaas-11.2 contains the entry point to install and configure the Oracle ATG Commerce 11.2 stack
-webui contains the WebUI tool for assist in generating configuration data and Ansible playbooks.
-openstack-metadata contains a script to retrieve user metadata from OpenStack.
+* common_python contains the python libraries for the provisioning services, and REST api wrappers to talk to OpenStack and Oracle Public Cloud.
+* iaas-11.1 contains the entry point to install and configure the Oracle ATG Commerce 11.1 stack
+* iaas-11.2 contains the entry point to install and configure the Oracle ATG Commerce 11.2 stack
+* webui contains the WebUI tool for assist in generating configuration data and Ansible playbooks.
+* openstack-metadata contains a script to retrieve user metadata from OpenStack.
 
 ## Additional instructions
 Installation and additional instructions are contained in each top level folder.
