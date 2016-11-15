@@ -1,2 +1,0 @@
-environmentname: endeca2
-envorchestration: '{{ environmentname }}'

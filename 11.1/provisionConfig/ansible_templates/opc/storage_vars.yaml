@@ -1,6 +1,0 @@
-sectionname:   "dbtest"
-
-storagevolume:         "{{ sectionname }}_storage"
-storagevolumesize:     "1G"
-storagevolumedescription:     "{{ sectionname }}_storage"
-storagevolumeprops: /oracle/public/storage/default

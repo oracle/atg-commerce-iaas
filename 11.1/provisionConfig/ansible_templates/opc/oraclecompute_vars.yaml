@@ -1,9 +1,0 @@
----
-# Endpoint variables to access Oracle Cloud
-endpoint: "{{ lookup('env','OC_ENDPOINT') }}"
-account: "/Compute-{{ lookup('env','OC_DOMAIN') }}/default"
-user: "/Compute-{{ lookup('env','OC_DOMAIN') }}/{{ lookup('env','OC_USERNAME')}}"
-password: "{{ lookup('env','OC_PASSWORD') }}"
-resourcebase: "Compute-{{ lookup('env','OC_DOMAIN') }}/{{ lookup('env','OC_USERNAME')}}"
-sshkeyfile: "{{ lookup('env','OC_SSHKEY_FILE') }}"
-...

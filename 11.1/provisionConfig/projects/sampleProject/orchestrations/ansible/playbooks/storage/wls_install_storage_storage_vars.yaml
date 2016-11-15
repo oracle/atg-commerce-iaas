@@ -1,5 +1,0 @@
-sectionname: wls_install_storage
-storagevolume: '{{ sectionname }}'
-storagevolumedescription: weblogic install storage
-storagevolumeprops: /oracle/public/storage/default
-storagevolumesize: 10g
