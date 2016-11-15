@@ -1,0 +1,34 @@
+#Installed features
+#------------------
+CHOSEN_INSTALL_FEATURE_LIST=RM,Commerce,Portal,CA,MP
+
+#Choose Install Folder
+#---------------------
+USER_INSTALL_DIR=INSTALL_HOME
+
+#Product Selection Console
+#-------------------------
+CHOSEN_INSTALL_FEATURE_LIST=RM,Commerce,Portal,CA,MP
+
+#Select Application Server
+#-------------------------
+SELECTED_APP_SERVER=\"\",\"\",\"\",\"Oracle WebLogic\",\"\"
+
+#WebLogic Console
+#----------------
+ATG_BEA_HOME=WEBLOGIC_HOME
+ATG_WL_HOME=WEBLOGIC_HOME/wlserver
+ATG_WL_DOMAIN=WEBLOGIC_HOME/user_projects/domains/WEBLOGIC_DOMAIN
+ATG_LISTEN_PORT=WEBLOGIC_ADMIN_PORT
+ATG_RMI_PORT=ATGRMI_PORT
+ATG_JDK_HOME=JDK_PATH
+
+#Install
+#-------
+-fileOverwrite_INSTALL_HOME/.ASE11.2_config/config/setup_rule.xml=Yes
+-fileOverwrite_INSTALL_HOME/.ASE11.2_config/config/j2ee_deploy_setup_rule.xml=Yes
+-fileOverwrite_INSTALL_HOME/.ASE11.2_config/lib/OCIAPlatformlib.jar=Yes
+-fileOverwrite_INSTALL_HOME/.ASE11.2_config/lib/vendorlibs.jar=Yes
+-fileOverwrite_INSTALL_HOME/.ASE11.2_config/bin/getlicense.sh=Yes
+-fileOverwrite_INSTALL_HOME/.ASE11.2_config/bin/getlicense.bat=Yes
+-fileOverwrite_INSTALL_HOME/uninstall/.ASE11.2_uninstall/Uninstall Oracle Commerce Platform 11.2.lax=Yes

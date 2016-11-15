@@ -1,0 +1,13 @@
+- gather_facts: true
+  hosts: localhost
+  name: Create seclists
+  vars_files:
+    - ../oraclecompute_vars.yaml  
+  tasks:
+  - name: authenticate
+    oc_authenticate:
+      endpoint: '{{ endpoint }}'
+      password: '{{ password }}'
+      user: '{{ user }}'
+    register: cookie
+    

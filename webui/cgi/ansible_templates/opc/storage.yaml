@@ -1,0 +1,28 @@
+---
+- name: storage_template
+  hosts: localhost
+  gather_facts: true
+  vars_files:
+    - oraclecompute_vars.yaml
+    - storage_vars.yaml
+    
+  tasks:
+    - name: authenticate
+      register: cookie
+      oc_authenticate:
+        endpoint: "{{ endpoint }}"
+        user: "{{ user }}"
+        password: "{{ password }}"
+
+    - name: create storage
+      oc_storagevolume:
+        action: "create"
+        endpoint: "{{ endpoint }}"
+        cookie: "{{ cookie.cookie }}"
+        resourcename: "{{ resourcebase }}"
+        size: "{{ storagevolumesize }}"
+        name: "{{ resourcebase }}/{{ storagevolume }}"
+        properties: "{{ storagevolumeprops }}"
+        bootable: False
+        description: "{{ storagevolumedescription }}"        
+...

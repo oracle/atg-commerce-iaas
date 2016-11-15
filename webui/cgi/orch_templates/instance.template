@@ -1,0 +1,43 @@
+{
+    "description": "Commerce instances",
+    "name": "",
+    "oplans": [
+        {
+            "label": "create_instances",
+            "obj_type": "launchplan",
+            "objects": [
+                {
+                    "instances": [
+                        {
+                            "imagelist": "/Compute-atgdevcs/michael.shanley@oracle.com/atg11_1p1_v3",
+                            "label": "endeca1",
+                            "name": "/Compute-atgdevcs/michael.shanley@oracle.com/endeca1",
+                            "hostname": "endeca1",
+                            "shape": "oc2m",
+                            "networking": {
+                                "eth0": {
+                                    "seclists": [
+                                        "/Compute-atgdevcs/michael.shanley@oracle.com/endeca_instances",
+                                        "/Compute-atgdevcs/michael.shanley@oracle.com/endeca1_server",
+                                        "/Compute-atgdevcs/default/default"
+                                    ],
+                                    "nat": "ippool:/oracle/public/ippool"
+                                }
+                            },
+                            "sshkeys": [
+                                "/Compute-atgdevcs/michael.shanley@oracle.com/mshanley"
+                            ],
+                            "attributes": {
+                                "userdata": {
+                                    "pre-bootstrap": {
+                                        "script": "/opt/oracle/install/pywrapper.sh --endeca --copy-ssh-keys"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

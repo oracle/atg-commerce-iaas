@@ -1,0 +1,12 @@
+
+#Choose Install Folder
+#---------------------
+USER_INSTALL_DIR=INSTALL_HOME
+
+#Install
+#-------
+-fileOverwrite_INSTALL_HOME/CommerceReferenceStore/.CommerceReferenceStore_config/config/setup_rule.xml=Yes
+-fileOverwrite_INSTALL_HOME/CommerceReferenceStore/.CommerceReferenceStore_config/lib/vendorlibs.jar=Yes
+-fileOverwrite_INSTALL_HOME/CommerceReferenceStore/.CommerceReferenceStore_config/bin/getlicense.sh=Yes
+-fileOverwrite_INSTALL_HOME/CommerceReferenceStore/.CommerceReferenceStore_config/bin/getlicense.bat=Yes
+-fileOverwrite_INSTALL_HOME/CommerceReferenceStore/uninstall/.CommerceReferenceStore_uninstall/Uninstall Oracle Commerce Reference Store 11.2.lax=Yes

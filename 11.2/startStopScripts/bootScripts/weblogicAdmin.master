@@ -1,0 +1,164 @@
+#!/bin/sh 
+#
+# weblogicAdmin:      Oracle Weblogic admin.
+#
+# chkconfig: 345 99 95 
+#
+# description:       Oracle Weblogic admin.
+#
+
+### BEGIN INIT INFO
+# Provides: weblogicAdmin
+# Required-Start: $local_fs $remote_fs $network $named
+# Required-Stop: $local_fs $remote_fs $network
+# Should-Start:
+# Should-Stop:
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 2 6
+# Short-Description: Oracle Weblogic admin.
+# Description: Starts and stops Oracle Weblogic admin.
+### END INIT INFO
+
+
+# Source function library.
+. /etc/init.d/functions
+
+# Check for root
+if [ `id -u` != 0 ]; then
+    echo "you must be root to use this script"
+    exit 4
+fi
+
+
+DOMAIN_HOME=WL_DOMAIN_HOME
+PROCESS_OWNER="WL_PROCESS_OWNER"
+
+COMMAND_PREFIX="su - ${PROCESS_OWNER} -c"
+
+# what to look for in the output of running processes
+PROCESS_STRING="^.*weblogic.Name=AdminServer.*weblogic.Server.*"
+# start script
+PROGRAM_START="$DOMAIN_HOME/bin/startWebLogic.sh"
+
+# string to scrape the log file for to indicate process has completely started
+PROCESS_RUNNING_STRING="Server state changed to RUNNING"
+ 
+SERVICE_NAME=`/bin/basename $0`
+LOCKFILE="/var/lock/subsys/$SERVICE_NAME"
+OUT_FILE="${DOMAIN_HOME}/servers/AdminServer/logs/AdminServer.log"
+ 
+RETVAL=0
+ 
+start() {
+        OLDPID=`/usr/bin/pgrep -f $PROCESS_STRING`
+        if [ ! -z "$OLDPID" ] ; then
+            echo "$SERVICE_NAME is already running (pid $OLDPID) !"
+            echo
+            exit
+        fi
+        echo -n $"Starting $SERVICE_NAME ... "
+
+	    ${COMMAND_PREFIX} "$PROGRAM_START > /dev/null 2>&1 &"
+ 
+         RETVAL=$?
+         # give logs a second to rotate
+         sleep 1
+        if [ $RETVAL -eq 0 ] ; then
+          wait_for ${PROCESS_RUNNING_STRING}
+        else
+          echo "FAILED: $RETVAL. Please check $OUT_FILE for more information."
+        fi
+        echo        
+}
+
+wait_for() {
+    res=$(cat "$OUT_FILE" | fgrep -c "$1")
+    count=60
+    while [[ ! $res -gt 0 ]] && [[ $count -gt 0 ]]
+    do
+        sleep 1
+        count=$(($count - 1))
+        res=$(cat "$OUT_FILE" | fgrep -c "$1")
+    done
+    res=$(cat "$OUT_FILE" | fgrep -c "$1")
+    if [ ! $res -gt 0 ]; then
+        echo "FAILED or took too long time to start. Please check $OUT_FILE for more information."
+    else
+        echo "OK"
+        touch $LOCKFILE
+    fi
+}
+ 
+stop() {
+        
+        OLDPID=`/usr/bin/pgrep -f $PROCESS_STRING`
+
+    # Check to see if the process is running
+    if [ "${OLDPID}" == "" ]; then
+        echo "Weblogic Admin server is not running"
+    else
+
+	    echo -n $"Stopping $SERVICE_NAME ... "
+        echo -n "(pid $OLDPID) "
+
+	    # The process was found, try and kill it nicely
+            /bin/kill -TERM $OLDPID
+
+        RETVAL=1
+        sleep=0
+        # Loop to see if the process is still active
+        while [ $sleep -lt 120 -a $RETVAL -eq 1 ]; do
+            echo -n -e "\nwaiting for processes to stop";
+            sleep 10
+            sleep=`expr $sleep + 10`
+            OLDPID=`/usr/bin/pgrep -f $PROCESS_STRING`
+            if [ "x${OLDPID}" == "x" ]; then
+                RETVAL=0
+            fi
+    done
+    fi
+
+    # Still not dead.  Kill it with fire!
+    if [ $RETVAL != 0 ]; then
+        kill -9 $OLDPID
+        RETVAL=$?
+    fi
+
+    [ $RETVAL -eq 0 ] && rm -f $LOCKFILE
+}
+ 
+restart() {
+        stop
+        sleep 10
+        start
+}
+ 
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|force-reload|reload)
+        restart
+        ;;
+  condrestart|try-restart)
+        [ -f $LOCKFILE ] && restart
+        ;;
+  status)
+        OLDPID=`/usr/bin/pgrep -f $PROCESS_STRING`
+        if [ "$OLDPID" != "" ]; then
+            /bin/echo "$SERVICE_NAME is running (pid: $OLDPID)"
+        else
+            /bin/echo "$SERVICE_NAME is stopped"
+        fi
+        echo
+        RETVAL=$?
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+        exit 1
+esac
+ 
+exit $RETVAL

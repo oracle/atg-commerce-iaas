@@ -61,9 +61,15 @@ Some of the features in the tool set include:
 * Install and Configure Oracle Traffic Director
 * Install Oracle Database, and create a new starter database instance
 
-# Detailed instructions
-Detailed usage instructions are contained in the PDF manual included with the code.
-Code will be broken up by supported Oracle ATG Commerce version. Each specific version of the stack allows for different installation and configuration options, based on the specific product versions in the stack.
+# Components
+common_python contains the python libraries for the provisioning services, and REST api wrappers to talk to OpenStack and Oracle Public Cloud.
+iaas-11.1 contains the entry point to install and configure the Oracle ATG Commerce 11.1 stack
+iaas-11.2 contains the entry point to install and configure the Oracle ATG Commerce 11.2 stack
+webui contains the WebUI tool for assist in generating configuration data and Ansible playbooks.
+openstack-metadata contains a script to retrieve user metadata from OpenStack.
+
+## Additional instructions
+Installation and additional instructions are contained in each top level folder.
 
 # Contributing
 

@@ -1,0 +1,133 @@
+#!/bin/bash
+#
+# weblogicNodemgr:      Oracle Weblogic nodemanager.
+#
+# chkconfig: 345 99 95 
+#
+# description:       Oracle Weblogic nodemanager.
+#
+
+### BEGIN INIT INFO
+# Provides: weblogicNodemgr
+# Required-Start: $local_fs $remote_fs $network $named
+# Required-Stop: $local_fs $remote_fs $network
+# Should-Start:
+# Should-Stop:
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 2 6
+# Short-Description: Oracle Weblogic nodemanager service.
+# Description: Starts and stops Oracle Weblogic nodemanager.
+### END INIT INFO
+
+
+# Check for root
+if [ `id -u` != 0 ]; then
+    echo "you must be root to use this script"
+    exit 4
+fi
+
+
+DOMAIN_HOME=WL_DOMAIN_HOME
+PROCESS_OWNER="WL_PROCESS_OWNER"
+
+COMMAND_PREFIX="su - ${PROCESS_OWNER} -c"
+
+# what to look for in the output of running processes
+PROCESS_STRING="^.*$DOMAIN_HOME.*weblogic.NodeManager.*"
+# start script
+PROGRAM_START="$DOMAIN_HOME/bin/startNodeManager.sh"
+
+# string to scrape the log file for to indicate process has completely started
+PROCESS_RUNNING_STRING="socket listener started on port"
+
+NODEMANAGER_DIR=$DOMAIN_HOME/nodemanager
+OUT_FILE="$NODEMANAGER_DIR/nodemanager.out"
+ 
+SERVICE_NAME=`/bin/basename $0`
+ 
+RETVAL=0
+ 
+start() {
+        OLDPID=`/usr/ucb/ps auxwww | grep $PROCESS_STRING | grep -v grep | awk '{print $2}'`
+        if [ ! -z "$OLDPID" ]; then
+            echo "$SERVICE_NAME is already running (pid $OLDPID) !"
+            echo
+            exit
+        fi
+        echo -n $"Starting $SERVICE_NAME ... "
+
+	    ${COMMAND_PREFIX} "$PROGRAM_START >> $OUT_FILE 2>&1  &"
+ 
+        RETVAL=$?
+        if [ $RETVAL -eq 0 ] ; then
+          wait_for ${PROCESS_RUNNING_STRING}
+        else
+          echo "FAILED: $RETVAL. Please check $OUT_FILE for more information."
+        fi
+        echo
+}
+ 
+wait_for() {
+    res=$(cat "$OUT_FILE" | fgrep -c "$1")
+    count=60
+    while [[ ! $res -gt 0 ]] && [[ $count -gt 0 ]]
+    do
+        sleep 1
+        count=$(($count - 1))
+        res=$(cat "$OUT_FILE" | fgrep -c "$1")
+    done
+    res=$(cat "$OUT_FILE" | fgrep -c "$1")
+    if [ ! $res -gt 0 ]; then
+        echo "FAILED or took too long time to start. Please check $OUT_FILE for more information."
+    else
+        echo "OK"
+    fi
+}
+ 
+stopproc() {
+        echo -n $"Stopping $SERVICE_NAME ... "
+        OLDPID=`/usr/ucb/ps auxwww | grep $PROCESS_STRING | grep -v grep | awk '{print $2}'`
+        if [ "$OLDPID" != "" ]; then
+            echo -n "(pid $OLDPID) "
+            /bin/kill -TERM $OLDPID
+ 
+            RETVAL=$?
+            /bin/echo "stopping $SERVICE_NAME"
+        fi
+}
+ 
+restart() {
+        stopproc
+        sleep 10
+        start
+}
+ 
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stopproc
+        ;;
+  restart|force-reload|reload)
+        restart
+        ;;
+  condrestart|try-restart)
+        restart
+        ;;
+  status)
+        OLDPID=`/usr/ucb/ps auxwww | grep $PROCESS_STRING | grep -v grep | awk '{print $2}'`
+        if [ "$OLDPID" != "" ]; then
+            /bin/echo "$SERVICE_NAME is running (pid: $OLDPID)"
+        else
+            /bin/echo "$SERVICE_NAME is stopped"
+        fi
+        echo
+        RETVAL=$?
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+        exit 1
+esac
+ 
+exit $RETVAL
