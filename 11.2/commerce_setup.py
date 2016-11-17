@@ -16,6 +16,7 @@ from oc_provision_wrappers import commerce_setup_helper
 from oc_provision_wrappers import load_user_metadata
 from oc_provision_wrappers.atg import create_atg_server_layers 
 from oc_provision_wrappers.atg.v11_2 import atg_helper
+from oc_provision_wrappers.atg.v11_2 import atgpatch_helper
 from oc_provision_wrappers.database.v12c import oracle_rdbms_install
 from oc_provision_wrappers.endeca.v11_2 import cas_helper
 from oc_provision_wrappers.endeca.v11_2 import mdex_helper
@@ -50,6 +51,7 @@ user_data_url = "http://192.0.0.192/latest/user-data"
 json_ds = None
 install_java = None
 install_atg = None
+install_atgpatch = None
 install_mdex = None
 install_platform = None
 install_tools = None
@@ -74,7 +76,7 @@ showDebug = None
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], '', ['java', 'addstorage', 'advancedStorage', 'weblogic', 'weblogicDomain', 'weblogicManagedServer',
-                                                  'weblogicPackDomain', 'weblogicSettings', 'weblogicDatasources', 'weblogicServers', 'weblogicMachines', 'atg',
+                                                  'weblogicPackDomain', 'weblogicSettings', 'weblogicDatasources', 'weblogicServers', 'weblogicMachines', 'atg', 'atgpatch',
                                                   'mdex', 'platformServices', 'toolsAndFramework', 'cas', 'endeca', 'dgraph', 'otdInstall', 'otdConfig',
                                                   'copy-ssh-keys', 'db', 'debug', 'configSource='])
 except getopt.GetoptError as err:
@@ -93,7 +95,9 @@ for opt, arg in opts:
     if opt == '--java':
         install_java = True        
     if opt == '--atg':
-        install_atg = True                    
+        install_atg = True
+    if opt == '--atgpatch':
+        install_atgpatch = True                       
     if opt == '--otdInstall':
         install_otd = True
     if opt == '--otdConfig':
@@ -201,7 +205,10 @@ if install_atg:
     atg_helper.install_atg(configData, full_path)
     # This may be useful as its own option in the future. Leave here w/ATG install for now
     create_atg_server_layers.generate_atg_server_payers(configData, full_path)
-            
+
+if install_atgpatch:
+    atgpatch_helper.install_atgpatch(configData, full_path)
+               
 if install_mdex:
     mdex_helper.install_mdex(configData, full_path)
     

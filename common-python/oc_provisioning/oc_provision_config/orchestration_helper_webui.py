@@ -45,7 +45,7 @@ wrapper_script = "/opt/oracle/install/11.1/pywrapper.sh"
 
 # map the instance types in our property files to the flags we need to pass to our wrapper script. This tells wrapper what to install
 # remove weblogicSettings from weblogic map until added to gui
-instance_flags = {'atg': ['--java', '--atg', '--atgpatch'],
+instance_flags = {'atg': ['--java', '--atg'],
                   'weblogic': ['--java', '--weblogic', '--weblogicDomain'],
                   'weblogicManagedServer': ['--java', '--weblogic', '--weblogicManagedServer'],
                   'otd': ['--java', '--otdInstall'],
@@ -57,7 +57,8 @@ instance_flags = {'atg': ['--java', '--atg', '--atgpatch'],
 # common/optional flags that can be used based on what data is in the json
 optional_flags = {'copy_ssh_keys': ['--copy_ssh_keys'],
                   'advanced_storage': ['--advanced_storage'],
-                  'weblogicDatasources': ['--weblogicDatasources']}
+                  'weblogicDatasources': ['--weblogicDatasources'],
+                  'atgpatch': ['--atgpatch']}
 
 # map the instance type to the security lists the instance needs to be a part of
 seclist_map = {'atg': ['atg_instances'],

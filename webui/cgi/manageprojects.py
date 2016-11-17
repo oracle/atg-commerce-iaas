@@ -353,7 +353,9 @@ if (action == "add_instance"):
     if ('advanced_storage' in json_blob):
         optional_data_types.append('advanced_storage')
     if ('WEBLOGIC_datasources' in json_blob):
-        optional_data_types.append('weblogicDatasources')             
+        optional_data_types.append('weblogicDatasources')
+    if ('ATGPATCH_install' in json_blob):
+        optional_data_types.append('atgpatch')                        
     
     instance_data = {}
     instance_data['targetPlatform'] = target_platform
@@ -433,13 +435,3 @@ if (action == "generate_configs"):
         response_data = {'instance': selected_project, 'status': 'error', 'message': 'Generate Configs Failed ', 'errormsg': value.strerror}
         
     print(json.JSONEncoder().encode(response_data))    
-       
-    
-    
-    
-    
-    
-    
-    
-    
-    

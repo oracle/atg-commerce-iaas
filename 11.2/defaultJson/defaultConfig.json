@@ -45,9 +45,17 @@
                     "wl_home": "/u01/middleware",
                     "wl_domain": "base_domain",
                     "wl_adminPort": "7001",
+                    "atg_clustername": "democluster",
                     "install_crs": "true",
                     "install_csa": "true"                    
                 },        
+            "ATGPATCH_install": 
+                {
+                    "dynamoRoot": "/u02/atg11.2",
+                    "installOwner": "oracle",
+                    "atg_patch_archive": "p23147552_112000_Generic.zip",
+                    "atg_patch_destination": "OCPlatform11.2_p1"
+                },                
             "WEBLOGIC_common":
                 {
                     "middlewareHome": "/u01/middleware",

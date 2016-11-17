@@ -594,10 +594,9 @@ $(document).ready(function () {
         $.each( data.optional_fields, function( key, val ) {
         	var $add_optional_button = ('<button id="addOptionalField" class="optionalSubmitBtn" name="' + key +'">Add ' + key + '</button>');
         	$optional_button_container.append($add_optional_button);
-        	//$optional_data_wrapper_div.append($add_optional_button);
-        	var $optional_data_div = $('<div id="' + key + '" style="display:none;" class="optional_data_div disabled">');
-        	$optional_data_div.append('<label class="section_label">Section: ' + key + '</label>');
         	if (isArray(val)) {
+        		var $optional_data_div = $('<div id="' + key + '" style="display:none;" class="optional_data_div disabled">');
+        		$optional_data_div.append('<label class="section_label">Section: ' + key + '</label></br>');
         		var divId = key + '_array_div';
         		var $array_data_div = $('<div id="' + divId + '" class="array_div">');
         		$optional_data_div.append('<br/>');
@@ -610,14 +609,18 @@ $(document).ready(function () {
                 $array_data_div.append($add_more);
                 $array_data_div.append('<br/>'); 
                 $optional_data_div.append($array_data_div);
-
+                $optional_data_div.append('<br/>');
         		
         	} else {
         		// if not an array, use shared function to create inputs
         		var $nesteddata = build_required_data(key,val);
-        		$optional_data_div.append($nesteddata);
+        		$nesteddata.prepend('<label class="section_label">Section: ' + key + '</label></br>');
+        		$nesteddata.addClass('disabled');
+        		$nesteddata.hide();
+        		
+        		$optional_data_wrapper_div.append($nesteddata);
+        		$optional_data_wrapper_div.append('<br/>');
         	}
-        	$optional_data_div.append('<br/>');
         	$optional_data_wrapper_div.append($optional_data_div);
         });
         $optional_data_wrapper_div.append($optional_button_container);
@@ -628,7 +631,7 @@ $(document).ready(function () {
         $( "#mainBody" ).empty();
         $formContainer.append($form);
         $formContainer.appendTo( "#mainBody" );
-    };    
+    }; 
     
     function build_required_data(typekey, dataval) {
     	var $html_to_return = $('<div id=' + typekey + '>');

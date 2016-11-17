@@ -52,9 +52,10 @@
                 },        
             "ATGPATCH_install": 
                 {
-                	"required": ["[required]", "true"],
                     "dynamoRoot": ["[enter ATG install path]", "/u02/atg11.1"],
-                    "installOwner": ["[enter unix user]", "oracle"]
+                    "installOwner": ["[enter unix user]", "oracle"],
+                    "atg_patch_archive": ["[enter patch archive name]", "p20173321_111000_Generic.zip"],
+                    "atg_patch_destination": ["[enter patch destination dir]", "OCPlatform11.1_p1"]                 
                 },
             "WEBLOGIC_common":
                 {

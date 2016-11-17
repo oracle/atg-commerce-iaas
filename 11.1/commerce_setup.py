@@ -37,7 +37,7 @@ from urlparse import urlparse
 from oc_provision_wrappers import commerce_setup_helper 
 from oc_provision_wrappers import load_user_metadata
 from oc_provision_wrappers.atg import create_atg_server_layers 
-from oc_provision_wrappers.atg.v11_1 import atg_helper
+from oc_provision_wrappers.atg.v11_1 import atg_helper, atgpatch_postinstall
 from oc_provision_wrappers.atg.v11_1 import atgpatch_helper
 from oc_provision_wrappers.database.v11g import oracle_rdbms_install
 from oc_provision_wrappers.endeca.v11_1 import cas_helper
@@ -236,7 +236,9 @@ if install_atg:
     create_atg_server_layers.generate_atg_server_payers(configData, full_path)
     
 if install_atgpatch:
-    atgpatch_helper.install_atgpatch(configData, full_path)          
+    atgpatch_helper.install_atgpatch(configData, full_path)
+    # fix issues in the patch
+    atgpatch_postinstall.post_install_cmds(configData, full_path)  
             
 if install_mdex:
     mdex_helper.install_mdex(configData, full_path)

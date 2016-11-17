@@ -51,7 +51,9 @@
             "ATGPATCH_install": 
                 {
                     "dynamoRoot": "/u02/atg11.1",
-                    "installOwner": "oracle"
+                    "installOwner": "oracle",
+                    "atg_patch_archive": "p20173321_111000_Generic.zip",
+                    "atg_patch_destination": "OCPlatform11.1_p1"
                 },
             "WEBLOGIC_common":
                 {
