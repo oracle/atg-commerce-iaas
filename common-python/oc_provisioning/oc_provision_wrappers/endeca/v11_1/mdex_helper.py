@@ -27,6 +27,7 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
+import platform
 
 json_key = 'ENDECA_install'
 service_name = "MDEX"
@@ -45,7 +46,14 @@ def install_mdex(configData, full_path):
         print service_name + " config data missing from json. will not install"
         return
 
-    binary_path = full_path + "/binaries/endeca11.1"
+    if (platform.system() == "SunOS"):
+        binary_path = full_path + "/binaries/endeca11.1/solaris"
+        install_exec = "/MDEX_Install/OCmdex6.5.1-Solaris_829811.sh"
+    else:
+        binary_path = full_path + "/binaries/endeca11.1"
+        install_exec = "/MDEX_Install/OCmdex6.5.1-Linux64_829811.sh"
+        
+    
         
     if jsonData is not None:
         print "installing " + service_name
@@ -53,7 +61,7 @@ def install_mdex(configData, full_path):
         # make the install tree with correct owner if needed
         commerce_setup_helper.mkdir_with_perms(ENDECA_ROOT, INSTALL_OWNER, INSTALL_GROUP)
 
-        installCommand = "\"" + binary_path + "/MDEX_Install/OCmdex6.5.1-Linux64_829811.sh --target " + ENDECA_ROOT + "\""
+        installCommand = "\"" + binary_path + install_exec + " --target " + ENDECA_ROOT + "\""
         # print "command is " + installCommand
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
          

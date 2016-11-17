@@ -28,7 +28,7 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
-
+import os
 
 json_key = 'ATGPATCH_install'
 service_name = "ATG Patch"
@@ -50,50 +50,21 @@ def install_atgpatch(configData, full_path):
 
     INSTALL_DIR = jsonData['dynamoRoot']
     INSTALL_OWNER = jsonData['installOwner']
-
-    unzipCommand = "\"" + "unzip " + binary_path + "/patch1/OCPlatform11.1_p1_24REL.jar -d " + INSTALL_DIR + "/patch" + "\""
-    chmodCmd = "\"" + "chmod 755 " + INSTALL_DIR + "/patch/OCPlatform11.1_p1/bin/install.sh" + "\""
-    installCmd = "\"" + "cd " + INSTALL_DIR + "/patch/OCPlatform11.1_p1/bin; ./install.sh < " + response_files_path + "/patch1/YES.txt" + "\""
+    PATCH_ARCHIVE = jsonData['atg_patch_archive']
+    PATCH_NAME = jsonData['atg_patch_destination']
+    
+    path_to_patch = binary_path + "/patches/" + PATCH_ARCHIVE
+    patch_destination = INSTALL_DIR + "/patch/" + PATCH_NAME
+    
+    if not os.path.exists(path_to_patch):
+        print "patch file " + path_to_patch + " does not exist - halting"
+        return
+    
+    unzipCommand = "\"" + "unzip " + path_to_patch + " -d " + INSTALL_DIR + "/patch" + "\""
+    chmodCmd = "\"" + "chmod 755 " + patch_destination + "/bin/install.sh" + "\""
+    installCmd = "\"" + "cd " + patch_destination + "/bin; ./install.sh < " + response_files_path + "/patches/YES.txt" + "\""    
     
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipCommand)
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, chmodCmd)
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCmd)
-    
-    # fix missing manifest entry that cause jps-config.xml to not get pulled into standalone ears
-    MANIFEST_TO_UPDATE = INSTALL_DIR + "/home/META-INF/MANIFEST.MF"
-    fixJPScmd = "\"" + "echo >> " + MANIFEST_TO_UPDATE + \
-                "; echo 'Name: security' >> " + MANIFEST_TO_UPDATE + \
-                "; echo 'ATG-Assembler-Import-File: true' >> " + MANIFEST_TO_UPDATE + "\""
-    commerce_setup_helper.exec_as_user(INSTALL_OWNER, fixJPScmd)
-    
-    # fix crs after patch
-    patch_crs(configData, full_path)
-    
-def patch_crs(configData, full_path):
-    """
-    patch1 has a bug where it does not update CRS with new taglibs. Patch it here.
-    """   
-    atginstall_json_key = 'ATG_install'
-    if atginstall_json_key not in configData:
-        return
-    
-    jsonData = configData[atginstall_json_key]
-    INSTALL_DIR = jsonData['dynamoRoot']
-    INSTALL_OWNER = jsonData['installOwner']
-    INSTALL_CRS = jsonData['install_crs']
-    
-    if INSTALL_CRS:     
-        # If patch1 is installed, these are not updated. fix it.
-        cpCmd = "\"" + "cp " + INSTALL_DIR + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar " + INSTALL_DIR + "/CommerceReferenceStore/Store/Storefront/j2ee-apps/Storefront/store.war/WEB-INF/lib" + "\""
-        commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpCmd)
-        cpCmd = "\"" + "cp " + INSTALL_DIR + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar " + INSTALL_DIR + "/CommerceReferenceStore/Store/Storefront/j2ee-apps/Storefront/storedocroot.war/WEB-INF/lib" + "\""
-        commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpCmd)
-        cpCmd = "\"" + "cp " + INSTALL_DIR + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar " + INSTALL_DIR + "/CommerceReferenceStore/Store/Fluoroscope/j2ee-apps/Fluoroscope/fluoroscope.war/WEB-INF/lib" + "\""
-        commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpCmd)
-        cpCmd = "\"" + "cp " + INSTALL_DIR + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar " + INSTALL_DIR + "/CommerceReferenceStore/Store/DCS-CSR/j2ee-apps/DCS-CSR/CSRHelper.war/WEB-INF/lib" + "\""
-        commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpCmd)
-        cpCmd = "\"" + "cp " + INSTALL_DIR + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar " + INSTALL_DIR + "/CommerceReferenceStore/Store/EStore/Versioned/j2ee-apps/Versioned/store-merchandising.war/WEB-INF/lib" + "\""
-        commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpCmd)         
-    
-    
     

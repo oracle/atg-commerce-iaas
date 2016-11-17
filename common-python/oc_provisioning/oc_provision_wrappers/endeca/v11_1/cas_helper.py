@@ -27,6 +27,7 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
+import platform
 
 json_key = 'ENDECA_install'
 service_name = "cas"
@@ -47,7 +48,13 @@ def install_cas(configData, full_path):
         print service_name + " config data missing from json. will not install"
         return
 
-    binary_path = full_path + "/binaries/endeca11.1"
+    if (platform.system() == "SunOS"):
+        binary_path = full_path + "/binaries/endeca11.1/solaris"
+        install_exec = "/CAS_Install/OCcas11.1.0-Solaris.sh"
+    else:
+        binary_path = full_path + "/binaries/endeca11.1"
+        install_exec = "/CAS_Install/OCcas11.1.0-Linux64.sh"
+        
     response_files_path = full_path + "/responseFiles/endeca11.1"
        
     if jsonData is not None:
@@ -65,17 +72,22 @@ def install_cas(configData, full_path):
 
         commerce_setup_helper.substitute_file_fields(response_files_path + '/cas_silent.txt.master', response_files_path + '/cas_silent.txt', field_replacements)
         
-        installCommand = "\"" + binary_path + "/CAS_Install/OCcas11.1.0-Linux64.sh --silent --target " + ENDECA_ROOT + \
+        installCommand = "\"" + binary_path + install_exec + " --silent --target " + ENDECA_ROOT + \
         " --endeca_tools_root " + ENDECA_ROOT + "/endeca/ToolsAndFrameworks/11.1.0 --endeca_tools_conf " + ENDECA_ROOT + "/endeca/ToolsAndFrameworks/11.1.0/server/workspace < " + \
         response_files_path + "/cas_silent.txt \""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)         
-        
+
+        if (platform.system() == 'SunOS'):
+            startStopPath = "/startStopScripts/solaris/bootScripts/"
+        else:
+            startStopPath = "/startStopScripts/bootScripts/"
+                    
         # copy start/stop script
         ENDECA_HOME = ENDECA_ROOT + "/endeca"
         MDEX_SETUP = ENDECA_HOME + "/MDEX/6.5.1/mdex_setup_sh.ini"
         PLATFORM_SETUP = ENDECA_HOME + "/PlatformServices/workspace/setup/installer_sh.ini"
         script_replacements = {'ENDECA_PROCESS_OWNER':INSTALL_OWNER, 'ENDECA_INSTALL_ROOT':ENDECA_HOME, "MDEX_SETUP":MDEX_SETUP, "PLATFORM_SETUP":PLATFORM_SETUP}
-        commerce_setup_helper.copy_start_script(START_ON_BOOT, full_path + '/startStopScripts/bootScripts/endecaCAS.master', script_replacements)
+        commerce_setup_helper.copy_start_script(START_ON_BOOT, full_path + startStopPath + 'endecaCAS.master', script_replacements)
         
         # restart other services before cas
         platformCmd = "/etc/init.d/platformServices"

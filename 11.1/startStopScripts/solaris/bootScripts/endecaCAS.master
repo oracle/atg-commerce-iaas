@@ -1,24 +1,23 @@
-#!/bin/bash 
+#!/bin/sh 
 #
-# OTDAdmin:      Oracle Traffic Director admin.
+# platformServices:      Endeca CAS
 #
 # chkconfig: 345 99 95 
 #
-# description:       Oracle Traffic Director admin.
+# description:       Endeca CAS
 #
 
 ### BEGIN INIT INFO
-# Provides: OTDAdmin
-# Required-Start: $local_fs $remote_fs $network $named
-# Required-Stop: $local_fs $remote_fs $network
+# Provides: weblogic
+# Required-Start: $network $local_fs
+# Required-Stop:
 # Should-Start:
 # Should-Stop:
 # Default-Start: 3 4 5
 # Default-Stop: 0 1 2 6
-# Short-Description: Oracle Traffic Director admin.
-# Description: Starts and stops Oracle Traffic Director admin.
+# Short-Description: Endeca CAS
+# Description: Starts and stops Endeca CAS
 ### END INIT INFO
-
 
 # Check for root
 if [ `id -u` != 0 ]; then
@@ -26,28 +25,27 @@ if [ `id -u` != 0 ]; then
     exit 4
 fi
 
-# Oracle Traffic Director Instance
-OTD_INSTANCE_DIRECTORY=OTD_INSTANCE_HOME
-OTD_INSTANCE=OTD_INSTANCE_NAME
-PROCESS_OWNER="OTD_PROCESS_OWNER"
+. MDEX_SETUP
+. PLATFORM_SETUP
+
+ENDECA_HOME="ENDECA_INSTALL_ROOT"
+PROCESS_OWNER="ENDECA_PROCESS_OWNER"
 
 COMMAND_PREFIX="su - ${PROCESS_OWNER} -c"
+ 
+PROGRAM_START="${ENDECA_HOME}/CAS/11.1.0/bin/cas-service.sh"
+PROGRAM_STOP="${ENDECA_HOME}/CAS/11.1.0/bin/cas-service-shutdown.sh"
 
 # what to look for in the output of running processes
-PROCESS_STRING="^.*trafficd-wdog.*${INSTANCE_NAME}.*"
-# start script
-PROGRAM_START="${OTD_INSTANCE_DIRECTORY}/${OTD_INSTANCE}/bin/startserv"
-
-# stop script
-PROGRAM_STOP="${OTD_INSTANCE_DIRECTORY}/${OTD_INSTANCE}/bin/stopserv"
-
+PROCESS_STRING="^.*com.endeca.cas.workspace=${ENDECA_HOME}/CAS/11.1.0/bin.*"
 
 # string to scrape the log file for to indicate process has completely started
-PROCESS_RUNNING_STRING="successful server startup"
- 
+PROCESS_RUNNING_STRING="Successfully started CAS services"
+
 SERVICE_NAME=`/bin/basename $0`
 
-OUT_FILE="${OTD_INSTANCE_DIRECTORY}/${OTD_INSTANCE}/logs/server.log"
+OUT_FILE="${ENDECA_HOME}/CAS/workspace/logs/cas-service.log"
+LOG_EXT=`date +%s`
  
 RETVAL=0
  
@@ -59,11 +57,18 @@ start() {
             exit
         fi
         echo "Starting $SERVICE_NAME ... "
-
+        
+        # rotate old log file if it exists
+        if [ -r ${OUT_FILE} ] ; then
+             mv ${OUT_FILE} ${OUT_FILE}"."${LOG_EXT}
+        fi
+         
         ${COMMAND_PREFIX} "$PROGRAM_START > /dev/null 2>&1 &"
  
          RETVAL=$?
         if [ $RETVAL -eq 0 ] ; then
+          # wait for log to be created
+          sleep 1 
           wait_for ${PROCESS_RUNNING_STRING}
         else
           echo "FAILED: $RETVAL. Please check $OUT_FILE for more information."
@@ -109,7 +114,7 @@ stopproc() {
         sleep=0
         # Loop to see if the process is still active
         while [ $sleep -lt 120 -a $RETVAL -eq 1 ]; do
-            echo "\nwaiting for processes to stop";
+            echo "\nwaiting for processes to stop"
             sleep 10
             sleep=`expr $sleep + 10`
             OLDPID=`/usr/ucb/ps auxwww | grep $PROCESS_STRING | grep -v grep | awk '{print $2}'`
@@ -128,8 +133,7 @@ stopproc() {
 }
  
 restart() {
-        stopproc
-        sleep 10
+        stop
         start
 }
  
@@ -147,7 +151,7 @@ case "$1" in
         restart
         ;;
   status)
-        OLDPID=`/usr/ucb/ps auxwww | grep $PROCESS_STRING | grep -v grep | awk '{print $2}'`
+        OLDPID=`/usr/bin/pgrep -f $PROCESS_STRING`
         if [ "$OLDPID" != "" ]; then
             /bin/echo "$SERVICE_NAME is running (pid: $OLDPID)"
         else
