@@ -27,6 +27,8 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
+import platform
+import os
 
 json_key = 'ENDECA_install'
 service_name = "MDEX"
@@ -43,13 +45,25 @@ def install_mdex(configData, full_path):
         commerce_setup_helper.check_required_fields(jsonData, requiredFields)
     else:
         print service_name + " config data missing from json. will not install"
-        return
-
-    binary_path = full_path + "/binaries/endeca11.2"
+        return   
+    
+    print "installing " + service_name
+    
+    if (platform.system() == "SunOS"):
+        binary_path = full_path + "/binaries/endeca11.2/solaris"
+        install_exec = "/MDEX_Install/OCmdex6.5.2-Solaris_962107.bin"
+    else:
+        binary_path = full_path + "/binaries/endeca11.2"
+        install_exec = "/MDEX_Install/OCmdex6.5.2-Linux64_962107.bin"
+        
     response_files_path = full_path + "/responseFiles/endeca11.2"
+    full_exec_path = binary_path + install_exec
+    
+    if not os.path.exists(full_exec_path):
+        print "Binary " + full_exec_path + " does not exist - will not install"
+        return False   
         
     if jsonData is not None:
-        print "installing " + service_name
         ENDECA_ROOT = jsonData['endecaRoot']
         # make the install tree with correct owner if needed
         commerce_setup_helper.mkdir_with_perms(ENDECA_ROOT, INSTALL_OWNER, INSTALL_GROUP)
@@ -59,7 +73,7 @@ def install_mdex(configData, full_path):
 
         commerce_setup_helper.substitute_file_fields(response_files_path + '/mdex_response.rsp.master', response_files_path + '/mdex_response.rsp', field_replacements)        
 
-        installCommand = "\"" + binary_path + "/MDEX_Install/OCmdex6.5.2-Linux64_962107.bin -i silent -f " + response_files_path + '/mdex_response.rsp' + "\""
+        installCommand = "\"" + full_exec_path + " -i silent -f " + response_files_path + '/mdex_response.rsp' + "\""
         # print "command is " + installCommand
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
          

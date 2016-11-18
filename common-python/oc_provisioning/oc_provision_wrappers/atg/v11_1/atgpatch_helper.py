@@ -39,7 +39,7 @@ def install_atgpatch(configData, full_path):
         jsonData = configData[json_key]
     else:
         print json_key + " config data missing from json. will not install"
-        return
+        return False
 
     binary_path = full_path + "/binaries/atg11.1"
     response_files_path = full_path + "/responseFiles/atg11.1"
@@ -57,8 +57,8 @@ def install_atgpatch(configData, full_path):
     patch_destination = INSTALL_DIR + "/patch/" + PATCH_NAME
     
     if not os.path.exists(path_to_patch):
-        print "patch file " + path_to_patch + " does not exist - halting"
-        return
+        print "patch file " + path_to_patch + " does not exist - will not install"
+        return False
     
     unzipCommand = "\"" + "unzip " + path_to_patch + " -d " + INSTALL_DIR + "/patch" + "\""
     chmodCmd = "\"" + "chmod 755 " + patch_destination + "/bin/install.sh" + "\""

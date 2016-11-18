@@ -41,6 +41,8 @@ def install_java(configData, full_path):
         print service_name + " config data missing from json. will not install"
         return
 
+    print "installing " + service_name
+    
     if (platform.system() == "SunOS"):
         binary_path = full_path + "/binaries/java1.7/solaris"
     else:

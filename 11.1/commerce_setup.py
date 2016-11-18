@@ -236,9 +236,10 @@ if install_atg:
     create_atg_server_layers.generate_atg_server_payers(configData, full_path)
     
 if install_atgpatch:
-    atgpatch_helper.install_atgpatch(configData, full_path)
+    success = atgpatch_helper.install_atgpatch(configData, full_path)
     # fix issues in the patch
-    atgpatch_postinstall.post_install_cmds(configData, full_path)  
+    if (success):
+        atgpatch_postinstall.post_install_cmds(configData, full_path)  
             
 if install_mdex:
     mdex_helper.install_mdex(configData, full_path)

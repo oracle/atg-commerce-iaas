@@ -27,6 +27,8 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
+import platform
+import os
 
 json_key = 'ENDECA_install'
 service_name = "PlatformServices"
@@ -46,12 +48,25 @@ def install_platformServices(configData, full_path):
     else:
         print service_name + " config data missing from json. will not install"
         return
-
-    binary_path = full_path + "/binaries/endeca11.2"
+    
+    print "installing " + service_name
+    
+    if (platform.system() == "SunOS"):
+        binary_path = full_path + "/binaries/endeca11.2/solaris"
+        install_exec = "/Platform_Install/OCplatformservices11.2.0-Solaris.bin"
+    else:
+        binary_path = full_path + "/binaries/endeca11.2"
+        install_exec = "/Platform_Install/OCplatformservices11.2.0-Linux64.bin"
+        
     response_files_path = full_path + "/responseFiles/endeca11.2"
+    
+    full_exec_path = binary_path + install_exec
+    
+    if not os.path.exists(full_exec_path):
+        print "Binary " + full_exec_path + " does not exist - will not install"
+        return False        
         
     if jsonData is not None:
-        print "installing " + service_name
         ENDECA_ROOT = jsonData['endecaRoot']
         MDEX_ROOT = jsonData['mdexRoot']
         EAC_PORT = jsonData['eacPort']
@@ -65,7 +80,7 @@ def install_platformServices(configData, full_path):
 
         commerce_setup_helper.substitute_file_fields(response_files_path + '/platform_response.rsp.master', response_files_path + '/platform_response.rsp', field_replacements)
         
-        installCommand = "\"" + binary_path + "/Platform_Install/OCplatformservices11.2.0-Linux64.bin -i silent -f " + response_files_path + '/platform_response.rsp' + "\""
+        installCommand = "\"" + full_exec_path + " -i silent -f " + response_files_path + '/platform_response.rsp' + "\""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
          
         # add bashrc entries

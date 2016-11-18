@@ -42,12 +42,20 @@ def install_weblogic(configData, full_path):
         jsonData = configData[json_key]
     else:
         print json_key + " config data missing from json. will not install"
-        return
+        return False
 
+    print "installing " + service_name
+    
     binary_path = full_path + "/binaries/wls-12.1.2"
     response_files_path = full_path + "/responseFiles/wls-12.1.2"
+    install_exec = "wls_121200.jar"
+    full_exec_path = binary_path + "/" + install_exec
+    
+    if not os.path.exists(full_exec_path):
+        print "Binary " + full_exec_path + " does not exist - will not install"
+        return False
                     
-    print "installing " + service_name                
+                    
     requiredFields = ['middlewareHome', 'installOwner', 'installGroup', 'oraInventoryDir']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
 
@@ -77,7 +85,7 @@ def install_weblogic(configData, full_path):
         installCommand = "\"" + "java -d64 -jar "
     else:
         installCommand = "\"" + "java -jar "
-    installCommand = installCommand + binary_path + "/wls_121200.jar -silent -invPtrLoc " + ORA_INST + " -responseFile " + response_files_path + "/install.rsp -logfile wlinstall.log" + "\""
+    installCommand = installCommand + full_exec_path + " -silent -invPtrLoc " + ORA_INST + " -responseFile " + response_files_path + "/install.rsp -logfile wlinstall.log" + "\""
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
     
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "##################### \n")
@@ -110,6 +118,7 @@ def patch_weblogic(configData, full_path):
     # if the patches key was provided, get the list of patches to apply
     if patchKey in jsonData:
         PATCH_FILES = jsonData['wl_patches']
+        
     
     if PATCH_FILES:
         print "patching " + service_name 
@@ -124,11 +133,14 @@ def patch_weblogic(configData, full_path):
             patchNum = patchParts[0][1:]
             # keep a running list of all patch numbers
             patchList.append(patchNum)
+            if not os.path.exists(patches_path + "/" + patch):
+                print "patch file " + patches_path + "/" + patch + " missing - will not install"
+                return
             # unzip patch to /tmp. This will create a dir with the patchNum as the name
             unzipCommand = "\"" + "unzip " + patches_path + "/" + patch + " -d " + tmpPatchDir + "\""
             commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipCommand)
         patchCommand = "\"" + patchScript + " napply " + tmpPatchDir + " -silent -id " + ','.join(patchList) + "\""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, patchCommand)
         # cleanup our files from /tmp
-        shutil.rmtree(tmpPatchDir)
+        shutil.rmtree(tmpPatchDir, ignore_errors=True)
     

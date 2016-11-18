@@ -42,17 +42,25 @@ def install_otd(configData, full_path):
         jsonData = configData[json_key]
     else:
         print json_key + " config data missing from json. will not install"
-        return
+        return False
 
+    print "installing " + service_name 
+    
     if (platform.system() == "SunOS"):
         binary_path = full_path + "/binaries/OTD11.1.1.9/solaris"
     else:
         binary_path = full_path + "/binaries/OTD11.1.1.9"
         
+    install_exec = "/Disk1/runInstaller"
     
     response_files_path = full_path + "/responseFiles/OTD"
     
-    print "installing " + service_name                
+    full_exec_path = binary_path + install_exec
+    
+    if not os.path.exists(full_exec_path):
+        print "Binary " + full_exec_path + " does not exist - will not install"
+        return False  
+                      
     requiredFields = ['instanceHome', 'installDir', 'adminUser', 'installOwner', 'adminPassword', 'oraInventoryDir']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
     

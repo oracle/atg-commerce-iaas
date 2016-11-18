@@ -57,8 +57,8 @@ def install_atgpatch(configData, full_path):
     patch_destination = INSTALL_DIR + "/patch/" + PATCH_NAME
     
     if not os.path.exists(path_to_patch):
-        print "patch file " + path_to_patch + " does not exist - halting"
-        return
+        print "patch file " + path_to_patch + " does not exist - will not install"
+        return False
     
     unzipCommand = "\"" + "unzip " + path_to_patch + " -d " + INSTALL_DIR + "/patch" + "\""
     chmodCmd = "\"" + "chmod 755 " + patch_destination + "/bin/install.sh" + "\""

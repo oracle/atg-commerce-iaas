@@ -27,7 +27,7 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
-
+import os
 
 json_key = 'WEBLOGIC_datasources'
 common_key = 'WEBLOGIC_common'
@@ -65,7 +65,13 @@ def config_wl_datasources(configData, full_path):
     WL_ADMIN_PW = commonData['wl_adminPassword']
     WL_ADMIN_HOST = commonData['wl_adminHost']
     WL_ADMIN_HTTP_PORT = commonData['wl_adminHttpPort']  
+
+    wlst_path = INSTALL_DIR + "/wlserver/common/bin/wlst.sh"
     
+    if not os.path.exists(wlst_path):
+        print "Binary " + wlst_path + " does not exist - will not install"
+        return False   
+        
     # datasource is an array type. look through them all
     for jsonData in dsData:
         requiredFields = ["dsName", "dsJNDIName", "dsURL", "dsDriver", "dsUsername", "dsPassword", "dsTargetNames", "dsMaxCapacity"]
@@ -86,6 +92,6 @@ def config_wl_datasources(configData, full_path):
         cmd_flags += " --dsName=" + dsName + " --dsJNDIName=" + dsJNDIName + " --dsURL=" + dsURL + " --dsDriver=" + dsDriver + " --dsUsername=" + dsUsername + \
                      " --dsPassword=" + dsPassword + " --dsTargetNames=" + dsTargetNames + " --dsMaxCapacity=" + dsMaxCapacity
            
-        dsCmd = "\"" + INSTALL_DIR + "/wlserver/common/bin/wlst.sh " + response_files_path + "/create_datasources.py " + cmd_flags + "\""
+        dsCmd = "\"" + wlst_path + " " + response_files_path + "/create_datasources.py " + cmd_flags + "\""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, dsCmd)  
 

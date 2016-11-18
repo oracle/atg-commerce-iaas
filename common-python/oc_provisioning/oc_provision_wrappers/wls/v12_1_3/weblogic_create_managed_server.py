@@ -27,7 +27,7 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
-
+import os
 
 json_key = 'WEBLOGIC_managed_servers'
 common_key = 'WEBLOGIC_common'
@@ -63,7 +63,13 @@ def create_servers(configData, full_path):
     WL_ADMIN_PW = commonData['wl_adminPassword']
     WL_ADMIN_HOST = commonData['wl_adminHost']
     WL_ADMIN_HTTP_PORT = commonData['wl_adminHttpPort']
-                    
+
+    wlst_path = INSTALL_DIR + "/wlserver/common/bin/wlst.sh"
+    
+    if not os.path.exists(wlst_path):
+        print "Binary " + wlst_path + " does not exist - will not install"
+        return False 
+                        
     for jsonData in jsonDataArray:            
       
         requiredFields = ['managedServerName', 'managedServerHttpPort', 'managedServerHost']
@@ -73,7 +79,7 @@ def create_servers(configData, full_path):
         WL_SERVER_PORT = jsonData['managedServerHttpPort']
         WL_SERVER_HOST = jsonData['managedServerHost']
                     
-        wlCmd = "\"" + INSTALL_DIR + "/wlserver/common/bin/wlst.sh " + response_files_path + "/createManagedServer.py -u " + WL_ADMIN_USER + \
+        wlCmd = "\"" + wlst_path + " " + response_files_path + "/createManagedServer.py -u " + WL_ADMIN_USER + \
         " -p " + WL_ADMIN_PW + " -a t3://" + WL_ADMIN_HOST + ":" + WL_ADMIN_HTTP_PORT + " -n " + WL_SERVER_NAME + " -h " + WL_SERVER_PORT + " -m " + WL_SERVER_HOST + "\""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, wlCmd)  
     

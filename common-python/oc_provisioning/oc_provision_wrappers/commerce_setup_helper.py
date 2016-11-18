@@ -175,7 +175,7 @@ def copy_start_script (startOnBoot, srcFile, field_replacement):
     outFile = outDir + "/" + outFilename
     substitute_file_fields(srcFile, outFile, field_replacement)
     os.chmod(outFile, 0755)
-    if startOnBoot:
+    if (startOnBoot == 'true'):
         # solaris does not use chkconfig. add to rc dirs manually
         if (platform.system() == 'SunOS'):
             startLinkCommand = "ln -s " + outFile + " /etc/rc3.d/S99" + outFilename   

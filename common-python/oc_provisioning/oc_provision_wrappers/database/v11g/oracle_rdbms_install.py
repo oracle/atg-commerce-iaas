@@ -28,6 +28,7 @@ __version__ = "1.0.0.0"
 
 import fileinput
 import platform
+import os
 
 from oc_provision_wrappers import commerce_setup_helper
 
@@ -42,15 +43,22 @@ def install_oracle(configData, full_path):
     else:
         print json_key + " config data missing from json. will not install"
         return
-
+    print "installing " + service_name
+    
     if (platform.system() == "SunOS"):
         binary_path = full_path + "/binaries/oracleDB11g/solaris"
     else:
         binary_path = full_path + "/binaries/oracleDB11g"
         
     response_files_path = full_path + "/responseFiles/oracle11g"
-                    
-    print "installing " + service_name                
+
+    install_exec = "/database/runInstaller"
+    full_exec_path = binary_path + install_exec
+    
+    if not os.path.exists(full_exec_path):
+        print "Binary " + full_exec_path + " does not exist - will not install"
+        return False
+                                        
     requiredFields = ['oracleBase', 'installOwner', 'installGroup', 'installHost', 'oraInventoryDir', 'oracleHome', 'oracleSID', 'adminPW', 'dbStorageLoc']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
 
@@ -77,7 +85,7 @@ def install_oracle(configData, full_path):
     commerce_setup_helper.mkdir_with_perms(DB_FILE_DIR, INSTALL_OWNER, INSTALL_GROUP)
     
     # install db
-    installCommand = "\"" + binary_path + "/database/runInstaller -silent -waitforcompletion -responseFile " + response_files_path + "/db.rsp" + "\""
+    installCommand = "\"" + full_exec_path + " -silent -waitforcompletion -responseFile " + response_files_path + "/db.rsp" + "\""
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
     
     invCmd = ORACLE_INVENTORY_DIR + "/orainstRoot.sh"

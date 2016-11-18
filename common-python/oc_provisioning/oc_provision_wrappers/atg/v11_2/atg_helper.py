@@ -27,7 +27,7 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
-
+import os
 
 json_key = 'ATG_install'
 service_name = "ATG"
@@ -38,12 +38,18 @@ def install_atg(configData, full_path):
         jsonData = configData[json_key]
     else:
         print json_key + " config data missing from json. will not install"
-        return
+        return False
 
+    print "installing " + service_name
     binary_path = full_path + "/binaries/atg11.2"
     response_files_path = full_path + "/responseFiles/atg11.2"
-                     
-    print "installing " + service_name                
+    install_exec = "/linux/OCPlatform11_2.1.bin"
+    full_exec_path = binary_path + install_exec
+
+    if not os.path.exists(full_exec_path):
+        print "Binary " + full_exec_path + " does not exist - will not install"
+        return False    
+                                        
     requiredFields = ['dynamoRoot', 'installOwner', 'installGroup', 'rmiPort', 'javaHome', 'wl_home', 'wl_domain', 'wl_adminPort', 'install_crs', 'install_csa']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
 
@@ -64,7 +70,7 @@ def install_atg(configData, full_path):
     # make the install tree with correct owner if needed
     commerce_setup_helper.mkdir_with_perms(INSTALL_DIR, INSTALL_OWNER, INSTALL_GROUP)
     
-    installCommand = "\"" + binary_path + "/linux/OCPlatform11_2.bin -i silent -f " + response_files_path + "/linux/installer.properties" + "\"" 
+    installCommand = "\"" + full_exec_path + " -i silent -f " + response_files_path + "/linux/installer.properties" + "\"" 
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
     
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "##################### \n")
@@ -73,16 +79,26 @@ def install_atg(configData, full_path):
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export DYNAMO_ROOT=" + INSTALL_DIR + "\n")
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export DYNAMO_HOME=$DYNAMO_ROOT/home \n\n")
     
-    if INSTALL_CRS:
+    if (INSTALL_CRS == "true"):
+        print "installing CRS"
+        crs_exec_path = binary_path + "/crs/OCReferenceStore11.2_222RCN.bin"
+        if not os.path.exists(crs_exec_path):
+            print "Binary " + crs_exec_path + " does not exist - will not install"
+            return False    
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}
         commerce_setup_helper.substitute_file_fields(response_files_path + '/crs/crsinstaller.properties.master', response_files_path + '/crs/crsinstaller.properties', field_replacements)
-        installCommand = "\"" + binary_path + "/crs/OCReferenceStore11.2_222RCN.bin -i silent -f " + response_files_path + "/crs/crsinstaller.properties" + "\"" 
+        installCommand = "\"" + crs_exec_path + " -i silent -f " + response_files_path + "/crs/crsinstaller.properties" + "\"" 
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)   
         
-    if INSTALL_CSA:
+    if (INSTALL_CSA == "true"):
+        print "installing CSA"
+        csa_exec_path = binary_path + "/csa/OCStoreAccelerator11_2.bin"
+        if not os.path.exists(csa_exec_path):
+            print "Binary " + csa_exec_path + " does not exist - will not install"
+            return False           
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}
         commerce_setup_helper.substitute_file_fields(response_files_path + '/csa/csainstaller.properties.master', response_files_path + '/csa/csainstaller.properties', field_replacements)
-        installCommand = "\"" + binary_path + "/csa/OCStoreAccelerator11_2.bin -i silent -f " + response_files_path + "/csa/csainstaller.properties" + "\"" 
+        installCommand = "\"" + csa_exec_path + " -i silent -f " + response_files_path + "/csa/csainstaller.properties" + "\"" 
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)   
 
 

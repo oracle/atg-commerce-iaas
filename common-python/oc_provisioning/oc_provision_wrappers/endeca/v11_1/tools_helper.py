@@ -28,6 +28,7 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import platform
+import os
 
 json_key = 'ENDECA_install'
 service_name = "toolsAndFramework"
@@ -46,7 +47,9 @@ def install_toolsAndFramework(configData, full_path):
     else:
         print service_name + " config data missing from json. will not install"
         return
-
+    
+    print "installing " + service_name
+    
     if (platform.system() == "SunOS"):
         binary_path = full_path + "/binaries/endeca11.1/solaris"
     else:
@@ -55,9 +58,15 @@ def install_toolsAndFramework(configData, full_path):
     install_exec = "/ToolsAndFrameworkInstall/Disk1/install/silent_install.sh"
         
     response_files_path = full_path + "/responseFiles/endeca11.1"
+    
+    full_exec_path = binary_path + install_exec
+    
+    if not os.path.exists(full_exec_path):
+        print "Binary " + full_exec_path + " does not exist - will not install"
+        return False      
         
     if jsonData is not None:
-        print "installing " + service_name
+        
         ENDECA_ROOT = jsonData['endecaRoot']
         ADMIN_PW = jsonData['adminPassword']
         START_ON_BOOT = jsonData['start_onBoot']
@@ -69,7 +78,7 @@ def install_toolsAndFramework(configData, full_path):
 
         commerce_setup_helper.substitute_file_fields(response_files_path + '/silent_response.rsp.master', response_files_path + '/silent_response.rsp', field_replacements)
         
-        installCommand = "\"" + binary_path + install_exec + " " + \
+        installCommand = "\"" + full_exec_path + " " + \
         response_files_path + "/silent_response.rsp ToolsAndFrameworks " + \
         ENDECA_ROOT + "/endeca/ToolsAndFrameworks " + ADMIN_PW + "\""
         

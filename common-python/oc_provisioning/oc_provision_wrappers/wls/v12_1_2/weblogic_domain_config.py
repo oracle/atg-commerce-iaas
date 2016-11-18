@@ -31,6 +31,7 @@ import time
 
 from oc_provision_wrappers import commerce_setup_helper
 import weblogic_packer
+import os
 
 
 json_key = 'WEBLOGIC_domain_setup'
@@ -50,11 +51,11 @@ def create_wl_domain(configData, full_path):
     else:
         print common_key + " config data missing from json. will not install"
         return   
-
-    response_files_path = full_path + "/responseFiles/wls-12.1.2"
-                    
-    print "Creating " + service_name               
+    
+    print "Creating " + service_name 
      
+    response_files_path = full_path + "/responseFiles/wls-12.1.2"
+                      
     commonRequiredFields = ['middlewareHome', 'installOwner', 'wl_domain', 'wl_adminHttpPort', 'wl_adminHttpsPort', 'wl_adminPassword']
     commerce_setup_helper.check_required_fields(commonData, commonRequiredFields)
     
@@ -73,6 +74,12 @@ def create_wl_domain(configData, full_path):
     WL_MACHINES = add_machines(configData, full_path)
     WL_MANAGED_SERVERS = add_managed_servers(configData, full_path)
     
+    wlst_path = INSTALL_DIR + "/wlserver/common/bin/wlst.sh"
+    
+    if not os.path.exists(wlst_path):
+        print "Binary " + wlst_path + " does not exist - will not install"
+        return False        
+    
     wl_replacements = {'INSTALL_DIR':INSTALL_DIR, 'WL_DOMAIN_NAME':WL_DOMAIN_NAME, 'WL_ADMIN_HTTP_PORT':WL_ADMIN_HTTP_PORT, 'WL_ADMIN_HTTPS_PORT':WL_ADMIN_HTTPS_PORT, 'WL_ADMIN_PW':WL_ADMIN_PW, 'WL_MANAGED_SERVERS':WL_MANAGED_SERVERS, 'WL_MACHINES':WL_MACHINES}
     commerce_setup_helper.substitute_file_fields(response_files_path + '/basicWLSDomain.py.master', response_files_path + '/basicWLSDomain.py', wl_replacements)
 
@@ -87,7 +94,7 @@ def create_wl_domain(configData, full_path):
         
     # create wl domain CONFIG_JVM_ARGS
     domainCmd += "export CONFIG_JVM_ARGS='" + JAVA_RAND + "'; "
-    domainCmd += INSTALL_DIR + "/wlserver/common/bin/wlst.sh " + response_files_path + "/basicWLSDomain.py " + "\""
+    domainCmd += wlst_path + " " + response_files_path + "/basicWLSDomain.py " + "\""
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, domainCmd)  
    
     if (platform.system() == 'SunOS'):

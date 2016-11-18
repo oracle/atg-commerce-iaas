@@ -27,7 +27,7 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
-
+import os
 
 json_key = 'WEBLOGIC_domain_settings'
 common_key = 'WEBLOGIC_common'
@@ -68,8 +68,14 @@ def config_wl_domain(configData, full_path):
     WL_ADMIN_HOST = commonData['wl_adminHost']
     WL_ADMIN_HTTP_PORT = commonData['wl_adminHttpPort']  
     JTA_TIMEOUT = jsonData['jtaTimeout']   
-       
-    jtaCmd = "\"" + INSTALL_DIR + "/wlserver/common/bin/wlst.sh " + response_files_path + "/setJTA.py -u " + WL_ADMIN_USER + \
+
+    wlst_path = INSTALL_DIR + "/wlserver/common/bin/wlst.sh"
+    
+    if not os.path.exists(wlst_path):
+        print "Binary " + wlst_path + " does not exist - will not install"
+        return False   
+           
+    jtaCmd = "\"" + wlst_path + " " + response_files_path + "/setJTA.py -u " + WL_ADMIN_USER + \
     " -p " + WL_ADMIN_PW + " -a t3://" + WL_ADMIN_HOST + ":" + WL_ADMIN_HTTP_PORT + " -j " + JTA_TIMEOUT + "\""
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, jtaCmd)  
 

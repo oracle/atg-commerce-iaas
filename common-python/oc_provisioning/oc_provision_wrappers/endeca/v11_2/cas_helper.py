@@ -27,6 +27,8 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
+import os
+import platform
 
 json_key = 'ENDECA_install'
 service_name = "cas"
@@ -48,11 +50,24 @@ def install_cas(configData, full_path):
         print service_name + " config data missing from json. will not install"
         return
 
-    binary_path = full_path + "/binaries/endeca11.2"
+    print "installing " + service_name
+    
+    if (platform.system() == "SunOS"):
+        binary_path = full_path + "/binaries/endeca11.2/solaris"
+        install_exec = "/CAS_Install/OCcas11.2.0-Solaris.sh"
+    else:
+        binary_path = full_path + "/binaries/endeca11.2"
+        install_exec = "/CAS_Install/OCcas11.2.0-Linux64.sh"
+        
     response_files_path = full_path + "/responseFiles/endeca11.2"
+    
+    full_exec_path = binary_path + install_exec
+    
+    if not os.path.exists(full_exec_path):
+        print "Binary " + full_exec_path + " does not exist - will not install"
+        return False    
        
     if jsonData is not None:
-        print "installing " + service_name
         ENDECA_ROOT = jsonData['endecaRoot']
         CAS_PORT = jsonData['casPort']
         CAS_SHUTDOWN_PORT = jsonData['casShutdownPort']
@@ -68,7 +83,7 @@ def install_cas(configData, full_path):
 
         commerce_setup_helper.substitute_file_fields(response_files_path + '/cas_response.rsp.master', response_files_path + '/cas_response.rsp', field_replacements)
         
-        installCommand = "\"" + binary_path + "/CAS_Install/OCcas11.2.0-Linux64.bin -i silent -f " + response_files_path + '/cas_response.rsp' + "\""
+        installCommand = "\"" + full_exec_path + " -i silent -f " + response_files_path + '/cas_response.rsp' + "\""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)         
         
         # copy start/stop script
