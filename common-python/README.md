@@ -21,3 +21,6 @@ python setup.py install
 Make sure the user you execute this as has permissions to write to your python library area - you may need to be root.
 If you are using a python interpreter other than the default python command, such as python2.7, adjust the command accordingly.
 
+# baremetal
+Libraries to manage Oracle Baremetal Cloud through Ansible - in progress...
+ 
