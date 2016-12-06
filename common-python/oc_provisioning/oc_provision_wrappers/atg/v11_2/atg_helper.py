@@ -43,7 +43,7 @@ def install_atg(configData, full_path):
     print "installing " + service_name
     binary_path = full_path + "/binaries/atg11.2"
     response_files_path = full_path + "/responseFiles/atg11.2"
-    install_exec = "/linux/OCPlatform11_2.1.bin"
+    install_exec = "/linux/OCPlatform11_2.bin"
     full_exec_path = binary_path + install_exec
 
     if not os.path.exists(full_exec_path):
@@ -63,6 +63,7 @@ def install_atg(configData, full_path):
     WL_ADMIN_PORT = jsonData['wl_adminPort']
     INSTALL_CRS = jsonData['install_crs']
     INSTALL_CSA = jsonData['install_csa']
+    INSTALL_SERVICE = jsonData['install_service']
     
     field_replacements = {'INSTALL_HOME':INSTALL_DIR, 'WEBLOGIC_HOME':WL_HOME, 'WEBLOGIC_DOMAIN':WL_DOMAIN, 'WEBLOGIC_ADMIN_PORT':WL_ADMIN_PORT, 'ATGRMI_PORT':RMI_PORT, 'JDK_PATH':JAVA_DIR}
     commerce_setup_helper.substitute_file_fields(response_files_path + '/linux/installer.properties.master', response_files_path + '/linux/installer.properties', field_replacements)
@@ -101,4 +102,17 @@ def install_atg(configData, full_path):
         installCommand = "\"" + csa_exec_path + " -i silent -f " + response_files_path + "/csa/csainstaller.properties" + "\"" 
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)   
 
+    if (INSTALL_SERVICE == "true"):
+        
+        print "installing Service"
+        
+        service_exec_path = binary_path + "/service/OCServiceCenter11.2_224RCN.bin"
+        if not os.path.exists(service_exec_path):
+            print "Binary " + service_exec_path + " does not exist - will not install"
+            return
+        
+        field_replacements = {'INSTALL_HOME':INSTALL_DIR}
+        commerce_setup_helper.substitute_file_fields(response_files_path + '/service/serviceinstaller.properties.master', response_files_path + '/service/serviceinstaller.properties', field_replacements)
+        installCommand = "\"" + service_exec_path + " -i silent -f " + response_files_path + "/service/serviceinstaller.properties" + "\"" 
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)  
 

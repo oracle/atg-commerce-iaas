@@ -47,7 +47,8 @@
                     "wl_adminPort": "7001",
                     "atg_clustername": "democluster",
                     "install_crs": "true",
-                    "install_csa": "true"                    
+                    "install_csa": "true",
+                    "install_service": "true"                 
                 },        
             "ATGPATCH_install": 
                 {

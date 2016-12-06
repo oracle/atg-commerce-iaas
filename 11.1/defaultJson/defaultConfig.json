@@ -46,7 +46,8 @@
                     "wl_domain": "base_domain",
                     "wl_adminPort": "7001",
                     "atg_clustername": "democluster",
-                    "install_crs": "true"
+                    "install_crs": "true",
+                    "install_service": "true"
                 },        
             "ATGPATCH_install": 
                 {

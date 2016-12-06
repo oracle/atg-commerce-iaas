@@ -48,7 +48,9 @@
                     "wl_domain": ["[name of weblogic domain]", "base_domain"],
                     "wl_adminPort": ["[weblogic admin port]", "7001"],
                     "atg_clustername": ["[logical cluster name]", "democluster"],
-                    "install_crs": ["[install CRS app. enter true or false]", "true"]
+                    "install_crs": ["[install CRS app. enter true or false]", "true"],
+                    "install_csa": ["[install CSA app. enter true or false]", "true"],
+                    "install_service": ["[install Service app. enter true or false]", "true"]
                 },        
             "ATGPATCH_install": 
                 {

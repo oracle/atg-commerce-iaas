@@ -64,6 +64,7 @@ def install_atg(configData, full_path):
     WL_DOMAIN = jsonData['wl_domain']
     WL_ADMIN_PORT = jsonData['wl_adminPort']
     INSTALL_CRS = jsonData['install_crs']
+    INSTALL_SERVICE = jsonData['install_service']
     
     field_replacements = {'INSTALL_HOME':INSTALL_DIR, 'WEBLOGIC_HOME':WL_HOME, 'WEBLOGIC_DOMAIN':WL_DOMAIN, 'WEBLOGIC_ADMIN_PORT':WL_ADMIN_PORT, 'ATGRMI_PORT':RMI_PORT, 'JDK_PATH':JAVA_DIR}
     commerce_setup_helper.substitute_file_fields(response_files_path + '/linux/installer.properties.master', response_files_path + '/linux/installer.properties', field_replacements)
@@ -104,4 +105,18 @@ def install_atg(configData, full_path):
         cpCmd = "\"" + "cp " + INSTALL_DIR + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar " + INSTALL_DIR + "/CommerceReferenceStore/Store/DCS-CSR/j2ee-apps/DCS-CSR/CSRHelper.war/WEB-INF/lib" + "\""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpCmd)
         cpCmd = "\"" + "cp " + INSTALL_DIR + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar " + INSTALL_DIR + "/CommerceReferenceStore/Store/EStore/Versioned/j2ee-apps/Versioned/store-merchandising.war/WEB-INF/lib" + "\""
-        commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpCmd)         
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpCmd)  
+        
+    if (INSTALL_SERVICE == "true"):
+        
+        print "installing Service"
+        
+        service_exec_path = binary_path + "/service/OCServiceCenter11.1.bin"
+        if not os.path.exists(service_exec_path):
+            print "Binary " + service_exec_path + " does not exist - will not install"
+            return
+        
+        field_replacements = {'INSTALL_HOME':INSTALL_DIR}
+        commerce_setup_helper.substitute_file_fields(response_files_path + '/service/serviceinstaller.properties.master', response_files_path + '/service/serviceinstaller.properties', field_replacements)
+        installCommand = "\"" + service_exec_path + " -i silent -f " + response_files_path + "/service/serviceinstaller.properties" + "\"" 
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)               
