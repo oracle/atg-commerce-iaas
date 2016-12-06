@@ -1,0 +1,15 @@
+
+#Choose Product Features
+#-----------------------
+CHOSEN_FEATURE_LIST=Commerc,CSC,WCSCUI
+CHOSEN_INSTALL_FEATURE_LIST=Commerc,CSC,WCSCUI
+CHOSEN_INSTALL_SET=Custom
+
+#Choose Install Folder
+#---------------------
+USER_INSTALL_DIR=INSTALL_HOME
+
+#Install
+#-------
+-fileOverwrite_INSTALL_HOME/Service11.1/META-INF/MANIFEST.MF=Yes
+-fileOverwrite_INSTALL_HOME/Service11.1/uninstall/.Service11.1_uninstall/Uninstall Oracle Commerce Service Center 11.1.lax=Yes
