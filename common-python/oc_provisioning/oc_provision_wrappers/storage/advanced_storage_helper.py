@@ -55,7 +55,7 @@ def advanced_storage(configData, full_path):
         print "creating and mounting storage on device " + DEVICE + " at " + MOUNT_POINT + " \n"
         
         createCmd = "mkfs -t ext4 " + DEVICE 
-        mountCmd = "mount " + DEVICE + " " + MOUNT_POINT
+        mountCmd = "mount " + DEVICE + " " + MOUNT_POINT + " -t ext4"
         mountOwnerCmd = "chown " + MOUNT_OWNER + ":" + MOUNT_GROUP + " " + MOUNT_POINT
         
         if not (os.path.exists(MOUNT_POINT)):

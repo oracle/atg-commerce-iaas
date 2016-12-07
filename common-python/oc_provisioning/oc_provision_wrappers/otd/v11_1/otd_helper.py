@@ -53,7 +53,7 @@ def install_otd(configData, full_path):
         
     install_exec = "/Disk1/runInstaller"
     
-    response_files_path = full_path + "/responseFiles/OTD"
+    response_files_path = full_path + "/responseFiles/OTD11"
     
     full_exec_path = binary_path + install_exec
     
