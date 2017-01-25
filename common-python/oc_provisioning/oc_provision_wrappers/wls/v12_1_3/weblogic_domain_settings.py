@@ -51,7 +51,7 @@ def config_wl_domain(configData, full_path):
         print common_key + " config data missing from json. will not install"
         return  
 
-    response_files_path = full_path + "/responseFiles/wls-12.1.2"
+    response_files_path = full_path + "/responseFiles/wls-12.1.3"
                     
     print "Updating " + service_name    
                 

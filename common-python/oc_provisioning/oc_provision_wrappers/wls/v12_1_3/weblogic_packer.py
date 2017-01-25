@@ -28,6 +28,7 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 import os
+import platform
 import shutil
 
 from oc_provision_wrappers import commerce_setup_helper
@@ -57,7 +58,17 @@ def pack_domain(configData, full_path):
     DOMAIN_TEMPLATE_NAME = WL_DOMAIN_NAME + '-template.jar'
     DOMAIN_TEMPLATE_PATH = INSTALL_DIR + '/user_projects/domains/' + DOMAIN_TEMPLATE_NAME
     
-    packCmd = "\"" + INSTALL_DIR + "/wlserver/common/bin/pack.sh -managed=true -domain=" + WL_DOMAIN_HOME + " -template=" + DOMAIN_TEMPLATE_PATH + " -template_name=" + WL_DOMAIN_NAME + "\""
+    JAVA_RAND = ""
+    # if linux/Solaris, change random, This is faster in some implementations.
+    if (platform.system() == "SunOS"):
+        JAVA_RAND = "-Djava.security.egd=file:///dev/urandom"
+    else:
+        JAVA_RAND = "-Djava.security.egd=file:/dev/./urandom"    
+        
+    packCmd = "\""
+    packCmd += "export CONFIG_JVM_ARGS='" + JAVA_RAND + "'; "    
+    packCmd += INSTALL_DIR + "/wlserver/common/bin/pack.sh -managed=true -domain=" + WL_DOMAIN_HOME + " -template=" + DOMAIN_TEMPLATE_PATH + " -template_name=" + WL_DOMAIN_NAME + "\""
+    
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, packCmd)
     
     # put a copy of the packed domain in our special users homeDir

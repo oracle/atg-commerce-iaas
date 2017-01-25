@@ -77,7 +77,7 @@ def install_toolsAndFramework(configData, full_path):
 
         commerce_setup_helper.substitute_file_fields(response_files_path + '/tools_response.rsp.master', response_files_path + '/tools_response.rsp', field_replacements)
 
-        installCommand = "\"" + install_exec + " " + \
+        installCommand = "\"" + full_exec_path + " " + \
         response_files_path + "/tools_response.rsp ToolsAndFrameworks " + \
         ENDECA_ROOT + "/endeca/ToolsAndFrameworks " + "\""
         

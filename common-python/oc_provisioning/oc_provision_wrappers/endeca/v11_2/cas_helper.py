@@ -57,7 +57,7 @@ def install_cas(configData, full_path):
         install_exec = "/CAS_Install/OCcas11.2.0-Solaris.sh"
     else:
         binary_path = full_path + "/binaries/endeca11.2"
-        install_exec = "/CAS_Install/OCcas11.2.0-Linux64.sh"
+        install_exec = "/CAS_Install/OCcas11.2.0-Linux64.bin"
         
     response_files_path = full_path + "/responseFiles/endeca11.2"
     

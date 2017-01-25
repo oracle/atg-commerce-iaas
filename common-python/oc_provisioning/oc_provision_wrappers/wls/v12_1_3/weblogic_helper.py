@@ -93,6 +93,9 @@ def install_weblogic(configData, full_path):
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "##################### \n")
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export MW_HOME=" + INSTALL_DIR + "\n\n")
     
+    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export CONFIG_JVM_ARGS=\"-Djava.security.egd=file:/dev/./urandom \" \n")
+    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export JAVA_OPTIONS=\"-Djava.security.egd=file:/dev/./urandom \" \n")
+    
     # install patches if any were listed
     patch_weblogic(configData, full_path)    
     

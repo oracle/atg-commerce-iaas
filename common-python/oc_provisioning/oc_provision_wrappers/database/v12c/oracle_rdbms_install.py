@@ -81,6 +81,7 @@ def install_oracle(configData, full_path):
             
     commerce_setup_helper.substitute_file_fields(response_files_path + '/db.rsp.master', response_files_path + '/db.rsp', oracle_replacements)
     commerce_setup_helper.substitute_file_fields(response_files_path + '/dbca.rsp.master', response_files_path + '/dbca.rsp', oracle_replacements)
+    commerce_setup_helper.substitute_file_fields(response_files_path + '/netca.rsp.master', response_files_path + '/netca.rsp', oracle_replacements)
     
     # make the install trees with correct owner if needed
     commerce_setup_helper.mkdir_with_perms(ORACLE_BASE, INSTALL_OWNER, INSTALL_GROUP)
@@ -111,7 +112,6 @@ def install_oracle(configData, full_path):
     # copy start/stop script
     script_replacements = {'ORACLE_HOME':ORACLE_HOME, 'ORACLE_PROCESS_OWNER':INSTALL_OWNER}
     commerce_setup_helper.copy_start_script(ORACLE_BOOT, full_path + '/startStopScripts/bootScripts/oracleDatabase.master', script_replacements)
-    # commerce_setup_helper.copy_start_script(ORACLE_BOOT, full_path + '/startStopScripts/bootScripts/oracleDBconsole.master', script_replacements)
     
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "# echo " + service_name + " start/stop script: /etc/init.d/oracleDatabase \n")
     # not used for 12c install - using em express instead
