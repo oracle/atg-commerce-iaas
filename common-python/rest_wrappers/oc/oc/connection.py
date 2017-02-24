@@ -1,13 +1,13 @@
 #
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 
-"""Provide Module Description
+"""TODO: Provide Module Description
 """
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -17,15 +17,17 @@ __module__ = "connection"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 
-import datetime
+#import datetime
+#import locale
+#import logging
+#import operator
+#import sys
+import os
 import getopt
 import json
-import locale
-import logging
-import operator
-import os
 import requests
-import sys
+import base64
+
 
 
 class RESTException(Exception):
@@ -131,6 +133,15 @@ class Connection:
             raise RESTException(str(self.response.status_code) + ' - ' + str(self.response.text))
         return
 
+    def generateresturl(self, basepath='', resourcename='', **kwargs):
+        url = str(self.endpoint).strip('/') + '/'
+        if basepath is not None and basepath != '':
+            url += str(basepath).strip('/') + '/'
+            if resourcename is not None and resourcename != '':
+                url += str(resourcename).strip('/') + '/'
+        return url
+
+
 
 class OCCSConnection(Connection):
 
@@ -173,17 +184,11 @@ class OCCSConnection(Connection):
         return self.response
 
 
-    def generateresturl(self, basepath='', resourcename='', **kwargs):
-        url = str(self.endpoint).strip('/') + '/'
-        if basepath is not None and basepath != '':
-            url += str(basepath).strip('/') + '/'
-            if resourcename is not None and resourcename != '':
-                url += str(resourcename).strip('/') + '/'
-        return url
-
 
 class OSCSConnection(Connection):
 
+    headers = {}
+    
     def __init__(self, endpoint=None, user=None, password=None, authtoken=None, storageurl=None):
         Connection.__init__(endpoint, user, password)
         self.authtoken = authtoken
@@ -213,4 +218,66 @@ class OSCSConnection(Connection):
         if headers is not None:
             headers.update(self.headers)
         client = self.getsession(headers)
+        return self.response
+
+class PSMConnection(Connection):
+
+    
+    
+    def __init__(self, endpoint, user, password, service=None, tenant=None):
+        Connection.__init__(self, endpoint, user, password)
+        self.service = service
+        self.tenant = tenant
+        self.headers = {}
+        self.basepath = 'paas/service/'+ service +'/api/v1.1/instances/' + tenant
+        self.authtoken = 'Basic '+ base64.b64encode(user +':'+ password)
+        self.headers = {
+            'Content-Type': 'application/json',
+            "X-ID-TENANT-NAME": self.tenant,
+            "Authorization": self.authtoken
+        }
+
+    def authenticate(self):
+        self.clearsession()
+        resourcename = ''
+        response = self.callrest(self.endpoint, resource=resourcename, method='GET')
+        if response is not None and 'Authorization' in response.headers:
+            self.authtoken = response.headers['Authorization']
+        else:
+            self.authtoken = ''
+
+    def callrest(self, resource='', method='GET', headers={}, params={}, data={}, files=None, **kwargs):
+        if headers is not None:
+            headers.update(self.headers)
+        client = self.getsession(headers)
+        url = self.generateresturl(self.basepath, resource)
+        # TODO: replace with proper function or logger
+        if "PYTHONDEBUG" in os.environ:
+            print('Endpoint: ' + self.endpoint)
+            print('User:     ' + self.user)
+            print('Password: ' + self.password)                
+            print('Service:  ' + self.service)
+            print('Tenant:   ' + self.tenant)
+            print('request ---------------------------------------')
+            print('request url     : ' + str(url))
+            print('request method  : ' + str(method.upper()))
+            print('request headers : ' + str(headers))
+            print('request params  : ' + str(params))
+            print('request data    : ' + str(data))
+            
+        if method.upper() == 'GET':
+            self.response = client.get(url, params=params, verify=False)
+        elif method.upper() == 'POST':
+            self.response = client.post(url, data=data, verify=False)
+        elif method.upper() == 'PUT':
+            self.response = client.put(url, params=params, verify=False)
+        elif method.upper() == 'DELETE':
+            self.response = client.delete(url, verify=False)
+        # TODO: replace with proper function or logger
+        if "PYTHONDEBUG" in os.environ:            
+            print('response request ---------------------------------------')
+            print('response code    : ' + str(self.response.status_code))
+            print('response headers : ' + str(self.response.headers))
+            print('response text    : ' + str(self.response.text))
+        self.checkresponse()
         return self.response

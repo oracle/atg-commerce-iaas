@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 
 """Provide Module Description
@@ -7,7 +7,7 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -97,8 +97,7 @@ def main(argv):
     # Configure Parameters and Options
     options = 'e:u:p:P:R:C:D:s:n:t:'
     longOptions = ['endpoint=', 'user=', 'password=', 'pwdfile=', 'resourcename=', 'cookie=', 'description=', 'size=',
-                   'name=',
-                   'tags=']
+                   'name=', 'tags=']
     # Get Options & Arguments
     try:
         opts, args = getopt.getopt(argv, options, longOptions)

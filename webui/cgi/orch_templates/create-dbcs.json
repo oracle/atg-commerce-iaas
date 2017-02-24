@@ -1,0 +1,19 @@
+{
+  "serviceName": "atgTest",
+  "version": "11.2.0.4",
+  "level": "PAAS",
+  "edition": "EE",
+  "subscriptionType": "MONTHLY",
+  "description": "atgTest",
+  "shape": "oc3",
+  "vmPublicKeyText": "ssh-rsa AAAA......",
+  "parameters": [
+    {
+      "type": "db",
+      "adminPassword": "Password123#",
+      "sid": "atgdemo",
+      "failoverDatabase": "no",
+      "backupDestination": "NONE"
+    }
+  ]
+}

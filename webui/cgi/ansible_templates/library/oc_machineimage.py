@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 DOCUMENTATION = '''
 ---
@@ -52,7 +52,7 @@ EXAMPLES = '''
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -63,6 +63,12 @@ __module__ = "oc_machineimage"
 
 import os
 import sys
+
+from oc.oc_exceptions import REST401Exception
+from oc.oc_exceptions import OCActionNotPermitted
+from oc.oc_exceptions import REST409Exception
+from oc.oc_exceptions import OCObjectAlreadyExists
+from oc.oc_exceptions import OCObjectDoesNotExist
 
 from oc.create_machine_image import createMachineImage
 from oc.list_machine_images import listMachnineImages
@@ -97,17 +103,27 @@ def main():
     account = module.params['account']
     noupload = module.params['noupload']
 
-    if module.params['action'] == 'create':
-        jsonobj = createMachineImage(endpoint, resourcename, cookie, name, fileurl, account, noupload)
-        module.exit_json(changed=True, list=jsonobj)
-    elif module.params['action'] == 'list':
-        jsonobj = listMachnineImages(endpoint, resourcename, cookie)
-        module.exit_json(changed=True, list=jsonobj)
-    elif module.params['action'] == 'delete':
-        jsonobj = deleteMachineImage(endpoint, resourcename, cookie)
-        module.exit_json(changed=True, list=jsonobj)
-    else:
-        module.fail_json(msg="Unknown action")
+    changed = True
+    jsonobj = module.params
+
+    try:
+        if module.params['action'] == 'create':
+            jsonobj = createMachineImage(endpoint, resourcename, cookie, name, fileurl, account, noupload)
+            module.exit_json(changed=True, list=jsonobj)
+        elif module.params['action'] == 'list':
+            jsonobj = listMachnineImages(endpoint, resourcename, cookie)
+            module.exit_json(changed=True, list=jsonobj)
+        elif module.params['action'] == 'delete':
+            jsonobj = deleteMachineImage(endpoint, resourcename, cookie)
+            module.exit_json(changed=True, list=jsonobj)
+        else:
+            module.fail_json(msg="Unknown action")
+    except OCObjectAlreadyExists as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except OCObjectDoesNotExist as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except Exception as e:
+        module.fail_json(msg=str(e.message))
 
     return
 

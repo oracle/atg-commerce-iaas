@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 
 """Provide Module Description
@@ -7,7 +7,7 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -44,9 +44,10 @@ def deleteSshKey(endpoint, resourcename, cookie):
     params = None
     data = None
     response = callRESTApi(endpoint, basepath, resourcename, data, 'DELETE', params, cookie)
-    print(response)
-    # jsonResponse = json.loads(response.text)
-    jsonResponse = {}
+    try:
+        jsonResponse = json.loads(response.text)
+    except Exception as e:
+        jsonResponse = {}
     return jsonResponse
 
 

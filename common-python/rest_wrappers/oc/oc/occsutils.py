@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 
 """Provide Module Description
@@ -7,7 +7,7 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -21,9 +21,18 @@ import getpass
 import json
 import requests
 
+from oc_logging import initLogging
+
 from oc_exceptions import RESTException
+from oc_exceptions import OCAlreadyStarted
+from oc_exceptions import OCAlreadyStopped
 from oc_exceptions import REST401Exception
+from oc_exceptions import OCActionNotPermitted
+from oc_exceptions import OCAuthorisationTokenInvalid
+from oc_exceptions import REST404Exception
+from oc_exceptions import OCObjectDoesNotExist
 from oc_exceptions import REST409Exception
+from oc_exceptions import OCObjectAlreadyExists
 
 
 def showVersionHistory():
@@ -39,6 +48,7 @@ def showVersionHistory():
     return
 
 
+mylogger = initLogging(__name__)
 httpSession = None
 restEndpoint = None
 
@@ -95,12 +105,40 @@ def callRESTApi(endpoint, basepath, resourcename='', data=None, method='GET', pa
     #print('response text    : ' + str(response.text))
 
     # Check response and raise exception if necessary
+    mylogger.debug("Response ({0:d}) : {1:s}".format(response.status_code, response.text))
     if response.status_code == 401:
-        raise REST401Exception(str(response.text))
+        mylogger.warn("Response ({0:d}) : {1:s}".format(response.status_code, response.text))
+        # Attempt to convert generic response to meaningful Exception.
+        if 'is not permitted to perform' in response.text:
+            raise OCActionNotPermitted(str(response.text))
+        elif 'Authorization token is invalid' in response.text:
+            raise OCAuthorisationTokenInvalid(str(response.text))
+        else:
+            raise REST401Exception('{0:s} : {1:s}'.format(str(response.status_code), str(response.text)))
+    elif response.status_code == 404:
+        mylogger.warn("Response ({0:d}) : {1:s}".format(response.status_code, response.text))
+        if 'not found' in response.text:
+            raise OCObjectDoesNotExist(str(response.text))
+        elif 'does not exist' in response.text:
+            raise OCObjectDoesNotExist(str(response.text))
+        else:
+            raise REST404Exception('{0:s} : {1:s}'.format(str(response.status_code), str(response.text)))
     elif response.status_code == 409:
-        raise REST409Exception(str(response.text))
+        mylogger.warn("Response ({0:d}) : {1:s}".format(response.status_code, response.text))
+        if 'already exists' in response.text:
+            raise OCObjectAlreadyExists(str(response.text))
+        elif 'does not exist' in response.text:
+            raise OCObjectDoesNotExist(str(response.text))
+        else:
+            raise REST409Exception('{0:s} : {1:s}'.format(str(response.status_code), str(response.text)))
     elif response.status_code >= 400 and response.status_code < 600:
-        raise RESTException(str(response.status_code) + ' - ' + str(response.text))
+        mylogger.warn("Response ({0:d}) : {1:s}".format(response.status_code, response.text))
+        if 'is already started' in response.text:
+            raise OCAlreadyStarted(str(response.text))
+        elif 'is already stopped' in response.text:
+            raise OCAlreadyStopped(str(response.text))
+        else:
+            raise RESTException('{0:s} : {1:s}'.format(str(response.status_code), str(response.text)))
 
     return response
 
@@ -127,5 +165,5 @@ def getPassword(user=None, prompt=None, **kwargs):
 
 def printJSON(jsonObj, sortKeys=True, indent=2, **kwargs):
     if jsonObj is not None:
-        print(json.dumps(jsonObj, sort_keys=sortKeys, indent=indent, separators=(',', ': ')))
+        print(json.dumps(jsonObj, indent=indent, separators=(',', ': ')))
     return

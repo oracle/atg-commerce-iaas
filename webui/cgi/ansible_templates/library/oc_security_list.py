@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 DOCUMENTATION = '''
 ---
@@ -52,7 +52,7 @@ EXAMPLES = '''
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Eder Zechim (Exalogic A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -64,6 +64,12 @@ __module__ = "oc_security_list"
 
 import os
 import sys
+
+from oc.oc_exceptions import REST401Exception
+from oc.oc_exceptions import OCActionNotPermitted
+from oc.oc_exceptions import REST409Exception
+from oc.oc_exceptions import OCObjectAlreadyExists
+from oc.oc_exceptions import OCObjectDoesNotExist
 
 from oc.authenticate import authenticate
 from oc.create_security_list import createSecurityList
@@ -102,19 +108,28 @@ def main():
 
     changed = True
 
-    if module.params['action'] == 'create':
-        jsonobj = createSecurityList(endpoint, resourcename, cookie, name, policy, outbound_cidr_policy, description)
-        if 'message' in jsonobj and 'already exists' in jsonobj['message']:
-            changed = False
-        module.exit_json(changed=changed, list=jsonobj)
-    elif module.params['action'] == 'list':
-        jsonobj = listSecurityLists(endpoint, resourcename, cookie)
-        module.exit_json(changed=changed, list=jsonobj)
-    elif module.params['action'] == 'delete':
-        jsonobj = deleteSecurityList(endpoint, resourcename, cookie)
-        module.exit_json(changed=changed, list=jsonobj)
-    else:
-        module.fail_json(msg="Unknown action")
+    jsonobj = module.params
+
+    try:
+        if module.params['action'] == 'create':
+            jsonobj = createSecurityList(endpoint, resourcename, cookie, name, policy, outbound_cidr_policy, description)
+            if 'message' in jsonobj and 'already exists' in jsonobj['message']:
+                changed = False
+            module.exit_json(changed=changed, list=jsonobj)
+        elif module.params['action'] == 'list':
+            jsonobj = listSecurityLists(endpoint, resourcename, cookie)
+            module.exit_json(changed=changed, list=jsonobj)
+        elif module.params['action'] == 'delete':
+            jsonobj = deleteSecurityList(endpoint, resourcename, cookie)
+            module.exit_json(changed=changed, list=jsonobj)
+        else:
+            module.fail_json(msg="Unknown action")
+    except OCObjectAlreadyExists as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except OCObjectDoesNotExist as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except Exception as e:
+        module.fail_json(msg=str(e.message))
 
     return
 

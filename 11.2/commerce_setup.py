@@ -204,7 +204,7 @@ if managed_wl_server:
 if install_atg:
     atg_helper.install_atg(configData, full_path)
     # This may be useful as its own option in the future. Leave here w/ATG install for now
-    create_atg_server_layers.generate_atg_server_payers(configData, full_path)
+    create_atg_server_layers.generate_atg_server_layers(configData, full_path)
 
 if install_atgpatch:
     atgpatch_helper.install_atgpatch(configData, full_path)

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 DOCUMENTATION = '''
 ---
@@ -52,7 +52,7 @@ EXAMPLES = '''
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -64,6 +64,12 @@ __module__ = "oc_authenticate"
 
 import os
 import sys
+
+from oc.oc_exceptions import REST401Exception
+from oc.oc_exceptions import OCActionNotPermitted
+from oc.oc_exceptions import REST409Exception
+from oc.oc_exceptions import OCObjectAlreadyExists
+from oc.oc_exceptions import OCObjectDoesNotExist
 
 from oc.authenticate import authenticate as authenticate_occs
 from oc.authenticate_oscs import authenticate as authenticate_oscs
@@ -83,16 +89,28 @@ def main():
     user = module.params['user']
     password = module.params['password']
     storage = module.params['storage']
-    if storage:
-        # Authorise against Oracle Storage Cloud
-        authtoken, storageurl = authenticate_oscs(endpoint, user, password)
-        facts = {'oc_auth_token': authtoken, 'oc_storage_endpoint': storageurl}
-    else:
-        # Authorise again Oracle Compute Cloud
-        cookie = authenticate_occs(endpoint, user, password)
-        facts = {'oc_auth_cookie': cookie}
+    module.log(str({"Authenticating": {"endpoint": str(endpoint), "user": str(user), "storage": storage}}))
 
-    module.exit_json(changed=True, ansible_facts=facts, cookie=cookie)
+    changed = True
+    jsonobj = module.params
+
+    try:
+        if storage:
+            # Authorise against Oracle Storage Cloud
+            authtoken, storageurl = authenticate_oscs(endpoint, user, password)
+            facts = {'oc_auth_token': authtoken, 'oc_storage_endpoint': storageurl}
+        else:
+            # Authorise again Oracle Compute Cloud
+            cookie = authenticate_occs(endpoint, user, password)
+            facts = {'oc_auth_cookie': cookie}
+
+        module.exit_json(changed=True, ansible_facts=facts, cookie=cookie)
+    except OCObjectAlreadyExists as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except OCObjectDoesNotExist as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except Exception as e:
+        module.fail_json(msg=str(e.message))
 
     return
 

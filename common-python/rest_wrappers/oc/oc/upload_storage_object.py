@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 
 """Provide Module Description
@@ -7,7 +7,7 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -83,10 +83,8 @@ def splitfile(filename, size='5GB', **kwargs):
         return [os.path.join(splitdir, fn) for fn in os.listdir(splitdir)]
 
 
-def uploadfile((endpoint, basepath, authtoken, filename, authendpoint, user, password)):
+def uploadfile((endpoint, basepath, authtoken, filename, authendpoint, user, password, headers, params)):
     print('Uploading : ' + filename)
-    headers = None
-    params = None
     files = None
     resourcename = os.path.split(filename)[-1]
     try:
@@ -104,12 +102,16 @@ def uploadfile((endpoint, basepath, authtoken, filename, authendpoint, user, pas
     return
 
 
-def uploadStorageObject(endpoint, container='compute_images', authtoken=None, filename=None, splitsize=4000, poolsize=4, authendpoint=None, user=None, password=None, **kwargs):
+def uploadStorageObject(endpoint, container='compute_images', authtoken=None, filename=None, splitsize=4000, poolsize=4, authendpoint=None, user=None, password=None, extractarchive=None, **kwargs):
     basepath = container
     imgbasepath = basepath
     splitbasepath = basepath + '_segments'
     headers = None
     params = None
+    if extractarchive is not None:
+        if params is None:
+            params = {}
+        params['extract-archive'] = extractarchive
     data = None
     files = None
     jsonResponse = ''
@@ -126,14 +128,14 @@ def uploadStorageObject(endpoint, container='compute_images', authtoken=None, fi
             # Build tupal list
             workerdata = []
             for fn in filelist:
-                workerdata.append([endpoint, basepath, authtoken, fn, authendpoint, user, password])
+                workerdata.append([endpoint, basepath, authtoken, fn, authendpoint, user, password, headers, params])
             #print(workerdata)
             # Start processes
             pool.map(uploadfile, workerdata)
             # Upload manifest file to point to parts
             manifest = basepath + '/' + getsplitprefix(filename)
             resourcename = os.path.split(filename)[-1]
-            headers = {'Content-Length': 0, 'X-Object-Manifest': manifest}
+            headers = {'Content-Length': "0", 'X-Object-Manifest': manifest}
             printJSON(headers)
             data = None
             basepath = imgbasepath

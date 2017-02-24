@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 DOCUMENTATION = '''
 ---
@@ -52,7 +52,7 @@ EXAMPLES = '''
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -66,6 +66,14 @@ import os
 import sys
 import json
 import time
+
+from oc.oc_exceptions import OCAlreadyStarted
+from oc.oc_exceptions import OCAlreadyStopped
+from oc.oc_exceptions import REST401Exception
+from oc.oc_exceptions import OCActionNotPermitted
+from oc.oc_exceptions import REST409Exception
+from oc.oc_exceptions import OCObjectAlreadyExists
+from oc.oc_exceptions import OCObjectDoesNotExist
 
 from oc.authenticate import authenticate
 from oc.add_orchestration import addOrchestration
@@ -123,45 +131,53 @@ def main():
         orchestration = orchestration.replace("'", '"')
 
     changed = True
+    jsonobj = module.params
 
-    if module.params['action'] == 'create' or module.params['action'] == 'add':
-        jsonobj = addOrchestration(endpoint, resourcename, cookie, json.loads(orchestration))
-        if 'message' in jsonobj and 'already exists' in jsonobj['message']:
-            changed = False
-        module.exit_json(changed=changed, list=jsonobj)
-    elif module.params['action'] == 'list':
-        jsonobj = listOrchestrations(endpoint, resourcename, cookie)
-        if wait and waitstate is not None and waitstate != '':
-            waituntil(endpoint, resourcename, cookie, waitstate, waitdelay, waitretries)
-        module.exit_json(changed=changed, list=jsonobj)
-    elif module.params['action'] == 'delete':
-        jsonobj = deleteOrchestration(endpoint, resourcename, cookie)
-        module.exit_json(changed=changed, list=jsonobj)
-    elif module.params['action'] == 'start':
-        jsonobj = startOrchestration(endpoint, resourcename, cookie)
-        if 'message' in jsonobj and 'already started' in jsonobj['message']:
-            changed = False
-        if wait:
-#            while jsonobj['status'] != 'ready':
-#                time.sleep(5)
-#                jsonresp = listOrchestrations(endpoint, resourcename, cookie)
-#                jsonobj = jsonresp['result'][0]
-            if waitstate is None or waitstate == '':
-                waitstate = 'ready'
-            waituntil(endpoint, resourcename, cookie, waitstate, waitdelay, waitretries)
-        module.exit_json(changed=changed, list=jsonobj)
-    elif module.params['action'] == 'stop':
-        jsonobj = stopOrchestration(endpoint, resourcename, cookie)
-        if 'message' in jsonobj and 'already stopped' in jsonobj['message']:
-            changed = False
-        if wait:
-            while jsonobj['status'] != 'stopped':
-                time.sleep(5)
-                jsonresp = listOrchestrations(endpoint, resourcename, cookie)
-                jsonobj = jsonresp['result'][0]
-        module.exit_json(changed=changed, list=jsonobj)
-    else:
-        module.fail_json(msg="Unknown action")
+    try:
+        if module.params['action'] == 'create' or module.params['action'] == 'add':
+            jsonobj = addOrchestration(endpoint, resourcename, cookie, json.loads(orchestration))
+            if 'message' in jsonobj and 'already exists' in jsonobj['message']:
+                changed = False
+            module.exit_json(changed=changed, list=jsonobj)
+        elif module.params['action'] == 'list':
+            jsonobj = listOrchestrations(endpoint, resourcename, cookie)
+            if wait and waitstate is not None and waitstate != '':
+                waituntil(endpoint, resourcename, cookie, waitstate, waitdelay, waitretries)
+            module.exit_json(changed=changed, list=jsonobj)
+        elif module.params['action'] == 'delete':
+            jsonobj = deleteOrchestration(endpoint, resourcename, cookie)
+            module.exit_json(changed=changed, list=jsonobj)
+        elif module.params['action'] == 'start':
+            jsonobj = startOrchestration(endpoint, resourcename, cookie)
+            if 'message' in jsonobj and 'already started' in jsonobj['message']:
+                changed = False
+            if wait:
+                if waitstate is None or waitstate == '':
+                    waitstate = 'ready'
+                waituntil(endpoint, resourcename, cookie, waitstate, waitdelay, waitretries)
+            module.exit_json(changed=changed, list=jsonobj)
+        elif module.params['action'] == 'stop':
+            jsonobj = stopOrchestration(endpoint, resourcename, cookie)
+            if 'message' in jsonobj and 'already stopped' in jsonobj['message']:
+                changed = False
+            if wait:
+                while jsonobj['status'] != 'stopped':
+                    time.sleep(5)
+                    jsonresp = listOrchestrations(endpoint, resourcename, cookie)
+                    jsonobj = jsonresp['result'][0]
+            module.exit_json(changed=changed, list=jsonobj)
+        else:
+            module.fail_json(msg="Unknown action")
+    except OCObjectAlreadyExists as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except OCObjectDoesNotExist as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except OCAlreadyStarted as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except OCAlreadyStopped as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except Exception as e:
+        module.fail_json(msg=str(e.message))
 
     return
 

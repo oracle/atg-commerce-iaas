@@ -32,7 +32,7 @@ import os
 from oc_provision_wrappers import commerce_setup_helper  
  
 
-def generate_atg_server_payers(configData, full_path):
+def generate_atg_server_layers(configData, full_path):
     """
     Create ATG server layers based on the instance type
     """      
@@ -55,6 +55,7 @@ def generate_atg_server_payers(configData, full_path):
     
     ATG_INSTALL_ROOT = atgData['dynamoRoot']
     ATG_CLUSTER_NAME = atgData['atg_clustername']
+    ATG_INSTALL_OWNER = atgData['installOwner']
     ATG_SERVERS_HOME = ATG_INSTALL_ROOT + "/home/servers"
     
     print "Creating ATG Server layers"
@@ -100,8 +101,11 @@ def generate_atg_server_payers(configData, full_path):
         PROD_LOCK_SERVERS = ','.join(PROD_LOCK_SERVERS_ARRAY)
         
         server_layer_path = full_path + "/atg-server-layers/"
-            
-        distutils.dir_util.copy_tree(server_layer_path + ATG_SERVER_TYPE , ATG_SERVERS_HOME + "/" + WL_SERVER_NAME)
+         
+        cpCmd = "cp -R " + server_layer_path + ATG_SERVER_TYPE + ATG_SERVERS_HOME + "/" + WL_SERVER_NAME
+        commerce_setup_helper.exec_as_user(ATG_INSTALL_OWNER, cpCmd)
+
+        #distutils.dir_util.copy_tree(server_layer_path + ATG_SERVER_TYPE , ATG_SERVERS_HOME + "/" + WL_SERVER_NAME)
         string_replacements = {'ATG_DRP_PORT':ATG_DRP_PORT, 'ATG_RMI_PORT':ATG_RMI_PORT, 'ATG_FD_PORT':ATG_FD_PORT, 'ATG_HTTP_PORT':WL_SERVER_HTTP_PORT, \
                                'ATG_HTTPS_PORT':WL_SERVER_HTTPS_PORT, 'BCC_FILE_SYNC_PORT':BCC_FILE_PORT, 'BCC_LOCK_PORT':BCC_LOCK_PORT, \
                                'ATG_CLUSTER_NAME':ATG_CLUSTER_NAME, 'PROD_LOCK_PORTS':PROD_LOCK_PORTS, 'PROD_LOCK_SERVERS':PROD_LOCK_SERVERS}

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2013, 2014-2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved.
 
 DOCUMENTATION = '''
 ---
@@ -52,7 +52,7 @@ EXAMPLES = '''
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Andrew Hopkinson (Oracle Cloud Solutions A-Team)"
-__copyright__ = "Copyright (c) 2013, 2014-2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2013, 2014-2017 Oracle and/or its affiliates. All rights reserved."
 __ekitversion__ = "@VERSION@"
 __ekitrelease__ = "@RELEASE@"
 __version__ = "1.0.0.0"
@@ -64,6 +64,11 @@ __module__ = "oc_storage_object"
 import os
 import sys
 
+from oc.oc_exceptions import REST401Exception
+from oc.oc_exceptions import OCActionNotPermitted
+from oc.oc_exceptions import REST409Exception
+from oc.oc_exceptions import OCObjectAlreadyExists
+from oc.oc_exceptions import OCObjectDoesNotExist
 
 from oc.authenticate_oscs import authenticate
 from oc.upload_storage_object import uploadStorageObject
@@ -74,7 +79,7 @@ from oc.oc_exceptions import REST401Exception
 def main():
     module = AnsibleModule(
             argument_spec=dict(
-                    action=dict(default='list', choices=['upload','create', 'list', 'update', 'delete']),
+                    action=dict(default='list', choices=['upload', 'create', 'list', 'update', 'delete']),
                     endpoint=dict(required=True, type='str'),
                     user=dict(required=False, type='str'),
                     password=dict(required=False, type='str'),
@@ -82,6 +87,7 @@ def main():
                     resourcename   = dict(required=True, type='str'),
                     authendpoint   = dict(required=True, type='str'),
                     filename       = dict(required=False, type='str'),
+                    extractarchive = dict(required=False, type='str'),
                     splitsize      = dict(required=False, type='int', default=500),
                     poolsize       = dict(required=False, type='int', default=4)
             )
@@ -98,19 +104,24 @@ def main():
     filename = module.params['filename']
     splitsize = module.params['splitsize']
     poolsize = module.params['poolsize']
+    extractarchive = module.params['extractarchive']
 
     changed = True
+    jsonobj = module.params
 
-    if module.params['action'] == 'upload':
-        jsonobj = {}
-        try:
-            jsonobj = uploadStorageObject(endpoint, 'compute_images', cookie, filename, splitsize, poolsize, authendpoint, user, password)
-        except REST409Exception as e:
-            changed = False
-        module.exit_json(changed=changed, list=jsonobj)
+    try:
+        if module.params['action'] == 'upload':
+            jsonobj = uploadStorageObject(endpoint, 'compute_images', cookie, filename, splitsize, poolsize, authendpoint, user, password, extractarchive)
+            module.exit_json(changed=changed, list=jsonobj)
 
-    else:
-        module.fail_json(msg="Unknown action")
+        else:
+            module.fail_json(msg="Unknown action")
+    except OCObjectAlreadyExists as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except OCObjectDoesNotExist as e:
+        module.exit_json(changed=False, list=jsonobj)
+    except Exception as e:
+        module.fail_json(msg=str(e.message))
 
     return
 
