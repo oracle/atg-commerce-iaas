@@ -1,0 +1,84 @@
+{
+	"description": "Commerce ATG Security rules",
+	"name": "/Compute-DOMAINNAME/USERNAME/commerce_atg_secrules_orchestration",
+  "oplans": [
+
+    {
+      "label": "create_secrules",
+      "obj_type": "secrule",
+
+      "objects": [
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/bcc_to_rmi_8860",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_rmi_8860",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },	
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/bcc_to_rmi_8870",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_rmi_8870",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },	
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/bcc_to_rmi_8880",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_rmi_8880",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/bcc_to_fd_8810",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_fd_8810",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },	
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/bcc_to_fd_8820",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_fd_8820",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },	
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/bcc_to_fd_8830",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_fd_8830",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },			
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/atg_to_otd_dgraphs",
+          "application": "/Compute-DOMAINNAME/USERNAME/otd_endeca_lb",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/otd_server",
+          "action": "PERMIT"
+        },		
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/atg_to_lock9012",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_lock_9012",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+          "action": "PERMIT"
+        },
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/atg1_to_lock9022",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_lock_9012",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+          "action": "PERMIT"
+        },
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/atg_to_db",
+          "application": "/Compute-DOMAINNAME/USERNAME/sqlnet",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/db_server",
+          "action": "PERMIT"
+        }			
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+	"description": "Commerce WLS Security rules",
+	"name": "/Compute-DOMAINNAME/USERNAME/commerce_wls_secrules_orchestration",
+  "oplans": [
+
+    {
+      "label": "create_secrules",
+      "obj_type": "secrule",
+
+      "objects": [
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/wls_admin",
+          "application": "/Compute-DOMAINNAME/USERNAME/wls_admin",
+          "src_list": "seciplist:/oracle/public/public-internet",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/weblogic_admin",
+          "action": "PERMIT"
+        },
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/wls_modeman",
+          "application": "/Compute-DOMAINNAME/USERNAME/wls_nodeman",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/weblogic_admin",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/atg_to_wladmin",
+          "application": "/Compute-DOMAINNAME/USERNAME/wls_admin",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/weblogic_admin",
+          "action": "PERMIT"
+        }		
+      ]
+    }
+  ]
+}

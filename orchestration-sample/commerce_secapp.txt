@@ -1,0 +1,62 @@
+{
+    "description": "Commerce Security Apps1",
+    "name": "/Compute-DOMAINNAME/USERNAME/commerce_secapps_orchestration",
+    "oplans": [
+        {
+            "label": "create_secapps",
+            "obj_type": "secapplication",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_http_7010",
+                    "dport": 7010,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_http_7020",
+                    "dport": 7020,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_http_7030",
+                    "dport": 7030,
+                    "protocol": "tcp"
+                },				
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_rmi_8860",
+                    "dport": 8860,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_rmi_8870",
+                    "dport": 8870,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_rmi_8880",
+                    "dport": 8880,
+                    "protocol": "tcp"
+                },				
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_lock_9012",
+                    "dport": 9012,
+                    "protocol": "tcp"
+                },	
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_lock_9022",
+                    "dport": 9022,
+                    "protocol": "tcp"
+                },					
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_fd_8810",
+                    "dport": 8810,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_fd_8820",
+                    "dport": 8820,
+                    "protocol": "tcp"
+                }				
+            ]
+        }
+    ]
+}

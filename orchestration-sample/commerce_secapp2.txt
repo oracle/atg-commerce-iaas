@@ -1,0 +1,62 @@
+{
+    "description": "Commerce Security Apps2",
+    "name": "/Compute-DOMAINNAME/USERNAME/commerce_secapps_orchestration2",
+    "oplans": [
+        {
+            "label": "create_secapps",
+            "obj_type": "secapplication",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/otd_admin",
+                    "dport": 8989,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/otd_atg_lb",
+                    "dport": 9000,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/otd_endeca_lb",
+                    "dport": 9100,
+                    "protocol": "tcp"
+                },				
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/sqlnet",
+                    "dport": 1521,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/oracle_em",
+                    "dport": 1158,
+                    "protocol": "tcp"
+                },				
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/endeca_workbench",
+                    "dport": 8006,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/endeca_dgraph",
+                    "dport": 15000,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/wls_admin",
+                    "dport": "7001-7002",
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/wls_nodeman",
+                    "dport": 5556,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_fd_8830",
+                    "dport": 8830,
+                    "protocol": "tcp"
+                }					
+            ]
+        }
+    ]
+}

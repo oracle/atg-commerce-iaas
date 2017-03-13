@@ -1,0 +1,143 @@
+{
+    "description": "RUN ME - Commerce Stack Setup",
+    "name": "/Compute-DOMAINNAME/USERNAME/commerce_nested_orchestration",
+    "oplans": [
+        {
+            "label": "create_seclists",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_seclist_orchestration"
+                }
+            ]
+        },
+        {
+            "label": "create_secapps",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_secapps_orchestration"
+                }
+            ]
+        },
+        {
+            "label": "create_secapps2",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_secapps_orchestration2"
+                }
+            ]
+        },		
+        {
+            "label": "create_atg_secrules",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_atg_secrules_orchestration"
+                }
+            ]
+        },
+        {
+            "label": "create_atg_public_secrules",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_secrules_public_orchestration"
+                }
+            ]
+        },		
+        {
+            "label": "create_wls_secrules",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_wls_secrules_orchestration"
+                }
+            ]
+        },
+        {
+            "label": "create_endeca_secrules",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_endeca_secrules_orchestration"
+                }
+            ]
+        },	
+        {
+            "label": "create_otd_secrules",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_otd_secrules_orchestration"
+                }
+            ]
+        },			
+        {
+            "label": "create_storage",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_storage"
+                }
+            ]
+        },		
+        {
+            "label": "create_instances",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_instance_orchestration"
+                }
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "oplan": "create_instances",
+            "to_oplan": "create_storage",
+            "type": "depends"
+        },
+        {
+            "oplan": "create_storage",
+            "to_oplan": "create_otd_secrules",
+            "type": "depends"
+        },		
+        {
+            "oplan": "create_otd_secrules",
+            "to_oplan": "create_endeca_secrules",
+            "type": "depends"
+        },
+        {
+            "oplan": "create_endeca_secrules",
+            "to_oplan": "create_wls_secrules",
+            "type": "depends"
+        },
+        {
+            "oplan": "create_wls_secrules",
+            "to_oplan": "create_atg_public_secrules",
+            "type": "depends"
+        },
+        {
+            "oplan": "create_atg_public_secrules",
+            "to_oplan": "create_atg_secrules",
+            "type": "depends"
+        },		
+        {
+            "oplan": "create_atg_secrules",
+            "to_oplan": "create_secapps2",
+            "type": "depends"
+        },		
+        {
+            "oplan": "create_secapps2",
+            "to_oplan": "create_secapps",
+            "type": "depends"
+        },		
+        {
+            "oplan": "create_secapps",
+            "to_oplan": "create_seclists",
+            "type": "depends"
+        }
+    ]
+}

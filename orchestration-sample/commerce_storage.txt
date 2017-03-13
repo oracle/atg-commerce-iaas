@@ -1,0 +1,36 @@
+{
+    "description": "Commerce Storage",
+    "name": "/Compute-DOMAINNAME/USERNAME/commerce_storage",
+    "oplans": [
+        {
+            "label": "create_storage",
+            "obj_type": "storage/volume",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atgdb_storage",
+                    "properties": [
+                        "/oracle/public/storage/latency"
+                    ],
+                    "description": "atg database storage",
+                    "size": "20g"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_install_storage",
+                    "properties": [
+                        "/oracle/public/storage/default"
+                    ],
+                    "description": "atg installation storage",
+                    "size": "10g"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/wls_install_storage",
+                    "properties": [
+                        "/oracle/public/storage/default"
+                    ],
+                    "description": "weblogic installation storage",
+                    "size": "10g"
+                }				
+            ]
+        }
+    ]
+}

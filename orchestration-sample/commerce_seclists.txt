@@ -1,0 +1,39 @@
+{
+    "description": "Commerce Security Lists",
+    "name": "/Compute-DOMAINNAME/USERNAME/commerce_seclist_orchestration",
+    "oplans": [
+        {
+            "label": "create_seclist",
+            "obj_type": "seclist",
+            "objects": [
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/endeca_instances"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/endeca1_server"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg_instances"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/weblogic_admin"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg1_server"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atg2_server"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/atgsupport_server"
+                },				
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/db_server"
+                },
+                {
+                    "name": "/Compute-DOMAINNAME/USERNAME/otd_server"
+                }				
+            ]
+        }
+    ]
+}

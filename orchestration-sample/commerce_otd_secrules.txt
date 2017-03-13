@@ -1,0 +1,42 @@
+{
+	"description": "Commerce OTD Security rules",
+	"name": "/Compute-DOMAINNAME/USERNAME/commerce_otd_secrules_orchestration",
+  "oplans": [
+
+    {
+      "label": "create_secrules",
+      "obj_type": "secrule",
+
+      "objects": [
+         {
+          "name": "/Compute-DOMAINNAME/USERNAME/otd_to_atg_7010",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_http_7010",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/otd_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },
+         {
+          "name": "/Compute-DOMAINNAME/USERNAME/otd_to_atg_7020",
+          "application": "/Compute-DOMAINNAME/USERNAME/atg_http_7020",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/otd_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/atg_instances",
+          "action": "PERMIT"
+        },	
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/otd_to_endeca",
+          "application": "/Compute-DOMAINNAME/USERNAME/endeca_dgraph",
+          "src_list": "seclist:/Compute-DOMAINNAME/USERNAME/otd_server",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/endeca_instances",
+          "action": "PERMIT"
+        },
+       {
+          "name": "/Compute-DOMAINNAME/USERNAME/otd_admin",
+          "application": "/Compute-DOMAINNAME/USERNAME/otd_admin",
+          "src_list": "seciplist:/oracle/public/public-internet",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/otd_server",
+          "action": "PERMIT"
+        }		
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+	"description": "Commerce Endeca Security rules",
+	"name": "/Compute-DOMAINNAME/USERNAME/commerce_endeca_secrules_orchestration",
+  "oplans": [
+
+    {
+      "label": "create_secrules",
+      "obj_type": "secrule",
+
+      "objects": [
+        {
+          "name": "/Compute-DOMAINNAME/USERNAME/endeca_workbench",
+          "application": "/Compute-DOMAINNAME/USERNAME/endeca_workbench",
+          "src_list": "seciplist:/oracle/public/public-internet",
+          "dst_list": "seclist:/Compute-DOMAINNAME/USERNAME/endeca1_server",
+          "action": "PERMIT"
+        }	
+      ]
+    }
+  ]
+}

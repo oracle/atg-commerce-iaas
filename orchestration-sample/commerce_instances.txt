@@ -1,0 +1,240 @@
+{
+    "description": "Commerce instances v11",
+    "name": "/Compute-DOMAINNAME/USERNAME/commerce_instance_orchestration",
+    "oplans": [
+        {
+            "label": "create_instances",
+            "obj_type": "launchplan",
+            "objects": [
+                {
+                    "instances": [
+                        {
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_1_p1",
+                            "label": "endeca1",
+                            "name": "/Compute-DOMAINNAME/USERNAME/endeca1",
+                            "tags": [
+                                "endeca1"
+                            ],
+                            "hostname": "endeca1",
+                            "shape": "oc2m",
+                            "networking": {
+                                "eth0": {
+                                    "seclists": [
+                                        "/Compute-DOMAINNAME/USERNAME/endeca_instances",
+                                        "/Compute-DOMAINNAME/USERNAME/endeca1_server",
+                                        "/Compute-DOMAINNAME/default/default"
+                                    ],
+                                    "nat": "ipreservation:/Compute-DOMAINNAME/USERNAME/endeca1"
+                                }
+                            },
+                            "sshkeys": [
+                                "/Compute-DOMAINNAME/USERNAME/SSHKEYNAME"
+                            ],
+                            "attributes": {
+                                "userdata": {
+                                    "pre-bootstrap": {
+                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --endeca --copy-ssh-keys"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_1_p1",
+                            "label": "endeca2",
+                            "name": "/Compute-DOMAINNAME/USERNAME/endeca2",
+                            "tags": [
+                                "endeca2"
+                            ],
+                            "hostname": "endeca2",
+                            "shape": "oc2m",
+                            "networking": {
+                                "eth0": {
+                                    "seclists": [
+                                        "/Compute-DOMAINNAME/USERNAME/endeca_instances",
+                                        "/Compute-DOMAINNAME/default/default"
+                                    ],
+                                    "nat": "ipreservation:/Compute-DOMAINNAME/USERNAME/endeca2"
+                                }
+                            },
+                            "sshkeys": [
+                                "/Compute-DOMAINNAME/USERNAME/SSHKEYNAME"
+                            ],
+                            "attributes": {
+                                "userdata": {
+                                    "pre-bootstrap": {
+                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --dgraph --copy-ssh-keys"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_1_p1",
+                            "label": "atgsupport",
+                            "name": "/Compute-DOMAINNAME/USERNAME/atgsupport",
+                            "tags": [
+                                "atgsupport"
+                            ],
+                            "hostname": "atgsupport",
+                            "shape": "oc2m",
+                            "networking": {
+                                "eth0": {
+                                    "seclists": [
+                                        "/Compute-DOMAINNAME/USERNAME/atg_instances",
+                                        "/Compute-DOMAINNAME/USERNAME/atgsupport_server",
+                                        "/Compute-DOMAINNAME/USERNAME/weblogic_admin",										
+                                        "/Compute-DOMAINNAME/default/default"
+                                    ],
+                                    "nat": "ippool:/oracle/public/ippool"
+                                }
+                            },
+                            "storage_attachments": [
+                                {
+                                    "index": 1,
+                                    "volume": "/Compute-DOMAINNAME/USERNAME/wls_install_storage"
+                                },
+                                {
+                                    "index": 2,
+                                    "volume": "/Compute-DOMAINNAME/USERNAME/atg_install_storage"
+                                }								
+                            ],							
+                            "sshkeys": [
+                                "/Compute-DOMAINNAME/USERNAME/SSHKEYNAME"
+                            ],
+                            "attributes": {
+                                "userdata": {
+                                    "pre-bootstrap": {
+                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --java --weblogic --weblogicDomain --weblogicSettings --weblogicDatasources --advancedStorage --atg --atgpatch --copy-ssh-keys"
+                                    }
+                                }
+                            }
+                        },								
+                        {
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_1_p1",
+                            "label": "atg1",
+                            "name": "/Compute-DOMAINNAME/USERNAME/atg1",
+                            "tags": [
+                                "atg1"
+                            ],
+                            "hostname": "atg1",
+                            "shape": "oc2m",
+                            "networking": {
+                                "eth0": {
+                                    "seclists": [
+                                        "/Compute-DOMAINNAME/USERNAME/atg_instances",
+                                        "/Compute-DOMAINNAME/USERNAME/atg1_server",
+                                        "/Compute-DOMAINNAME/default/default"
+                                    ],
+                                    "nat": "ippool:/oracle/public/ippool"
+                                }
+                            },
+                            "sshkeys": [
+                                "/Compute-DOMAINNAME/USERNAME/SSHKEYNAME"
+                            ],
+                            "attributes": {
+                                "userdata": {
+                                    "pre-bootstrap": {
+                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --java --weblogic --weblogicManagedServer --copy-ssh-keys"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_1_p1",
+                            "label": "atg2",
+                            "name": "/Compute-DOMAINNAME/USERNAME/atg2",
+                            "tags": [
+                                "atg2"
+                            ],
+                            "hostname": "atg2",
+                            "shape": "oc2m",
+                            "networking": {
+                                "eth0": {
+                                    "seclists": [
+                                        "/Compute-DOMAINNAME/USERNAME/atg_instances",
+                                        "/Compute-DOMAINNAME/USERNAME/atg2_server",
+                                        "/Compute-DOMAINNAME/default/default"
+                                    ],
+                                    "nat": "ippool:/oracle/public/ippool"
+                                }
+                            },
+                            "sshkeys": [
+                                "/Compute-DOMAINNAME/USERNAME/SSHKEYNAME"
+                            ],
+                            "attributes": {
+                                "userdata": {
+                                    "pre-bootstrap": {
+                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --java --weblogic --weblogicManagedServer --copy-ssh-keys"
+                                    }
+                                }
+                            }
+                        },				
+                        {
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_1_p1",
+                            "label": "otd",
+                            "name": "/Compute-DOMAINNAME/USERNAME/otd",
+                            "tags": [
+                                "otd"
+                            ],
+                            "hostname": "otd",
+                            "shape": "oc2m",
+                            "networking": {
+                                "eth0": {
+                                    "seclists": [
+                                        "/Compute-DOMAINNAME/USERNAME/otd_server",
+                                        "/Compute-DOMAINNAME/default/default"
+                                    ],
+                                    "nat": "ippool:/oracle/public/ippool"
+                                }
+                            },
+                            "sshkeys": [
+                                "/Compute-DOMAINNAME/USERNAME/SSHKEYNAME"
+                            ],
+                            "attributes": {
+                                "userdata": {
+                                    "pre-bootstrap": {
+                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --java --otdInstall --otdConfig --copy-ssh-keys"
+                                    }
+                                }
+                            }
+                        },						
+                        {
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_1_p1",
+                            "label": "atgdb",
+                            "name": "/Compute-DOMAINNAME/USERNAME/atgdb",
+                            "tags": [
+                                "atgdb"
+                            ],
+                            "hostname": "atgdb",
+                            "shape": "oc2m",
+                            "networking": {
+                                "eth0": {
+                                    "seclists": [
+                                        "/Compute-DOMAINNAME/USERNAME/db_server",
+                                        "/Compute-DOMAINNAME/default/default"
+                                    ],
+                                    "nat": "ippool:/oracle/public/ippool"
+                                }
+                            },
+                            "storage_attachments": [
+                                {
+                                    "index": 1,
+                                    "volume": "/Compute-DOMAINNAME/USERNAME/atgdb_storage"
+                                }
+                            ],
+                            "sshkeys": [
+                                "/Compute-DOMAINNAME/USERNAME/SSHKEYNAME"
+                            ],
+                            "attributes": {
+                                "userdata": {
+                                    "pre-bootstrap": {
+                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --addstorage --db --copy-ssh-keys"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
