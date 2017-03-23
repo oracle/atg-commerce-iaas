@@ -24,7 +24,7 @@
                                         "/Compute-DOMAINNAME/USERNAME/endeca1_server",
                                         "/Compute-DOMAINNAME/default/default"
                                     ],
-                                    "nat": "ipreservation:/Compute-DOMAINNAME/USERNAME/endeca1"
+                                    "nat": "ippool:/oracle/public/ippool"
                                 }
                             },
                             "sshkeys": [
@@ -53,7 +53,7 @@
                                         "/Compute-DOMAINNAME/USERNAME/endeca_instances",
                                         "/Compute-DOMAINNAME/default/default"
                                     ],
-                                    "nat": "ipreservation:/Compute-DOMAINNAME/USERNAME/endeca2"
+                                    "nat": "ippool:/oracle/public/ippool"
                                 }
                             },
                             "sshkeys": [
