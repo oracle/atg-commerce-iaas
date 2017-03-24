@@ -13,6 +13,10 @@ Replace USERNAME with your Oracle Public Cloud login, which is typically your em
 Replace SSHKEYNAME with the name of the SSH key you want injected into each instance that is provisioned. You must setup this key up in your OPC domain prior to running these orchestrations.
 If your private OPC image name is not atg11_1_p1, replace all occurrences of that string in the commerce_instances file with the name of the private image you wish to use.
 
+These samples are setup for installing ATG 11.1
+If you want to use the 11.2 image, you also need to edit the script line in the commerce_instances.txt file.
+Change /opt/oracle/install/11.1 to /opt/oracle/install/11.2
+
 Upload all files to the orchestrations tab of your OPC domain.
 
 
