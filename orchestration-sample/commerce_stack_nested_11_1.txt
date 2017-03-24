@@ -1,6 +1,6 @@
 {
-    "description": "RUN ME - Commerce Stack Setup",
-    "name": "/Compute-DOMAINNAME/USERNAME/commerce_nested_orchestration",
+    "description": "RUN ME - Commerce Stack Setup 11.1",
+    "name": "/Compute-DOMAINNAME/USERNAME/commerce_11_1_nested_orchestration",
     "oplans": [
         {
             "label": "create_seclists",
@@ -88,7 +88,7 @@
             "obj_type": "orchestration",
             "objects": [
                 {
-                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_instance_orchestration"
+                    "name": "/Compute-DOMAINNAME/USERNAME/commerce_11_1_instance_orchestration"
                 }
             ]
         }

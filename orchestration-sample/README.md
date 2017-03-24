@@ -7,17 +7,26 @@ These orchestrations, once properly edited and added to your OPC domain, will cr
 
 Create your own image using the provisioning code in this repository, or, obtain a sample image from the Oracle Cloud Marketplace.
 
-Edit all files.
+Edit all files. (a text editor like notepad++ will allow you to edit all files at one time, doing a global find and replace)
 * Replace DOMAINNAME with your Oracle Public Cloud domain name
 * Replace USERNAME with your Oracle Public Cloud login, which is typically your email address.
 * Replace SSHKEYNAME with the name of the SSH key you want injected into each instance that is provisioned. You must setup this key up in your OPC domain prior to running these orchestrations.
-* If your private OPC image name is not atg11_1_p1, replace all occurrences of that string in the commerce_instances file with the name of the private image you wish to use.
+
+Two different top level orchestrations are provided; one to start an ATG 11.1 environment, and another to start an ATG 11.2 environment.  
+These use either the commerce_instances_11_1 or commerce_instances_11_2 orchestration file.  
+
+In the commerce_instances_11_x files, there is a pointer to the custom image name that was obtained from the Oracle Cloud Marketplace. Make sure this name matches the name of the image as it appears on the images tab of your compute console.  
+For example:  
+"imagelist": "/Compute-mydemodomain/john.jones@example.com/atg11_1_v15"  
+This would mean you have a private image in your OPC domain with the name atg11_1_v15  
+
 
 These samples are setup for installing ATG 11.1  
 If you want to use the 11.2 image, you also need to edit the script line in the commerce_instances.txt file.  
 Change /opt/oracle/install/11.1 to /opt/oracle/install/11.2
 
-Upload all files to the orchestrations tab of your OPC domain.
+Upload all files to the orchestrations tab of your OPC domain.  
+Upload the 2 nested orchestration files last, or you will get an error. Because this orchestration makes reference to all the other orchestrations, they must exist or the nested orchestration will fail a validation check.  
 
 
 
@@ -27,7 +36,7 @@ The following is a block from the commerce_instances file with DOMAINNAME, USERN
                {
                     "instances": [
                         {
-                            "imagelist": "/Compute-mydemodomain/john.jones@example.com/atg11_1_p1",
+                            "imagelist": "/Compute-mydemodomain/john.jones@example.com/atg11_1_v15",
                             "label": "endeca1",
                             "name": "/Compute-mydemodomain/john.jones@example.com/endeca1",
                             "tags": [
@@ -42,7 +51,7 @@ The following is a block from the commerce_instances file with DOMAINNAME, USERN
                                         "/Compute-mydemodomain/john.jones@example.com/endeca1_server",
                                         "/Compute-mydemodomain/default/default"
                                     ],
-                                    "nat": "ipreservation:/Compute-mydemodomain/john.jones@example.com/endeca1"
+                                    "nat": "ippool:/oracle/public/ippool"
                                 }
                             },
                             "sshkeys": [
@@ -59,8 +68,9 @@ The following is a block from the commerce_instances file with DOMAINNAME, USERN
 ```
 
 ## Usage
-With your private image, and orchestrations in place in your OPC domain, go to the orchestrations tab and start the orchestration with the description "RUN ME - Commerce Stack Setup".
+With your private image, and orchestrations in place in your OPC domain, go to the orchestrations tab and start the orchestration with the description "RUN ME - Commerce Stack Setup 11.1", OR "RUN ME - Commerce Stack Setup 11.2" 
+
+Do not attempt to start both 11.1 and 11.2 at the same time, they will colide with each other.  
 This is a top level, nested orchestartion that will start all other orchestration files in the correct order.
 
-To remove the ATG demo setup, simply stop the orchestration with the description "RUN ME - Commerce Stack Setup". This will delete all elements that were created by the nested orchestrations.
-
+To remove the ATG demo setup, simply stop the orchestration with the description "RUN ME - Commerce Stack Setup 11.x". This will delete all elements that were created by the nested orchestrations.
