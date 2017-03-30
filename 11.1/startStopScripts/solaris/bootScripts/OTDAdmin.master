@@ -34,7 +34,7 @@ PROCESS_OWNER="OTD_PROCESS_OWNER"
 COMMAND_PREFIX="su - ${PROCESS_OWNER} -c"
 
 # what to look for in the output of running processes
-PROCESS_STRING="^.*trafficd-wdog.*${INSTANCE_NAME}.*"
+PROCESS_STRING="^.*trafficd-wdog.*${OTD_INSTANCE}.*"
 # start script
 PROGRAM_START="${OTD_INSTANCE_DIRECTORY}/${OTD_INSTANCE}/bin/startserv"
 
