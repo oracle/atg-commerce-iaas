@@ -1,2 +1,2 @@
-database goes here
+x86 database goes here
 unzip installer here
