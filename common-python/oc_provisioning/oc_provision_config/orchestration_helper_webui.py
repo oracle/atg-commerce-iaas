@@ -16,6 +16,7 @@ import shutil
 import yaml
 import simplejson as json
 
+
 identity_domain = ""
 username = ""
 compute_domain = ""
@@ -73,10 +74,16 @@ def get_existing_projects():
     return os.listdir(project_directory)
 
 def make_project(project_name):
+    """
+    Make a new project
+    """    
     dir_to_make = posixpath.join(project_directory, project_name)
     os.mkdir(dir_to_make)
     
 def delete_project(project_name):
+    """
+    Delete a project
+    """       
     dir_to_del = posixpath.join(project_directory, project_name)
     shutil.rmtree(dir_to_del) 
 
@@ -109,6 +116,9 @@ def generate_orchestrations(project_name, domain, user, image_name):
     
     
 def remove_existing_orchestrations(project_name):
+    """
+    Clean out all existing generated configs
+    """       
     orch_dir = project_directory + "/" + project_name + "/" + root_orch_dir
     if os.path.exists(orch_dir):
         try:
@@ -311,18 +321,27 @@ def create_instance_yaml(section_name, project_name):
     write_yaml_data(clean_data, instance_cleanup_yaml, data_type, project_name)
                                  
 def get_section_data(project_name, data_type):
+    """
+    Return a specific section of a property file
+    """       
     config = ConfigParser.ConfigParser()
     storage_data = project_directory + "/" + project_name + "/" + config_file_map[data_type]
     config.read(storage_data)
     return config.sections()
 
 def does_name_exist(project_name, data_type, section_name):
+    """
+    Test if a specific section exists in a property file
+    """       
     config = ConfigParser.ConfigParser()
     storage_data = project_directory + "/" + project_name + "/" + config_file_map[data_type]
     config.read(storage_data)
     return config.has_section(section_name)
 
 def get_all_attached_storage(project_name, data_type):
+    """
+    Get all storage items already attached to something
+    """       
     attached_storage = []
     
     config = ConfigParser.ConfigParser()
@@ -336,12 +355,18 @@ def get_all_attached_storage(project_name, data_type):
         
         
 def get_config_items(project_name, data_type, section_name):
+    """
+    Get all config data from a specific section in a property
+    """       
     config = ConfigParser.ConfigParser()
     storage_data = project_directory + "/" + project_name + "/" + config_file_map[data_type]
     config.read(storage_data)
     return config.items(section_name)
 
 def get_config_item(project_name, section, option, data_type):
+    """
+    Get a specific config from a specific section in a property
+    """        
     if not project_name:
         return None
     config = ConfigParser.ConfigParser()
@@ -354,6 +379,9 @@ def get_config_item(project_name, section, option, data_type):
     return items
 
 def update_config_section(project_name, data_type, section_name, prop_name, prop_value):
+    """
+    Update a specific section in a property
+    """        
     config = ConfigParser.ConfigParser()
     storage_data = project_directory + "/" + project_name + "/" + config_file_map[data_type]
     config.read(storage_data)
@@ -364,6 +392,9 @@ def update_config_section(project_name, data_type, section_name, prop_name, prop
     # print ">> " + prop_name + " updated"
 
 def add_config_section(project_name, data_type, section_name, section_data):
+    """
+    Add a new section in a property
+    """        
     config = ConfigParser.ConfigParser()
     storage_data = project_directory + "/" + project_name + "/" + config_file_map[data_type]
     config.read(storage_data)
@@ -376,6 +407,9 @@ def add_config_section(project_name, data_type, section_name, section_data):
         config.write(configfile)
         
 def delete_config_section(project_name, data_type, section_name):
+    """
+    Delete a section in a property
+    """        
     config = ConfigParser.ConfigParser()
     storage_data = project_directory + "/" + project_name + "/" + config_file_map[data_type]
     config.read(storage_data)
@@ -613,6 +647,8 @@ def generate_instance_data(project_name, image_name):
     
     sections = get_section_data(project_name, data_type)
     
+    master_json = {}
+    
     for section in sections:
         json_data = {}
         
@@ -642,6 +678,9 @@ def generate_instance_data(project_name, image_name):
         
         # write json data for configuring installers
         json_data["commerceSetup"] = json.loads(get_config_item(project_name, section, 'jsondata', data_type))
+        
+        # keep a copy of all config data to dump a master config file later
+        master_json = dict_merge(master_json, json_data)
 
         write_orch_data(json_data, section, 'json', project_name)        
         
@@ -663,8 +702,34 @@ def generate_instance_data(project_name, image_name):
         write_orch_data(data, section, data_type, project_name)
         # write orchestration files for ansible template use
         write_ansible_orch_template(data, section, data_type, project_name)
+        
+    # write master config
+    write_orch_data(master_json, "masterConfig", 'prettyJson', project_name) 
+    
+def dict_merge(target, *args):
+    """
+    Combine multiple dictionaries into one
+    """     
+    if len(args) > 1:
+        for obj in args:
+            dict_merge(target, obj)
+        return target
 
+    obj = args[0]
+    
+    if not isinstance(obj, dict):
+        return obj
+    for k, v in obj.iteritems():
+        if k in target and isinstance(target[k], dict):
+            dict_merge(target[k], v)
+        else:
+            target[k] = copy.deepcopy(v)
+    return target    
+        
 def write_ansible_orch_template(data, name, orch_type, project_name):
+    """
+    Write OPC instance orchestrations for ansible
+    """        
     
     filename = name + ".json"
     orch_file = project_directory + "/" + project_name + "/" + root_orch_dir + "/ansible/playbooks/templates/" + filename
@@ -681,8 +746,17 @@ def write_ansible_orch_template(data, name, orch_type, project_name):
     target.close()
     
 def write_orch_data(data, name, orch_type, project_name):
-    
+    """
+    Write json data for instances and product configs
+    """        
     filename = name + ".json"
+    prettyJson = False
+    
+    # prettyJson formats the output to make it more readable.
+    if (orch_type == 'prettyJson'):
+        prettyJson = True
+        orch_type = 'json'
+        
     orch_file = project_directory + "/" + project_name + "/" + root_orch_dir + "/" + orch_type + "/" + filename
     
     if not os.path.exists(os.path.dirname(orch_file)):
@@ -693,7 +767,10 @@ def write_orch_data(data, name, orch_type, project_name):
                 raise    
             
     target = open(orch_file, 'w')
-    target.write(json.dumps(data, ensure_ascii=True))
+    if prettyJson:
+        target.write(json.dumps(data, ensure_ascii=True, sort_keys=True, indent=2))
+    else:
+        target.write(json.dumps(data, ensure_ascii=True))
     target.close()
 
 def create_shell_wrapper(project_name):
@@ -768,7 +845,9 @@ def create_shell_wrapper(project_name):
     os.chmod(delete_wrapper, 0755)
     
 def write_yaml_data(data, name, yaml_type, project_name):
-    
+    """
+    Write playbook yaml data
+    """        
     global yaml_map
 
     filename = name
@@ -791,31 +870,32 @@ def write_yaml_data(data, name, yaml_type, project_name):
     target.write(yaml.dump(data, default_flow_style=False, width=1000))
     target.close()
 
-# compute the flags to be passed to the wrapper that kicks everything off
 def compute_script_flags(instance_types, optional_data_types, config_source):
-    
-        all_flags = []
-        # use the instance type map
-        for instance_type in instance_types:
-            for flags in instance_flags[instance_type]:
-                all_flags.append(flags)
-                
-        # use the map for optional flags
-        if optional_data_types:
-            optional_items = optional_data_types.split(',')
-            for optional_type in optional_items:
-                for flags in optional_flags[optional_type]:
-                    all_flags.append(flags)                
-        
-        # if there is a configSource defined, add a flag to read it
-        if (config_source != ""):
-            all_flags.append("--configSource=" + config_source)
+    """
+    compute the flags to be passed to the wrapper that kicks everything off
+    """        
+    all_flags = []
+    # use the instance type map
+    for instance_type in instance_types:
+        for flags in instance_flags[instance_type]:
+            all_flags.append(flags)
             
-        # flags can overlap. Use a set to only have unique elements    
-        unique_flags = set(all_flags)
-        script_params = " ".join(unique_flags)
+    # use the map for optional flags
+    if optional_data_types:
+        optional_items = optional_data_types.split(',')
+        for optional_type in optional_items:
+            for flags in optional_flags[optional_type]:
+                all_flags.append(flags)                
+    
+    # if there is a configSource defined, add a flag to read it
+    if (config_source != ""):
+        all_flags.append("--configSource=" + config_source)
         
-        return script_params
+    # flags can overlap. Use a set to only have unique elements    
+    unique_flags = set(all_flags)
+    script_params = " ".join(unique_flags)
+    
+    return script_params
             
 def compute_seclists(hostname, instance_types):
         """
