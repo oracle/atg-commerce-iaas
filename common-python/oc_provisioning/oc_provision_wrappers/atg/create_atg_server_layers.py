@@ -102,7 +102,7 @@ def generate_atg_server_layers(configData, full_path):
         
         server_layer_path = full_path + "/atg-server-layers/"
          
-        cpCmd = "cp -R " + server_layer_path + ATG_SERVER_TYPE + ATG_SERVERS_HOME + "/" + WL_SERVER_NAME
+        cpCmd = "\"" + "cp -R " + server_layer_path + ATG_SERVER_TYPE + " " + ATG_SERVERS_HOME + "/" + WL_SERVER_NAME + "\""
         commerce_setup_helper.exec_as_user(ATG_INSTALL_OWNER, cpCmd)
 
         #distutils.dir_util.copy_tree(server_layer_path + ATG_SERVER_TYPE , ATG_SERVERS_HOME + "/" + WL_SERVER_NAME)
