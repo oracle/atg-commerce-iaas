@@ -56,7 +56,7 @@ start() {
             echo
             exit
         fi
-        echo -n $"Starting $SERVICE_NAME ... "
+        echo -n "Starting $SERVICE_NAME ... "
 
 	    ${COMMAND_PREFIX} "$PROGRAM_START > /dev/null 2>&1 &"
  
@@ -64,7 +64,7 @@ start() {
          # give logs a second to rotate
          sleep 1
         if [ $RETVAL -eq 0 ] ; then
-          wait_for ${PROCESS_RUNNING_STRING}
+          wait_for "${PROCESS_RUNNING_STRING}"
         else
           echo "FAILED: $RETVAL. Please check $OUT_FILE for more information."
         fi

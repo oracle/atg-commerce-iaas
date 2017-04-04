@@ -69,7 +69,7 @@
                     "wl_adminHttpPort": "7001",
                     "wl_adminHttpsPort": "7002",  
                     "wl_domain": "base_domain",
-                    "wl_patches": "p22505404_121300_Generic.zip"                            
+                    "wl_patches": "p23094292_121300_Generic.zip"                            
                 },
             "WEBLOGIC_domain_setup": 
                 {
@@ -109,7 +109,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "page",
-                    "managedServerHost": "atg1"          
+                    "managedServerHost": "atg1",
+                    "wl_startManaged_onBoot": "false"       
                 },
                 { 
                     "managedServerName": "Prod1I2",
@@ -119,7 +120,8 @@
                     "atgFdPort": "7220",
                     "atgDrpPort": "7320",
                     "atgServerType": "page",
-                    "managedServerHost": "atg1"                     
+                    "managedServerHost": "atg1",
+                    "wl_startManaged_onBoot": "false"
                 },
                 { 
                     "managedServerName": "Fulfillment",
@@ -129,7 +131,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "page",
-                    "managedServerHost": "atg1"                     
+                    "managedServerHost": "atg1",
+                    "wl_startManaged_onBoot": "false"
                 },                
                  { 
                     "managedServerName": "Prod2I1",
@@ -139,7 +142,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "page",
-                    "managedServerHost": "atg2"                 
+                    "managedServerHost": "atg2",
+                    "wl_startManaged_onBoot": "false"
                 },
                 { 
                     "managedServerName": "Prod2I2",
@@ -149,7 +153,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "page",
-                    "managedServerHost": "atg2"                     
+                    "managedServerHost": "atg2",
+                    "wl_startManaged_onBoot": "false"
                 },    
                 { 
                     "managedServerName": "PES",
@@ -159,7 +164,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "pes",
-                    "managedServerHost": "atg2"                     
+                    "managedServerHost": "atg2",
+                    "wl_startManaged_onBoot": "false"
                 },      
                 { 
                     "managedServerName": "BCC",
@@ -171,7 +177,8 @@
                     "atgServerType": "bcc",
                     "bccFileSyncPort": "8816",
                     "bccLockPort": "9010",
-                    "managedServerHost": "atgsupport"                     
+                    "managedServerHost": "atgsupport",
+                    "wl_startManaged_onBoot": "false"
                 },                                      
                 { 
                     "managedServerName": "Lock1",
@@ -182,7 +189,8 @@
                     "atgDrpPort": "7310",
                     "atgServerType": "lock",
                     "atgLockManPort": "9012",
-                    "managedServerHost": "atgsupport"                     
+                    "managedServerHost": "atgsupport",
+                    "wl_startManaged_onBoot": "false"           
                 },
                 { 
                     "managedServerName": "Lock2",
@@ -193,7 +201,8 @@
                     "atgDrpPort": "7310",
                     "atgServerType": "lock",
                     "atgLockManPort": "9022",
-                    "managedServerHost": "atgsupport"                     
+                    "managedServerHost": "atgsupport",
+                    "wl_startManaged_onBoot": "false"
                 }                                                     
                 ],
             "WEBLOGIC_datasources":
@@ -291,7 +300,9 @@
                     "loadDistribution": "round-robin",
                     "healthCheckUrl": "/",
                     "healthCheckMethod": "OPTIONS",
-                    "instanceHostname": "localhost"                    
+                    "instanceHome": "/u01/otd/production",
+                    "instanceHostname": "localhost",
+                    "otd_start_onBoot": "true"                 
                 },
                 { 
                     "configName": "endeca-servers",
@@ -307,10 +318,12 @@
                     "loadDistribution": "round-robin",
                     "healthCheckUrl": "/admin?op=ping",
                     "healthCheckMethod": "GET",
-                    "instanceHostname": "localhost"                    
+                    "instanceHome": "/u01/otd/production",
+                    "instanceHostname": "localhost",
+                    "otd_start_onBoot": "true"                    
                 }                
                 ],
-            "ORACLE_RDBMS_install": 
+            "ORACLE_12c_install": 
                 {
                     "oracleBase": "/u01/oracle",
                     "installOwner": "oracle",
