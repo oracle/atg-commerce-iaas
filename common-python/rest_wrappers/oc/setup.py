@@ -14,11 +14,22 @@ __module__ = "setup"
 
 
 try:
-    from setuptools import setup
+    from setuptools import setup, Command
+    import os
 except ImportError:
     from distutils.core import setup
 import sys
 
+class CleanCommand(Command):
+    """Clean up build files."""
+    user_options = []
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
+        
 setup(name             = 'oc',
       version          = __version__,
       description      = 'Oracle Cloud REST API wrappers',
@@ -40,5 +51,8 @@ setup(name             = 'oc',
       install_requires = [
           'simplejson',
           'requests'
-      ]
+      ],
+      cmdclass={
+          'clean': CleanCommand,
+      }
       )
