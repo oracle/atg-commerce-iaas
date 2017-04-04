@@ -94,9 +94,16 @@ def install_weblogic(configData, full_path):
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "#WebLogic Settings \n")
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "##################### \n")
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export MW_HOME=" + INSTALL_DIR + "\n\n")
-    
-    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export CONFIG_JVM_ARGS=\"-Djava.security.egd=file:/dev/./urandom \" \n")
-    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export JAVA_OPTIONS=\"-Djava.security.egd=file:/dev/./urandom \" \n")
+
+    JAVA_RAND = ""
+    # if linux/Solaris, change random, This is faster in some implementations.
+    if (platform.system() == "SunOS"):
+        JAVA_RAND = "-Djava.security.egd=file:///dev/urandom"
+    else:
+        JAVA_RAND = "-Djava.security.egd=file:/dev/./urandom"
+            
+    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, 'export CONFIG_JVM_ARGS=\"' + JAVA_RAND + ' \" \n')
+    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, 'export JAVA_OPTIONS=\"' + JAVA_RAND + ' \" \n')
     
     # install patches if any were listed
     patch_weblogic(configData, full_path)    
