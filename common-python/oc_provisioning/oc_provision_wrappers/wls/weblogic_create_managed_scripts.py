@@ -58,11 +58,12 @@ def create_managed_scripts(configData, full_path):
                     
     logging.info("Updating... " + service_name)   
                  
-    commonRequiredFields = ['middlewareHome', 'installOwner', 'wl_domain', 'wl_adminHost', 'wl_adminHttpPort']
+    commonRequiredFields = ['middlewareHome', 'installOwner', 'installGroup', 'wl_domain', 'wl_adminHost', 'wl_adminHttpPort']
     commerce_setup_helper.check_required_fields(commonData, commonRequiredFields)   
 
     INSTALL_DIR = commonData['middlewareHome']
     INSTALL_OWNER = commonData['installOwner']
+    INSTALL_GROUP = commonData['installGroup']
     WL_DOMAIN_NAME = commonData['wl_domain']
     WL_ADMIN_HOST = commonData['wl_adminHost']
     WL_ADMIN_HTTP_PORT = commonData['wl_adminHttpPort']
@@ -96,13 +97,23 @@ def create_managed_scripts(configData, full_path):
                 SCRIPT_NAME = 'weblogicManaged-' + WL_SERVER_NAME
                 logging.info('Generating startup script for server ' + WL_SERVER_NAME)
                 commerce_setup_helper.copy_start_script(WL_SERVER_BOOT, full_path + startStopPath + 'weblogicManaged.master', wlScript_replacements, SCRIPT_NAME)
+                
+                # make the path to the log dir, or first server start will fail with scripts
+                logging.info('Generating log dir for server ' + WL_SERVER_NAME)
+                SERVER_LOG_PATH = WL_DOMAIN_NAME + '/servers/' + WL_SERVER_NAME + '/logs'
+                commerce_setup_helper.mkdir_with_perms(SERVER_LOG_PATH, INSTALL_OWNER, INSTALL_GROUP)
+                
+                # fire up the instance 
+                logging.info('Starting up instance ' + WL_SERVER_NAME)
+                startCmd = "/etc/init.d/" + SCRIPT_NAME
+                commerce_setup_helper.exec_cmd(startCmd + " start")                   
 
         else:
-            logging.error("Cannot determine hostname. Cannot create boot.properties")
+            logging.error("Cannot determine hostname. Cannot create startup script")
         
-        # fire up the instance 
-        startCmd = "/etc/init.d/" + SCRIPT_NAME
-        commerce_setup_helper.exec_cmd(startCmd + " start")         
+        
+        
+      
         
         
         
