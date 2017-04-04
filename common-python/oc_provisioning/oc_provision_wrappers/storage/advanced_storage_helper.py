@@ -26,10 +26,12 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-import os
-
 from oc_provision_wrappers import commerce_setup_helper
 
+import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'advanced_storage'
 
@@ -38,7 +40,7 @@ def advanced_storage(configData, full_path):
     if json_key in configData:
         jsonArray = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return                
     
     for jsonData in jsonArray:
@@ -52,7 +54,7 @@ def advanced_storage(configData, full_path):
         
         FSTAB_ENTRY = DEVICE + "  " + MOUNT_POINT + "  ext4  defaults  0 0 \n"
         
-        print "creating and mounting storage on device " + DEVICE + " at " + MOUNT_POINT + " \n"
+        logging.info("creating and mounting storage on device " + DEVICE + " at " + MOUNT_POINT)
         
         createCmd = "mkfs -t ext4 " + DEVICE 
         mountCmd = "mount " + DEVICE + " " + MOUNT_POINT + " -t ext4"

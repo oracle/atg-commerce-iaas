@@ -26,12 +26,14 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+from oc_provision_wrappers import commerce_setup_helper
+
 import os
 import platform
 import shutil
+import logging
 
-from oc_provision_wrappers import commerce_setup_helper
-
+logger = logging.getLogger(__name__)
 
 json_key = 'WEBLOGIC_common'
 service_name = "WebLogic"
@@ -41,10 +43,10 @@ def install_weblogic(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return False
 
-    print "installing " + service_name
+    logging.info("installing " + service_name)
     
     binary_path = full_path + "/binaries/wls-12.1.2"
     response_files_path = full_path + "/responseFiles/wls-12.1.2"
@@ -52,7 +54,7 @@ def install_weblogic(configData, full_path):
     full_exec_path = binary_path + "/" + install_exec
     
     if not os.path.exists(full_exec_path):
-        print "Binary " + full_exec_path + " does not exist - will not install"
+        logging.error("Binary " + full_exec_path + " does not exist - will not install")
         return False
                     
                     
@@ -100,7 +102,7 @@ def patch_weblogic(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
 
     binary_path = full_path + "/binaries/wls-12.1.2"
@@ -121,7 +123,7 @@ def patch_weblogic(configData, full_path):
         
     
     if PATCH_FILES:
-        print "patching " + service_name 
+        logging.info("patching " + service_name) 
         patches = PATCH_FILES.split(',')
         patchList = []
         patchScript = INSTALL_DIR + "/OPatch/opatch"
@@ -134,7 +136,7 @@ def patch_weblogic(configData, full_path):
             # keep a running list of all patch numbers
             patchList.append(patchNum)
             if not os.path.exists(patches_path + "/" + patch):
-                print "patch file " + patches_path + "/" + patch + " missing - will not install"
+                logging.error("patch file " + patches_path + "/" + patch + " missing - will not install")
                 return
             # unzip patch to /tmp. This will create a dir with the patchNum as the name
             unzipCommand = "\"" + "unzip " + patches_path + "/" + patch + " -d " + tmpPatchDir + "\""

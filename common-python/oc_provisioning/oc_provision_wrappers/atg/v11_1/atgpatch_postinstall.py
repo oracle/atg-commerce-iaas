@@ -28,6 +28,9 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'ATGPATCH_install'
 
@@ -36,10 +39,10 @@ def post_install_cmds(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
 
-    print "executing post patch install tasks"
+    logging.info("executing post patch install tasks")
     
     INSTALL_DIR = jsonData['dynamoRoot']
     INSTALL_OWNER = jsonData['installOwner']

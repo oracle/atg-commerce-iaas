@@ -28,6 +28,9 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'ATG_install'
 service_name = "ATG"
@@ -37,17 +40,17 @@ def install_atg(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return False
 
-    print "installing " + service_name
+    logging.info("installing " + service_name)
     binary_path = full_path + "/binaries/atg11.2"
     response_files_path = full_path + "/responseFiles/atg11.2"
     install_exec = "/linux/OCPlatform11_2.bin"
     full_exec_path = binary_path + install_exec
 
     if not os.path.exists(full_exec_path):
-        print "Binary " + full_exec_path + " does not exist - will not install"
+        logging.error("Binary " + full_exec_path + " does not exist - will not install")
         return False    
                                         
     requiredFields = ['dynamoRoot', 'installOwner', 'installGroup', 'rmiPort', 'javaHome', 'wl_home', 'wl_domain', 'wl_adminPort', 'install_crs', 'install_csa']
@@ -81,10 +84,10 @@ def install_atg(configData, full_path):
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export DYNAMO_HOME=$DYNAMO_ROOT/home \n\n")
     
     if (INSTALL_CRS == "true"):
-        print "installing CRS"
+        logging.info("installing CRS")
         crs_exec_path = binary_path + "/crs/OCReferenceStore11.2_222RCN.bin"
         if not os.path.exists(crs_exec_path):
-            print "Binary " + crs_exec_path + " does not exist - will not install"
+            logging.error("Binary " + crs_exec_path + " does not exist - will not install")
             return False    
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}
         commerce_setup_helper.substitute_file_fields(response_files_path + '/crs/crsinstaller.properties.master', response_files_path + '/crs/crsinstaller.properties', field_replacements)
@@ -92,10 +95,10 @@ def install_atg(configData, full_path):
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)   
         
     if (INSTALL_CSA == "true"):
-        print "installing CSA"
+        logging.info("installing CSA")
         csa_exec_path = binary_path + "/csa/OCStoreAccelerator11_2.bin"
         if not os.path.exists(csa_exec_path):
-            print "Binary " + csa_exec_path + " does not exist - will not install"
+            logging.error("Binary " + csa_exec_path + " does not exist - will not install")
             return False           
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}
         commerce_setup_helper.substitute_file_fields(response_files_path + '/csa/csainstaller.properties.master', response_files_path + '/csa/csainstaller.properties', field_replacements)
@@ -104,11 +107,11 @@ def install_atg(configData, full_path):
 
     if (INSTALL_SERVICE == "true"):
         
-        print "installing Service"
+        logging.info("installing Service")
         
         service_exec_path = binary_path + "/service/OCServiceCenter11.2_224RCN.bin"
         if not os.path.exists(service_exec_path):
-            print "Binary " + service_exec_path + " does not exist - will not install"
+            logging.error("Binary " + service_exec_path + " does not exist - will not install")
             return
         
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}

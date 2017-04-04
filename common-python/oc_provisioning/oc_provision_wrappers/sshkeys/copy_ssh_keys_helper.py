@@ -27,7 +27,9 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
+import logging
 
+logger = logging.getLogger(__name__)
 
 json_key = 'copy_ssh_keys'
 
@@ -36,7 +38,7 @@ def copy_keys(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
 
                
@@ -47,5 +49,5 @@ def copy_keys(configData, full_path):
     TO_USER = jsonData['toUser']
     TO_USER_GROUP = jsonData['toUserGroup']
     
-    print "Copy ssh keys from user " + FROM_USER + " to user " + TO_USER
+    logging.info("Copy ssh keys from user " + FROM_USER + " to user " + TO_USER)
     commerce_setup_helper.copy_sshkeys(FROM_USER, TO_USER, TO_USER_GROUP)

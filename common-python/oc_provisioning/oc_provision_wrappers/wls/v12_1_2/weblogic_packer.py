@@ -26,11 +26,13 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-import os
-import shutil
-
 from oc_provision_wrappers import commerce_setup_helper
 
+import os
+import shutil
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'WEBLOGIC_common'
 service_name = "WebLogic Domain Pack"
@@ -40,10 +42,10 @@ def pack_domain(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
                 
-    print "Packing... " + service_name                
+    logging.info("Packing... " + service_name)                
     requiredFields = ['middlewareHome', 'installOwner', 'wl_domain']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
 
@@ -66,4 +68,4 @@ def pack_domain(configData, full_path):
         shutil.copyfile(DOMAIN_TEMPLATE_PATH , homeDir + "/" + DOMAIN_TEMPLATE_NAME)
         os.chmod(homeDir + "/" + DOMAIN_TEMPLATE_NAME, 0644)
     else:
-        print "user " + templateUser + " home dir not available. Will not copy packed domain" 
+        logging.error("user " + templateUser + " home dir not available. Will not copy packed domain") 

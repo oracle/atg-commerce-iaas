@@ -26,9 +26,13 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+from oc_provision_wrappers import commerce_setup_helper
+
 import os
 import platform
-from oc_provision_wrappers import commerce_setup_helper
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'JAVA_install'
 service_name = "Java"
@@ -38,9 +42,11 @@ def install_java(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print service_name + " config data missing from json. will not install"
+        logging.error(service_name + " config data missing from json. will not install")
         return
 
+    logging.info("installing " + service_name)
+    
     if (platform.system() == "SunOS"):
         binary_path = full_path + "/binaries/java1.8/solaris"
     else:

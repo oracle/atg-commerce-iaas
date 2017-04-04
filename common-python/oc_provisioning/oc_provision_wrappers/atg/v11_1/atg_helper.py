@@ -28,6 +28,9 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'ATG_install'
 service_name = "ATG"
@@ -37,10 +40,10 @@ def install_atg(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return False
 
-    print "installing " + service_name
+    logging.info("installing " + service_name)
      
     binary_path = full_path + "/binaries/atg11.1"
     response_files_path = full_path + "/responseFiles/atg11.1"
@@ -48,7 +51,7 @@ def install_atg(configData, full_path):
     full_exec_path = binary_path + install_exec
 
     if not os.path.exists(full_exec_path):
-        print "Binary " + full_exec_path + " does not exist - will not install"
+        logging.error("Binary " + full_exec_path + " does not exist - will not install")
         return False
                          
                    
@@ -83,11 +86,11 @@ def install_atg(configData, full_path):
 
     if (INSTALL_CRS == "true"):
         
-        print "installing CRS"
+        logging.info("installing CRS")
         
         crs_exec_path = binary_path + "/crs/OCReferenceStore11.1.bin"
         if not os.path.exists(crs_exec_path):
-            print "Binary " + crs_exec_path + " does not exist - will not install"
+            logging.error("Binary " + crs_exec_path + " does not exist - will not install")
             return
         
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}
@@ -109,11 +112,11 @@ def install_atg(configData, full_path):
         
     if (INSTALL_SERVICE == "true"):
         
-        print "installing Service"
+        logging.info("installing Service")
         
         service_exec_path = binary_path + "/service/OCServiceCenter11.1.bin"
         if not os.path.exists(service_exec_path):
-            print "Binary " + service_exec_path + " does not exist - will not install"
+            logging.error("Binary " + service_exec_path + " does not exist - will not install")
             return
         
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}

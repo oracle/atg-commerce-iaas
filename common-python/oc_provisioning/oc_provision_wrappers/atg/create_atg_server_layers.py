@@ -28,15 +28,16 @@ __version__ = "1.0.0.0"
 
 import distutils.core
 import os
+import logging
 
 from oc_provision_wrappers import commerce_setup_helper  
- 
+
+logger = logging.getLogger(__name__)
 
 def generate_atg_server_layers(configData, full_path):
     """
     Create ATG server layers based on the instance type
     """      
-        
     # we need the server defs, and the path to the ATG install
     wl_managed_key = "WEBLOGIC_managed_servers"
     atg_key = "ATG_install"
@@ -44,13 +45,13 @@ def generate_atg_server_layers(configData, full_path):
     if wl_managed_key in configData:
         managedServerArray = configData[wl_managed_key]
     else:
-        print wl_managed_key + " missing from json. will not create atg server layers"
+        logger.error(wl_managed_key + " missing from json. will not create atg server layers")
         return ''
 
     if atg_key in configData:
         atgData = configData[atg_key]
     else:
-        print atg_key + " missing from json. will not create atg server layers"
+        logger.error(atg_key + " missing from json. will not create atg server layers")
         return ''
     
     ATG_INSTALL_ROOT = atgData['dynamoRoot']
@@ -58,7 +59,7 @@ def generate_atg_server_layers(configData, full_path):
     ATG_INSTALL_OWNER = atgData['installOwner']
     ATG_SERVERS_HOME = ATG_INSTALL_ROOT + "/home/servers"
     
-    print "Creating ATG Server layers"
+    logger.info("Creating ATG Server layers")
     serverData = ''
     
     PROD_LOCK_PORTS_ARRAY = []

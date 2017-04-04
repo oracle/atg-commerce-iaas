@@ -26,12 +26,13 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-import os
-import time
-
-
 from oc_provision_wrappers import commerce_setup_helper
 
+import os
+import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'ORACLE_11g_clone'
 service_name = "Oracle DB clone"
@@ -41,9 +42,9 @@ def clone_oracle(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
-    print "installing " + service_name
+    logging.info("installing " + service_name)
 
     INSTALL_OWNER = jsonData['installOwner']
     ORACLE_HOME = jsonData['oracleHome']
@@ -64,7 +65,7 @@ def clone_oracle(configData, full_path):
     lsnr_path = ORACLE_HOME + "/network/admin/listener.ora"   
     
     if not os.path.exists(tns_path):
-        print "tnsnames.ora not found at " + tns_path + " - will not proceed"
+        logging.error("tnsnames.ora not found at " + tns_path + " - will not proceed")
         return False
 
     # stop db
@@ -83,7 +84,7 @@ def clone_oracle(configData, full_path):
     # update tnsnames
     if tns_replacements:
         if not os.path.exists(tns_path):
-            print "tnsnames.ora not found at " + tns_path + " - cannot modify"
+            logging.warn("tnsnames.ora not found at " + tns_path + " - cannot modify")
         else:
             # backup tnsnames
             timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -94,7 +95,7 @@ def clone_oracle(configData, full_path):
     # update listener
     if lsnr_replacements:
         if not os.path.exists(lsnr_path):
-            print "listener.ora not found at " + lsnr_path + " - cannot modify"
+            logging.warn("listener.ora not found at " + lsnr_path + " - cannot modify")
         else:      
             # backup listener
             timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -106,7 +107,7 @@ def clone_oracle(configData, full_path):
     orig_db_name = ORACLE_HOME + "/" + ORIG_HOST + "_" + ORACLE_SID
     new_db_name = ORACLE_HOME + "/" + NEW_HOST + "_" + ORACLE_SID
     if not os.path.exists(orig_db_name):
-        print "db path not found at " + orig_db_name + " - cannot modify"
+        logging.error("db path not found at " + orig_db_name + " - cannot modify")
     else:
         mv_cmd = "\"" + "mv " + orig_db_name + " " + new_db_name + "\""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, mv_cmd)
@@ -118,7 +119,7 @@ def clone_oracle(configData, full_path):
         orig_db_console = ORACLE_HOME + "/oc4j/j2ee/OC4J_DBConsole_" + ORIG_HOST + "_" + ORACLE_SID
         new_db_console = ORACLE_HOME + "/oc4j/j2ee/OC4J_DBConsole_" + NEW_HOST + "_" + ORACLE_SID
         if not os.path.exists(orig_db_console):
-            print "db console not found at " + orig_db_console + " - cannot modify"
+            logging.warn("db console not found at " + orig_db_console + " - cannot modify")
         else:
             mv_cmd = "\"" + "mv " + orig_db_console + " " + new_db_console + "\""
             commerce_setup_helper.exec_as_user(INSTALL_OWNER, mv_cmd)

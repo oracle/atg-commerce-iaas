@@ -26,13 +26,15 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-import platform
-import time
-
 from oc_provision_wrappers import commerce_setup_helper
 
+import platform
+import time
 import weblogic_packer
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'WEBLOGIC_domain_setup'
 common_key = 'WEBLOGIC_common'
@@ -43,18 +45,18 @@ def create_wl_domain(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
 
     if common_key in configData:
         commonData = configData[common_key]
     else:
-        print common_key + " config data missing from json. will not install"
+        logging.error(common_key + " config data missing from json. will not install")
         return   
 
     response_files_path = full_path + "/responseFiles/wls-12.1.3"
                     
-    print "Creating " + service_name               
+    logging.info("Creating " + service_name)               
      
     commonRequiredFields = ['middlewareHome', 'installOwner', 'wl_domain', 'wl_adminHttpPort', 'wl_adminHttpsPort', 'wl_adminPassword']
     commerce_setup_helper.check_required_fields(commonData, commonRequiredFields)
@@ -77,7 +79,7 @@ def create_wl_domain(configData, full_path):
     wlst_path = INSTALL_DIR + "/wlserver/common/bin/wlst.sh"
     
     if not os.path.exists(wlst_path):
-        print "Binary " + wlst_path + " does not exist - will not install"
+        logging.error("Binary " + wlst_path + " does not exist - will not install")
         return False   
         
     wl_replacements = {'INSTALL_DIR':INSTALL_DIR, 'WL_DOMAIN_NAME':WL_DOMAIN_NAME, 'WL_ADMIN_HTTP_PORT':WL_ADMIN_HTTP_PORT, 'WL_ADMIN_HTTPS_PORT':WL_ADMIN_HTTPS_PORT, 'WL_ADMIN_PW':WL_ADMIN_PW, 'WL_MANAGED_SERVERS':WL_MANAGED_SERVERS, 'WL_MACHINES':WL_MACHINES}
@@ -130,10 +132,10 @@ def add_managed_servers(configData, full_path):
     if managed_key in configData:
         jsonDataArray = configData[managed_key]
     else:
-        print managed_key + " missing from json. will not add managed servers"
+        logging.error(managed_key + " missing from json. will not add managed servers")
         return ''
     
-    print "adding managed servers"
+    logging.info("adding managed servers")
     serverData = ''
     
     for jsonData in jsonDataArray:             
@@ -160,10 +162,10 @@ def add_machines(configData, full_path):
     if machine_key in configData:
         jsonDataArray = configData[machine_key]
     else:
-        print machine_key + " missing from json. will not add machines"
+        logging.error(machine_key + " missing from json. will not add machines")
         return ''
     
-    print "adding machines"
+    logging.info("adding machines")
     machineData = ''
     
     for jsonData in jsonDataArray:             

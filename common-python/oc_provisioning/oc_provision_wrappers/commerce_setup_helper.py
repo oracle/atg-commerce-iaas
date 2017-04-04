@@ -34,7 +34,9 @@ import platform
 import shutil
 from subprocess import Popen, PIPE, STDOUT
 import urllib2
+import logging
 
+logger = logging.getLogger(__name__)
 
 def load_json_from_url(jsonUrl, key):
     """
@@ -43,7 +45,7 @@ def load_json_from_url(jsonUrl, key):
     try:
         data = urllib2.urlopen(jsonUrl)
     except urllib2.URLError, e:
-        print "url error"
+        logger.error("url error")
     jsonData = json.load(data)
     if key not in jsonData:
         raise ValueError ("Root " + key + " item missing")   
@@ -76,9 +78,9 @@ def callPopen(command):
 
     out, err = proc.communicate()
     if out:
-        print out
+        logger.info(out)
     if err:
-        print err  
+        logger.error(err)  
     
     return proc.returncode
 
@@ -148,8 +150,7 @@ def exec_cmd (command):
     """
     Exec command as the user who called this function
     """        
-    print "exec_cmd is " + command
-    print "\n"
+    logger.info("exec_cmd is " + command)
     returncode = callPopen(command)
     return returncode
 
@@ -160,18 +161,21 @@ def exec_as_user (user, command):
     """        
     COMMAND_PREFIX = "su - " + user + " -c "
     exec_cmd = COMMAND_PREFIX + command
-    print "exec_as_user cmd is " + exec_cmd
+    logger.info("exec_as_user cmd is " + exec_cmd)
     returncode = callPopen(exec_cmd)
     return returncode
-
-
-def copy_start_script (startOnBoot, srcFile, field_replacement):
+            
+def copy_start_script (startOnBoot, srcFile, field_replacement, dstFile=None):
     """
     Copy init scripts to /etc/init.d, and link to run on boot if startOnBoot true
     """        
     outDir = "/etc/init.d"
     path, filename = os.path.split(srcFile)
-    outFilename = filename.replace('.master', '')
+    if dstFile is None:
+        outFilename = filename.replace('.master', '')
+    else:
+        outFilename = dstFile
+        
     outFile = outDir + "/" + outFilename
     substitute_file_fields(srcFile, outFile, field_replacement)
     os.chmod(outFile, 0755)
@@ -184,7 +188,7 @@ def copy_start_script (startOnBoot, srcFile, field_replacement):
             exec_cmd(stopLinkCommand)
         else:
             chkCmd = "chkconfig --add " + outFilename
-            exec_cmd(chkCmd)
+            exec_cmd(chkCmd)            
 
 def copy_start_script_home (user, group, srcFile, field_replacement):
     """

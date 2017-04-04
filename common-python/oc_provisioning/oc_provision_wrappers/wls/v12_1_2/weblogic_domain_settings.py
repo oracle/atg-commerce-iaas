@@ -28,6 +28,9 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'WEBLOGIC_domain_settings'
 common_key = 'WEBLOGIC_common'
@@ -42,18 +45,18 @@ def config_wl_domain(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
 
     if common_key in configData:
         commonData = configData[common_key]
     else:
-        print common_key + " config data missing from json. will not install"
+        logging.error(common_key + " config data missing from json. will not install")
         return  
 
     response_files_path = full_path + "/responseFiles/wls-12.1.2"
                     
-    print "Updating " + service_name    
+    logging.info("Updating " + service_name)    
                 
     commonRequiredFields = ['middlewareHome', 'installOwner', 'wl_adminUser', 'wl_adminPassword', 'wl_domain', 'wl_adminHttpPort', 'wl_adminHost']
     commerce_setup_helper.check_required_fields(commonData, commonRequiredFields)
@@ -72,7 +75,7 @@ def config_wl_domain(configData, full_path):
     wlst_path = INSTALL_DIR + "/wlserver/common/bin/wlst.sh"
     
     if not os.path.exists(wlst_path):
-        print "Binary " + wlst_path + " does not exist - will not install"
+        logging.error("Binary " + wlst_path + " does not exist - will not install")
         return False      
            
     jtaCmd = "\"" + wlst_path + " " + response_files_path + "/setJTA.py -u " + WL_ADMIN_USER + \

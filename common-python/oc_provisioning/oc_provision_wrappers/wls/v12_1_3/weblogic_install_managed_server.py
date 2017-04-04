@@ -26,13 +26,15 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+from oc_provision_wrappers import commerce_setup_helper
+
 import os
 import platform
 import shutil
 import time
+import logging
 
-from oc_provision_wrappers import commerce_setup_helper
-
+logger = logging.getLogger(__name__)
 
 json_key = 'WEBLOGIC_managed_server'
 common_key = 'WEBLOGIC_common'
@@ -47,16 +49,16 @@ def unpack_domain(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
 
     if common_key in configData:
         commonData = configData[common_key]
     else:
-        print common_key + " config data missing from json. will not install"
+        logging.error(common_key + " config data missing from json. will not install")
         return    
                     
-    print "Unpacking... " + service_name   
+    logging.info("Unpacking... " + service_name)   
                  
     commonRequiredFields = ['middlewareHome', 'installOwner', 'installGroup', 'wl_domain', 'wl_adminHost']
     commerce_setup_helper.check_required_fields(commonData, commonRequiredFields)
@@ -76,7 +78,7 @@ def unpack_domain(configData, full_path):
     DOMAIN_TEMPLATE_PATH = INSTALL_DIR + '/user_projects/domains/' + DOMAIN_TEMPLATE_NAME
     
     if not os.path.isfile(DOMAIN_TEMPLATE_PATH):
-        print "domain template not found. Try to get it"
+        logging.info("domain template not found. Try to get it")
         # make the install tree with correct owner if needed
         commerce_setup_helper.mkdir_with_perms(WL_DOMAIN_HOME, INSTALL_OWNER, INSTALL_GROUP)        
         retrieve_domain_template(DOMAIN_TEMPLATE_NAME, DOMAIN_TEMPLATE_PATH, WL_ADMIN_HOST)
@@ -102,7 +104,7 @@ def unpack_domain(configData, full_path):
     commerce_setup_helper.exec_cmd(startNodeCmd + " start")      
     
 def retrieve_domain_template(DOMAIN_TEMPLATE_NAME, DOMAIN_TEMPLATE_PATH, WL_ADMIN_HOST):
-    print "Try to get domain template"
+    logging.info("Try to get domain template")
     
     templateUser = "wlinstall"
     
@@ -114,7 +116,7 @@ def retrieve_domain_template(DOMAIN_TEMPLATE_NAME, DOMAIN_TEMPLATE_PATH, WL_ADMI
     
     for _count in xrange(loops):
         returnCode = commerce_setup_helper.exec_as_user(templateUser, copyCmd)
-        print "scp returned " + str(returnCode)
+        logging.info("scp returned " + str(returnCode))
         if returnCode == 0:
             break
         time.sleep(sleepTime)

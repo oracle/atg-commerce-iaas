@@ -26,14 +26,17 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+from oc_provision_wrappers import commerce_setup_helper
+
 import fileinput
 import platform
 import os
+import logging
 
-from oc_provision_wrappers import commerce_setup_helper
+logger = logging.getLogger(__name__)
 
 
-json_key = 'ORACLE_RDBMS_install'
+json_key = 'ORACLE_12c_install'
 service_name = "Oracle DB"
 
 def install_oracle(configData, full_path): 
@@ -41,10 +44,10 @@ def install_oracle(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
     
-    print "installing " + service_name
+    logging.info("installing " + service_name)
     
     if (platform.system() == "SunOS"):
         binary_path = full_path + "/binaries/oracleDB12c/solaris"
@@ -57,7 +60,7 @@ def install_oracle(configData, full_path):
     full_exec_path = binary_path + install_exec
     
     if not os.path.exists(full_exec_path):
-        print "Binary " + full_exec_path + " does not exist - will not install"
+        logging.error("Binary " + full_exec_path + " does not exist - will not install")
         return False
                         
                     

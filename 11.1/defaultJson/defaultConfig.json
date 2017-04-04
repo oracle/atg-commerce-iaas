@@ -108,7 +108,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "page",
-                    "managedServerHost": "atg1"          
+                    "managedServerHost": "atg1",
+                    "wl_startManaged_onBoot": "false"     
                 },
                 { 
                     "managedServerName": "Prod1I2",
@@ -118,7 +119,8 @@
                     "atgFdPort": "7220",
                     "atgDrpPort": "7320",
                     "atgServerType": "page",
-                    "managedServerHost": "atg1"                     
+                    "managedServerHost": "atg1",
+                    "wl_startManaged_onBoot": "false"                    
                 },
                 { 
                     "managedServerName": "Fulfillment",
@@ -128,7 +130,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "page",
-                    "managedServerHost": "atg1"                     
+                    "managedServerHost": "atg1",
+                    "wl_startManaged_onBoot": "false"                     
                 },                
                 { 
                     "managedServerName": "Prod2I1",
@@ -138,7 +141,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "page",
-                    "managedServerHost": "atg2"                 
+                    "managedServerHost": "atg2",
+                    "wl_startManaged_onBoot": "false"                 
                 },
                 { 
                     "managedServerName": "Prod2I2",
@@ -148,7 +152,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "page",
-                    "managedServerHost": "atg2"                     
+                    "managedServerHost": "atg2",
+                    "wl_startManaged_onBoot": "false"                     
                 },    
                 { 
                     "managedServerName": "PES",
@@ -158,7 +163,8 @@
                     "atgFdPort": "7210",
                     "atgDrpPort": "7310",
                     "atgServerType": "pes",
-                    "managedServerHost": "atg2"                     
+                    "managedServerHost": "atg2",
+                    "wl_startManaged_onBoot": "false"                     
                 },      
                 { 
                     "managedServerName": "BCC",
@@ -170,7 +176,8 @@
                     "atgServerType": "bcc",
                     "bccFileSyncPort": "8816",
                     "bccLockPort": "9010",
-                    "managedServerHost": "atgsupport"                     
+                    "managedServerHost": "atgsupport",
+                    "wl_startManaged_onBoot": "false"                     
                 },                                      
                 { 
                     "managedServerName": "Lock1",
@@ -181,7 +188,8 @@
                     "atgDrpPort": "7310",
                     "atgServerType": "lock",
                     "atgLockManPort": "9012",
-                    "managedServerHost": "atgsupport"                     
+                    "managedServerHost": "atgsupport",
+                    "wl_startManaged_onBoot": "false"                     
                 },
                 { 
                     "managedServerName": "Lock2",
@@ -192,7 +200,8 @@
                     "atgDrpPort": "7310",
                     "atgServerType": "lock",
                     "atgLockManPort": "9022",
-                    "managedServerHost": "atgsupport"                     
+                    "managedServerHost": "atgsupport",
+                    "wl_startManaged_onBoot": "false"                     
                 }                                                     
                 ],
            "WEBLOGIC_datasources":
@@ -293,7 +302,9 @@
                     "loadDistribution": "round-robin",
                     "healthCheckUrl": "/",
                     "healthCheckMethod": "OPTIONS",
-                    "instanceHostname": "localhost"                    
+                    "instanceHome": "/u01/otd/production",
+                    "instanceHostname": "localhost",
+                    "otd_start_onBoot": "true"                 
                 },
                 { 
                     "configName": "endeca-servers",
@@ -309,10 +320,12 @@
                     "loadDistribution": "round-robin",
                     "healthCheckUrl": "/admin?op=ping",
                     "healthCheckMethod": "GET",
-                    "instanceHostname": "localhost"                    
+                    "instanceHome": "/u01/otd/production",
+                    "instanceHostname": "localhost",
+                    "otd_start_onBoot": "true"                    
                 }                
                 ],
-            "ORACLE_RDBMS_install": 
+            "ORACLE_11g_install": 
                 {
                     "oracleBase": "/u01/oracle",
                     "installOwner": "oracle",
@@ -324,6 +337,15 @@
                     "adminPW": "Password123",
                     "dbStorageLoc": "/u01/oracle/oradata",
                     "db_onBoot": "true"
-                }                                                            
+                },
+            "ORACLE_11g_clone": 
+                {
+                    "installOwner": "oracle",
+                    "oracleHome": "/u01/oracle/product/11.2.0/dbhome_1",
+                    "originalSID": "orcl",
+            		"newSID": "orclnew",
+                    "originalHost": "localhost",
+            		"newHost": "192.168.56.101"          		
+                }                                                                             
         }
 }

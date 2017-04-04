@@ -26,10 +26,12 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-import os
-
 from oc_provision_wrappers import commerce_setup_helper
 
+import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'mount_storage'
 
@@ -38,10 +40,10 @@ def mount_storage(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
                 
-    print "creating and mounting storage \n"
+    logging.info("creating and mounting storage")
     
     requiredFields = ['mountPoint', 'mountOwner', 'mountGroup']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)

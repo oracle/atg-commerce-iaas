@@ -29,6 +29,9 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 json_key = 'ATGPATCH_install'
 service_name = "ATG Patch"
@@ -38,13 +41,14 @@ def install_atgpatch(configData, full_path):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
 
     binary_path = full_path + "/binaries/atg11.2"
     response_files_path = full_path + "/responseFiles/atg11.2"
                     
-    print "installing " + service_name                
+    logging.info("installing " + service_name)
+                    
     requiredFields = ['dynamoRoot', 'installOwner']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
 
@@ -57,7 +61,7 @@ def install_atgpatch(configData, full_path):
     patch_destination = INSTALL_DIR + "/patch/" + PATCH_NAME
     
     if not os.path.exists(path_to_patch):
-        print "patch file " + path_to_patch + " does not exist - will not install"
+        logging.error("patch file " + path_to_patch + " does not exist - will not install")
         return False
     
     unzipCommand = "\"" + "unzip " + path_to_patch + " -d " + INSTALL_DIR + "/patch" + "\""

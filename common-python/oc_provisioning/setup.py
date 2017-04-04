@@ -28,11 +28,22 @@ __version__ = "1.0.0.0"
 
 
 try:
-    from setuptools import setup, find_packages
+    from setuptools import setup, find_packages, Command
+    import os
 except ImportError:
     from distutils.core import setup
 import sys
 
+class CleanCommand(Command):
+    """Clean up build files."""
+    user_options = []
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
+        
 setup(name='oc_provision_wrappers',
       version=__version__,
       description='Oracle Cloud Provisioning wrappers',
@@ -53,5 +64,8 @@ setup(name='oc_provision_wrappers',
           'requests',
           'abi',
           'ConfigParser'
-      ]
+      ],
+      cmdclass={
+          'clean': CleanCommand,
+      }      
       )

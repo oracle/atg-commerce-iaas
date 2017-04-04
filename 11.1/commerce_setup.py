@@ -33,6 +33,7 @@ import os
 from pprint import pprint
 import sys
 from urlparse import urlparse
+import traceback
 
 from oc_provision_wrappers import commerce_setup_helper 
 from oc_provision_wrappers import load_user_metadata
@@ -58,6 +59,9 @@ from oc_provision_wrappers.wls.v12_1_2 import weblogic_domain_settings
 from oc_provision_wrappers.wls.v12_1_2 import weblogic_helper
 from oc_provision_wrappers.wls.v12_1_2 import weblogic_install_managed_server
 from oc_provision_wrappers.wls.v12_1_2 import weblogic_packer
+from oc_provision_wrappers.wls import weblogic_boot_properties
+from oc_provision_wrappers.wls import weblogic_create_managed_scripts
+from oc_provision_wrappers import setup_logger
 
 
 sys.path.insert(0, os.path.abspath(".."))
@@ -93,13 +97,14 @@ config_wl_domain = None
 config_wl_ds = None
 create_wl_servers = None
 create_wl_machines = None
+create_wl_bootfiles = None
 pack_wl_domain = None
 install_oracle_db = None
 showDebug = None
 isOpenstack = None
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], '', ['java', 'addstorage', 'advancedStorage', 'weblogic', 'weblogicDomain', 'weblogicManagedServer',
+    opts, args = getopt.getopt(sys.argv[1:], '', ['java', 'addstorage', 'advancedStorage', 'weblogic', 'weblogicDomain', 'weblogicBootFiles', 'weblogicManagedServer',
                                                   'weblogicPackDomain', 'weblogicSettings', "weblogicDatasources", 'weblogicServers', 'weblogicMachines', 'atg', 'atgpatch',
                                                   'mdex', 'platformServices', 'toolsAndFramework', 'cas', 'endeca', 'dgraph', 'otdInstall', 'otdConfig',
                                                   'copy-ssh-keys', 'db', 'debug', 'openstack', 'configSource='])
@@ -148,6 +153,8 @@ for opt, arg in opts:
         create_wl_servers = True
     if opt == '--weblogicMachines':
         create_wl_machines = True
+    if opt == '--weblogicBootFiles':
+        create_wl_bootfiles = True        
     if opt == '--db':
         install_oracle_db = True
     if opt == '--openstack':
@@ -160,9 +167,11 @@ for opt, arg in opts:
   
 configData = None
 
+logger = setup_logger.setup_shared_logger('')
+
 # decide where to load our JSON data from
 if json_ds == None:
-    print "using default json configs \n"
+    logger.info("using default json configs ")
     json_ds = full_path + '/defaultJson/defaultConfig.json'
     configData = commerce_setup_helper.load_json_from_file(json_ds, root_json_key) 
 elif json_ds == "user-data":
@@ -193,71 +202,172 @@ if showDebug:
     pprint (configData)
 
 if copy_ssh_keys:
-    copy_ssh_keys_helper.copy_keys(configData, full_path) 
+    try:
+        copy_ssh_keys_helper.copy_keys(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
     
 if add_storage:
-    storage_helper.mount_storage(configData, full_path)  
+    try:
+        storage_helper.mount_storage(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
 
 if advanced_storage:
-    advanced_storage_helper.advanced_storage(configData, full_path)
+    try:
+        advanced_storage_helper.advanced_storage(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
        
 if install_java:
-    java_helper.install_java(configData, full_path)  
+    try:
+        java_helper.install_java(configData, full_path)  
+    except:
+        traceback.print_exc()
+        pass    
 
 if install_weblogic:
-    weblogic_helper.install_weblogic(configData, full_path)
+    try:
+        weblogic_helper.install_weblogic(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
         
 if create_wl_domain:
-    weblogic_domain_config.create_wl_domain(configData, full_path)     
+    try:
+        weblogic_domain_config.create_wl_domain(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass         
     
 if config_wl_domain:
-    weblogic_domain_settings.config_wl_domain(configData, full_path)
+    try:
+        weblogic_domain_settings.config_wl_domain(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
     
 if config_wl_ds:
-    weblogic_create_datasources.config_wl_datasources(configData, full_path)        
+    try:
+        weblogic_create_datasources.config_wl_datasources(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass           
      
 if create_wl_machines:
-    # for adding to already running domain
-    weblogic_create_machine.create_machines(configData, full_path)  
+    try:
+        # for adding to already running domain
+        weblogic_create_machine.create_machines(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass      
     
 if create_wl_servers:
-    # for adding to already running domain
-    weblogic_create_managed_server.create_servers(configData, full_path)  
+    try:
+        # for adding to already running domain
+        weblogic_create_managed_server.create_servers(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass      
 
 if pack_wl_domain:
-    weblogic_packer.pack_domain(configData, full_path) 
+    try:
+        weblogic_packer.pack_domain(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass     
     
 if managed_wl_server:
-    weblogic_install_managed_server.unpack_domain(configData, full_path)
+    try:
+        weblogic_install_managed_server.unpack_domain(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
+    
+if create_wl_bootfiles:
+    try:
+        weblogic_boot_properties.create_boot_properties(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass     
+    
+if managed_wl_server or create_wl_domain:
+    try:
+        # keep this after boot files. Without them, instances won't start
+        weblogic_create_managed_scripts.create_managed_scripts(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass         
                 
 if install_atg:
-    atg_helper.install_atg(configData, full_path)  
-    # This may be useful as its own option in the future. Leave here w/ATG install for now
-    create_atg_server_layers.generate_atg_server_layers(configData, full_path)
+    try:
+        atg_helper.install_atg(configData, full_path)
+        # This may be useful as its own option in the future. Leave here w/ATG install for now
+        create_atg_server_layers.generate_atg_server_layers(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass
     
 if install_atgpatch:
-    success = atgpatch_helper.install_atgpatch(configData, full_path)
-    # fix issues in the patch
-    if (success):
-        atgpatch_postinstall.post_install_cmds(configData, full_path)  
+    try:
+        success = atgpatch_helper.install_atgpatch(configData, full_path)
+        # fix issues in the patch
+        if (success):
+            atgpatch_postinstall.post_install_cmds(configData, full_path) 
+    except:
+        traceback.print_exc()
+        pass         
             
 if install_mdex:
-    mdex_helper.install_mdex(configData, full_path)
+    try:
+        mdex_helper.install_mdex(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
     
 if install_platform:
-    platform_helper.install_platformServices(configData, full_path)
+    try:
+        platform_helper.install_platformServices(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
 
 if install_tools:
-    tools_helper.install_toolsAndFramework(configData, full_path)    
+    try:
+        tools_helper.install_toolsAndFramework(configData, full_path)    
+    except:
+        traceback.print_exc()
+        pass    
     
 if install_cas:
-    cas_helper.install_cas(configData, full_path)          
+    try:
+        cas_helper.install_cas(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
     
 if install_otd:
-    otd_helper.install_otd(configData, full_path)      
+    try:
+        otd_helper.install_otd(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
 
 if config_otd:
-    otd_config.config_otd(configData, full_path)      
+    try:
+        otd_config.config_otd(configData, full_path) 
+    except:
+        traceback.print_exc()
+        pass         
 
 if install_oracle_db:
-    oracle_rdbms_install.install_oracle(configData, full_path)        
+    try:
+        oracle_rdbms_install.install_oracle(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass    
+
+logger.info("Setup Complete")     

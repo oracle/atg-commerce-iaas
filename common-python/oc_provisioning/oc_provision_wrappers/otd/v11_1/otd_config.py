@@ -27,7 +27,10 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
+import platform
+import logging
 
+logger = logging.getLogger(__name__)
 
 json_key = 'OTD_config'
 service_name = "OTD_Configuration"
@@ -38,7 +41,7 @@ def config_otd(configData, full_path):
     if json_key in configData:
         jsonArray = configData[json_key]
     else:
-        print json_key + " config data missing from json. will not install"
+        logging.error(json_key + " config data missing from json. will not install")
         return
     
     response_files_path = full_path + "/responseFiles/OTD11"
@@ -60,7 +63,9 @@ def config_otd(configData, full_path):
         LOAD_ALG = otdData['loadDistribution']
         HEALTH_CHECK_URL = otdData['healthCheckUrl']
         HEALTH_CHECK_METHOD = otdData['healthCheckMethod']
+        INSTANCE_HOME = otdData['instanceHome']
         INSTANCE_HOST = otdData['instanceHostname']
+        OTD_START_BOOT = otdData['otd_start_onBoot']
         
         TADM_COMMAND = INSTALL_DIR + "/bin/tadm"
         otdPassword_replacements = {'TADM_ADMINPASSWORD':ADMIN_PASSWORD}
@@ -91,4 +96,17 @@ def config_otd(configData, full_path):
         
         # start the instance
         startInstanceCommand = "\"" + TADM_COMMAND + " start-instance --user=" + ADMIN_USER + " --password-file=" + response_files_path + "/otdPassword.pwd --config=" + CONFIG_NAME + " " + INSTANCE_HOST + "\""
-        commerce_setup_helper.exec_as_user(INSTALL_OWNER, startInstanceCommand)                   
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, startInstanceCommand)
+        
+        if (platform.system() == 'SunOS'):
+            startStopPath = "/startStopScripts/solaris/bootScripts/"
+        else:
+            startStopPath = "/startStopScripts/bootScripts/"
+                
+        OTD_INSTANCE_NAME = 'net-' + CONFIG_NAME
+        SCRIPT_NAME = 'OTD-' + CONFIG_NAME
+        # copy start/stop script
+        otdScript_replacements = {'OTD_PROCESS_OWNER':INSTALL_OWNER, 'OTD_INSTANCE_HOME':INSTANCE_HOME, 'OTD_INSTANCE_NAME':OTD_INSTANCE_NAME}
+        commerce_setup_helper.copy_start_script(OTD_START_BOOT, full_path + startStopPath + 'OTDAdmin.master', otdScript_replacements, SCRIPT_NAME)
+        
+        commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "# echo " + SCRIPT_NAME + " start/stop script: /etc/init.d/" + SCRIPT_NAME + "\n\n")                        
