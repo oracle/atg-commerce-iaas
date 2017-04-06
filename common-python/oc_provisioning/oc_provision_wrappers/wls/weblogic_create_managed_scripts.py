@@ -100,7 +100,7 @@ def create_managed_scripts(configData, full_path):
                 
                 # make the path to the log dir, or first server start will fail with scripts
                 logging.info('Generating log dir for server ' + WL_SERVER_NAME)
-                SERVER_LOG_PATH = WL_DOMAIN_NAME + '/servers/' + WL_SERVER_NAME + '/logs'
+                SERVER_LOG_PATH = WL_DOMAIN_HOME + '/servers/' + WL_SERVER_NAME + '/logs'
                 commerce_setup_helper.mkdir_with_perms(SERVER_LOG_PATH, INSTALL_OWNER, INSTALL_GROUP)
                 
                 # fire up the instance 
