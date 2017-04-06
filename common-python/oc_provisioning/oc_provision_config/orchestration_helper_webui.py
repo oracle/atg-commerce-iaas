@@ -47,8 +47,8 @@ wrapper_script = "/opt/oracle/install/11.1/pywrapper.sh"
 # map the instance types in our property files to the flags we need to pass to our wrapper script. This tells wrapper what to install
 # remove weblogicSettings from weblogic map until added to gui
 instance_flags = {'atg': ['--java', '--atg'],
-                  'weblogic': ['--java', '--weblogic', '--weblogicDomain'],
-                  'weblogicManagedServer': ['--java', '--weblogic', '--weblogicManagedServer'],
+                  'weblogic': ['--java', '--weblogic', '--weblogicDomain', '--weblogicBootFiles'],
+                  'weblogicManagedServer': ['--java', '--weblogic', '--weblogicManagedServer', '--weblogicBootFiles'],
                   'otd': ['--java', '--otdInstall'],
                   'otdconfig': ['--otdConfig'],
                   'endeca': ['--endeca'],
