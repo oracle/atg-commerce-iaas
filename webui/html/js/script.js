@@ -546,15 +546,18 @@ $(document).ready(function () {
         $instance_type_info.append('<input type="hidden" name="config_source" value="' + data.config_source + '">');        
         $form.append($instance_type_info);
         
-        $form.append("Enter instance data: ");
-        var $instance_data_div = $('<div class="instance_data_div">');
-        $.each( data.instance_fields, function( key, val ) {
-        	$instance_data_div.append('<label class="instance_types_label">' + val + '</label>');        
-        	$instance_data_div.append('<input type="text" name="' + val + '" value="" >');
-        	$instance_data_div.append('<br/>');
-        });
-        $form.append($instance_data_div);
-        $form.append('<br/>'); 
+        // This data is useless for dbcs instances
+        if ((jQuery.inArray("dbcs", data.instance_types)) == -1) { 
+	        $form.append("Enter instance data: ");
+	        var $instance_data_div = $('<div class="instance_data_div">');
+	        $.each( data.instance_fields, function( key, val ) {
+	        	$instance_data_div.append('<label class="instance_types_label">' + val + '</label>');        
+	        	$instance_data_div.append('<input type="text" name="' + val + '" value="" >');
+	        	$instance_data_div.append('<br/>');
+	        });
+	        $form.append($instance_data_div);
+	        $form.append('<br/>'); 
+        }
         
         $form.append("Enter required fields: ");
         var $required_data_div = $('<div id="required_data_div" class="required_data_div">');
@@ -642,14 +645,21 @@ $(document).ready(function () {
         	}
         	if (isArray(val)) {
 	        	$html_to_return.append('<label class="subsection_input_label">' + key + ' ' + val[0] + '</label>');
-	        	$html_to_return.append('<input type="text" name="' + key + '" placeholder="' + val[1] + '" >');
+        		if (key == "dbcsJson") {
+        			// var test = JSON.stringify(eval("(" + val[1] + ")"),null,'\t');
+        			var $dbcsInput = $('<textarea class="dbcsJson" name="' + key + '" placeholder="' + val[1] + '" >');
+        			// $dbcsInput.attr("placeholder", test);
+        			$html_to_return.append($dbcsInput);
+        		} else {
+        			$html_to_return.append('<input type="text" name="' + key + '" placeholder="' + val[1] + '" >');
+        		}
 	        	$html_to_return.append('<br/>');      		
         	} else {
         		var $sub_html = $('<div id=' + key + '>');
         		$sub_html.append('<label class="subsection_label">Sub Section: ' + key + '</label>');        
         		$sub_html.append('<br/>');        		
         		$.each( val, function( subkey, subval ) {
-        			$sub_html.append('<label class="subsection_input_label">' + subkey + ' ' + subval[0] + '</label>');  
+        			$sub_html.append('<label class="subsection_input_label">' + subkey + ' ' + subval[0] + '</label>'); 
         			$sub_html.append('<input type="text" name="' + subkey + '" placeholder="' + subval[1] + '" >');
         			$sub_html.append('<br/>');        			
         		})
@@ -780,11 +790,19 @@ $(document).ready(function () {
             'selected_project'  : activeProject,
             'action' 		   	: 'add_instance'
             };
-            
+        
+
+        
         // only hold defaultjson for the user to see a value. We don't actually use it.
         config_source = $('input[name=config_source]').val();
         if (config_source == "defaultjson") {
         	config_source = ""; 
+        }
+        
+        // for dbcs, just pass the raw json
+        if (formData['instance_types'].includes('dbcs')) {
+	        dbcs_json = instance_data_json['ORACLE_DBCS']['dbcsJson'];	        
+	        formData['json_blob'] = dbcs_json;
         }
         
         formData['config_source'] = config_source;
@@ -808,13 +826,14 @@ $(document).ready(function () {
 		var return_data = {};
 				
 		// get immediate child inputs only, that are not marked disabled
-		$data.find('> input:not(:disabled)').each(function() {
+		$data.find('> input:not(:disabled), > textarea:not(:disabled)').each(function() {
 			var field_name = $(this).attr("name");
 			var field_value;
 			
 			if ($(this).is(':radio')) {			
 				field_holder = $('input[name=' + field_name +']:checked').val()
 			} else {
+				
 				if ($(this).val()) {
 					field_value = $(this).val();
 					
@@ -823,6 +842,10 @@ $(document).ready(function () {
 					field_value = $(this).attr("placeholder");
 				}
 				
+				// remove line breaks in textarea
+				if ($(this).is("textarea")) {	
+					field_value = field_value.replace(/\n/g,'');
+				}
 				field_holder[field_name] = field_value;
 			}						
 		});

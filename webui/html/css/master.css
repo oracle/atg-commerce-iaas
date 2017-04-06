@@ -102,6 +102,10 @@ button {
 
 }
 
+.form-container .dbcsJson {
+    height: 250px;
+}
+
 .form-container input {
     background-color: #FCFDFE;
     border: solid 1px #DFE4E7;
