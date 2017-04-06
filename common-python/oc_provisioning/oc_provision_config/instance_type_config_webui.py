@@ -15,7 +15,8 @@ instance_dependencies = {'atg': ['ATG_install', 'ATGPATCH_install', 'JAVA_instal
                          'otdconfig': ['OTD_config', 'copy_ssh_keys', 'advanced_storage'],
                          'endeca': ['ENDECA_install', 'copy_ssh_keys', 'advanced_storage'],
                          'dgraph': ['ENDECA_install', 'copy_ssh_keys', 'advanced_storage'],
-                         'db': ['ORACLE_RDBMS_install', 'copy_ssh_keys', 'advanced_storage']}
+                         'db': ['ORACLE_RDBMS_install', 'copy_ssh_keys', 'advanced_storage'],
+                         'dbcs': ['ORACLE_DBCS']}
 
 # entry point for collecting required data based on instance types selected
 def instance_type_config(instance_types):

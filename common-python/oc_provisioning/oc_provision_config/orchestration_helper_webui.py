@@ -104,7 +104,7 @@ def generate_orchestrations(project_name, domain, user, image_name):
     
     # delete any exinsting orchs    
     remove_existing_orchestrations(project_name)
-    
+      
     generate_secapp_data(project_name)
     generate_seclist_data(project_name)
     generate_storage_data(project_name)
@@ -129,7 +129,7 @@ def remove_existing_orchestrations(project_name):
 def generate_storage_yaml(project_name):
     """
     Generate ansible playbooks for OPC storage
-    """          
+    """
     data_type = "storage"
     sections = get_section_data(project_name, data_type)
     for section in sections:
@@ -147,7 +147,10 @@ def generate_instance_yaml(project_name):
     for section in sections:
         target_platform = get_config_item(project_name, section, 'targetPlatform', data_type)
         if (target_platform == 'opc'):
-            create_instance_yaml(section, project_name)
+            if (get_config_item(project_name, section, 'instancetypes', data_type) == 'dbcs'):
+                create_dbcs_instance_yaml(section, project_name)
+            else:
+                create_instance_yaml(section, project_name)
         elif (target_platform == 'openstack'):
             create_os_instance_yaml(section, project_name)
                
@@ -281,7 +284,43 @@ def create_os_instance_yaml(section_name, project_name):
     clean_data[0]['name'] = "Delete " + instance_name
     clean_data[0]['tasks'][0]['os_server']['name'] = get_config_item(project_name, section_name, HOSTNAME_KEY, data_type)
     write_yaml_data(clean_data, instance_cleanup_yaml, data_type, project_name)       
+
+def create_dbcs_instance_yaml(section_name, project_name):
+    """
+    Create yaml from template for DBCS instances
+    """    
+    data_type = "instances"
+    instance_name = section_name + "_dbcs_instance"
+    instance_yaml = instance_name + ".yaml"
+    instance_cleanup_yaml = instance_name + "_cleanup.yaml" 
+    vars_files = ['../oraclecompute_vars.yaml']
+       
+        # add json template name to create instance with
+    orch_json = "{{ lookup('template', '../templates/" + section_name + ".json', convert_data=False) }}"
     
+    # read the instance create template, and update the name and vars files
+    create_template = file('ansible_templates/opc/dbcs_create.yaml', 'r')
+    create_data = yaml.load(create_template) 
+    create_data[0]['name'] = "Create " + instance_name
+    create_data[0]['vars_files'] = vars_files    
+    tasks = create_data[0]['tasks']
+    for task in tasks:
+        if task['name'] == 'Create dbcs instance':            
+            task['oc_service']['payload'] = orch_json
+    write_yaml_data(create_data, instance_yaml, data_type, project_name)    
+
+    # read the instance delete template, and update the name and vars files
+    clean_template = file('ansible_templates/opc/dbcs_delete.yaml', 'r')
+    clean_data = yaml.load(clean_template) 
+    clean_data[0]['name'] = "Delete " + instance_name
+    clean_data[0]['vars_files'] = vars_files
+    tasks = clean_data[0]['tasks']
+    for task in tasks:
+        if task['name'] == 'Delete dbcs instance':
+            task['oc_service']['name'] = section_name    
+    
+    write_yaml_data(clean_data, instance_cleanup_yaml, data_type, project_name)
+                
 def create_instance_yaml(section_name, project_name):
     """
     Create yaml from template for OPC instances
@@ -632,7 +671,7 @@ def generate_secapp_data(project_name):
     write_orch_data(data, data_type, data_type, project_name)
     
     create_secapp_yaml(project_name, all_secapps_list)       
-                           
+                                                          
 def generate_instance_data(project_name, image_name):
     """
     Generate instance orchestrations
@@ -647,61 +686,68 @@ def generate_instance_data(project_name, image_name):
     
     sections = get_section_data(project_name, data_type)
     
+    # Holder for all json merged in one file
     master_json = {}
     
     for section in sections:
+
         json_data = {}
-        
-        data = copy.deepcopy(master_data)
-       
-        data['description'] = section + " Commerce Instance"
-        data['name'] = compute_name + "/" + section
-        data['oplans'][0]['objects'][0]['instances'][0]['label'] = section
-        data['oplans'][0]['objects'][0]['instances'][0]['name'] = compute_name + "/" + section
-        hostname = get_config_item(project_name, section, HOSTNAME_KEY, data_type)
-        data['oplans'][0]['objects'][0]['instances'][0]['hostname'] = hostname
-        data['oplans'][0]['objects'][0]['instances'][0]['imagelist'] = compute_name + "/" + image_name
-        data['oplans'][0]['objects'][0]['instances'][0]['shape'] = get_config_item(project_name, section, 'opc_shape', data_type)
-        data['oplans'][0]['objects'][0]['instances'][0]['sshkeys'][0] = compute_name + "/" + get_config_item(project_name, section, 'sshkeyname', data_type)
-        
-        instance_types = get_config_item(project_name, section, INSTANCE_TYPES_KEY, data_type).split(',')
-        optional_data_types = get_config_item(project_name, section, OPTIONAL_DATA_KEY, data_type)
-        config_source = get_config_item(project_name, section, 'configSource', data_type)
-        
-        # add json data to config products with if configSource is set to user-data
-        if (config_source == 'user-data'):
-            data['oplans'][0]['objects'][0]['instances'][0]['attributes']['userdata']['commerceSetup'] = json.loads(get_config_item(project_name, section, 'jsondata', data_type))           
-        
-        data['oplans'][0]['objects'][0]['instances'][0]['attributes']['userdata']['pre-bootstrap']['script'] = wrapper_script + " " + compute_script_flags(instance_types, optional_data_types, config_source)
+        if (get_config_item(project_name, section, 'instancetypes', data_type) == 'dbcs'):
+            json_data = json.loads(get_config_item(project_name, section, 'jsondata', data_type))
+            write_orch_data(json_data, section, 'json', project_name) 
+            # write json file for ansible template use
+            write_ansible_orch_template(json_data, section, data_type, project_name)
+        else:       
+            data = copy.deepcopy(master_data)
+           
+            data['description'] = section + " Commerce Instance"
+            data['name'] = compute_name + "/" + section
+            data['oplans'][0]['objects'][0]['instances'][0]['label'] = section
+            data['oplans'][0]['objects'][0]['instances'][0]['name'] = compute_name + "/" + section
+            hostname = get_config_item(project_name, section, HOSTNAME_KEY, data_type)
+            data['oplans'][0]['objects'][0]['instances'][0]['hostname'] = hostname
+            data['oplans'][0]['objects'][0]['instances'][0]['imagelist'] = compute_name + "/" + image_name
+            data['oplans'][0]['objects'][0]['instances'][0]['shape'] = get_config_item(project_name, section, 'opc_shape', data_type)
+            data['oplans'][0]['objects'][0]['instances'][0]['sshkeys'][0] = compute_name + "/" + get_config_item(project_name, section, 'sshkeyname', data_type)
             
-        data['oplans'][0]['objects'][0]['instances'][0]['networking']['eth0']['seclists'] = compute_seclists(hostname, instance_types)
-        
-        # write json data for configuring installers
-        json_data["commerceSetup"] = json.loads(get_config_item(project_name, section, 'jsondata', data_type))
-        
-        # keep a copy of all config data to dump a master config file later
-        master_json = dict_merge(master_json, json_data)
-
-        write_orch_data(json_data, section, 'json', project_name)        
-        
-        # if instance config has attached storage, add it to our output data
-        storage_list = ''
-        storage_attachments = []
-        storage_list = get_config_item(project_name, section, 'attachedstorage', data_type)
-        if storage_list:
-            storage_attachments = storage_list.split(',')           
-            if storage_attachments:
-                data['oplans'][0]['objects'][0]['instances'][0]['storage_attachments'] = storage_attachments
-                for idx, attachment in enumerate(storage_attachments):
-                    attachment = compute_name + "/" + attachment
-                    tempdict = {'index' : idx + 1, 'volume' : attachment}
-                    data['oplans'][0]['objects'][0]['instances'][0]['storage_attachments'][idx] = tempdict
+            instance_types = get_config_item(project_name, section, INSTANCE_TYPES_KEY, data_type).split(',')
+            optional_data_types = get_config_item(project_name, section, OPTIONAL_DATA_KEY, data_type)
+            config_source = get_config_item(project_name, section, 'configSource', data_type)
+            
+            # add json data to config products with if configSource is set to user-data
+            if (config_source == 'user-data'):
+                data['oplans'][0]['objects'][0]['instances'][0]['attributes']['userdata']['commerceSetup'] = json.loads(get_config_item(project_name, section, 'jsondata', data_type))           
+            
+            data['oplans'][0]['objects'][0]['instances'][0]['attributes']['userdata']['pre-bootstrap']['script'] = wrapper_script + " " + compute_script_flags(instance_types, optional_data_types, config_source)
+                
+            data['oplans'][0]['objects'][0]['instances'][0]['networking']['eth0']['seclists'] = compute_seclists(hostname, instance_types)
+            
+            # write json data for configuring installers
+            json_data["commerceSetup"] = json.loads(get_config_item(project_name, section, 'jsondata', data_type))
+            
+            # keep a copy of all config data to dump a master config file later
+            master_json = dict_merge(master_json, json_data)
+    
+            write_orch_data(json_data, section, 'json', project_name)        
+            
+            # if instance config has attached storage, add it to our output data
+            storage_list = ''
+            storage_attachments = []
+            storage_list = get_config_item(project_name, section, 'attachedstorage', data_type)
+            if storage_list:
+                storage_attachments = storage_list.split(',')           
+                if storage_attachments:
+                    data['oplans'][0]['objects'][0]['instances'][0]['storage_attachments'] = storage_attachments
+                    for idx, attachment in enumerate(storage_attachments):
+                        attachment = compute_name + "/" + attachment
+                        tempdict = {'index' : idx + 1, 'volume' : attachment}
+                        data['oplans'][0]['objects'][0]['instances'][0]['storage_attachments'][idx] = tempdict
             
 
-        # write orchestration files for direct user use
-        write_orch_data(data, section, data_type, project_name)
-        # write orchestration files for ansible template use
-        write_ansible_orch_template(data, section, data_type, project_name)
+            # write orchestration files for direct user use
+            write_orch_data(data, section, data_type, project_name)
+            # write orchestration files for ansible template use
+            write_ansible_orch_template(data, section, data_type, project_name)
         
     # write master config
     write_orch_data(master_json, "masterConfig", 'prettyJson', project_name) 
