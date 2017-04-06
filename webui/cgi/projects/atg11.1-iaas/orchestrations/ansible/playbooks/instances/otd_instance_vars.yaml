@@ -1,0 +1,2 @@
+environmentname: otd
+envorchestration: '{{ environmentname }}'

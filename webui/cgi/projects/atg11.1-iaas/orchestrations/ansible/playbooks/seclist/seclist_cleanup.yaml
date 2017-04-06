@@ -1,0 +1,124 @@
+- gather_facts: true
+  hosts: localhost
+  name: Delete seclists
+  tasks:
+  - name: authenticate
+    oc_authenticate:
+      endpoint: '{{ endpoint }}'
+      password: '{{ password }}'
+      user: '{{ user }}'
+    register: cookie
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atg_support'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atg_support'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/db_server'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/db_server'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atgsupport'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atgsupport'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atgdb'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atgdb'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atg2'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atg2'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/otd_server'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/otd_server'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/endeca_instances'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/endeca_instances'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/otd'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/otd'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atg1'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atg1'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/weblogic_admin'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/weblogic_admin'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atg_instances'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/atg_instances'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/endeca2'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/endeca2'
+  - ignore_errors: 'yes'
+    name: delete seclist
+    oc_security_list:
+      action: delete
+      cookie: '{{ cookie.cookie }}'
+      endpoint: '{{ endpoint }}'
+      name: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/endeca1'
+      resourcename: !!python/unicode '/Compute-atgdevcs/michael.shanley@oracle.com/endeca1'
+  vars_files:
+  - ../oraclecompute_vars.yaml

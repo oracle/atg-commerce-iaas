@@ -1,0 +1,15 @@
+- gather_facts: true
+  hosts: localhost
+  name: Create dbcsTest_dbcs_instance
+  tasks:
+  - name: Create dbcs instance
+    oc_service:
+      action: add
+      endpoint: '{{ dbcsendpoint }}'
+      password: '{{ password }}'
+      payload: '{{ lookup(''template'', ''../templates/dbcsTest.json'', convert_data=False) }}'
+      service: dbcs
+      tenant: '{{ tenant }}'
+      user: '{{ dbcsuser }}'
+  vars_files:
+  - ../oraclecompute_vars.yaml
