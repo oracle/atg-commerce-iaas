@@ -1,5 +1,0 @@
-sectionname: atgdb_storage
-storagevolume: '{{ sectionname }}'
-storagevolumedescription: atg database storage
-storagevolumeprops: /oracle/public/storage/latency
-storagevolumesize: 20g

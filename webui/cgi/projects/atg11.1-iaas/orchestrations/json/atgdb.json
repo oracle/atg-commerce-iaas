@@ -1,1 +1,0 @@
-{"commerceSetup": {"ORACLE_RDBMS_install": {"oraInventoryDir": "/u01/oraInventory", "installHost": "localhost", "installOwner": "oracle", "dbStorageLoc": "/u01/oracle/oradata", "installGroup": "oinstall", "db_onBoot": "true", "adminPW": "Password123", "oracleBase": "/u01/oracle", "oracleSID": "orcl", "oracleHome": "/u01/oracle/product/11.2.0/dbhome_1"}}}

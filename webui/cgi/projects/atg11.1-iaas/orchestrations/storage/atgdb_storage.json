@@ -1,1 +1,0 @@
-{"oplans": [{"obj_type": "storage/volume", "objects": [{"description": "atg database storage", "size": "20g", "name": "/Compute-atgdevcs/michael.shanley@oracle.com/atgdb_storage", "properties": ["/oracle/public/storage/latency"]}], "label": "create_storage"}], "description": "atgdb_storage Commerce Storage", "name": "/Compute-atgdevcs/michael.shanley@oracle.com/atgdb_storage"}

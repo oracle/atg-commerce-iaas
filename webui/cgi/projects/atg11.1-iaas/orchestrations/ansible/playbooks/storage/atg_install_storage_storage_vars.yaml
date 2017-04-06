@@ -1,5 +1,0 @@
-sectionname: atg_install_storage
-storagevolume: '{{ sectionname }}'
-storagevolumedescription: atg install storage
-storagevolumeprops: /oracle/public/storage/default
-storagevolumesize: 10g
