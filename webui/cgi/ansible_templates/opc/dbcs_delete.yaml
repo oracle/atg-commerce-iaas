@@ -1,0 +1,15 @@
+- gather_facts: true
+  hosts: localhost
+  name: Delete dbcs_instance
+  tasks:
+  - name: Delete dbcs instance
+    oc_service:
+      action: delete
+      endpoint: '{{ dbcsendpoint }}'
+      password: '{{ password }}'
+      user: '{{ dbcsuser }}'
+      tenant: '{{ tenant }}'
+      service: dbcs
+      name: atgTest
+  vars_files:
+  - ../oraclecompute_vars.yaml      

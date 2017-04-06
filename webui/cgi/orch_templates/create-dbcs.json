@@ -3,7 +3,7 @@
   "version": "11.2.0.4",
   "level": "PAAS",
   "edition": "EE",
-  "subscriptionType": "MONTHLY",
+  "subscriptionType": "HOURLY",
   "description": "atgTest",
   "shape": "oc3",
   "vmPublicKeyText": "ssh-rsa AAAA......",

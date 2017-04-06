@@ -325,14 +325,14 @@ if (action == "add_instance_form"):
     
     instance_types = {'ATG Install': 'atg', 'WebLogic - Admin Server': 'weblogic', 'WebLogic - Managed Server': 'weblogicManagedServer', 
                       'Endeca - all components': 'endeca', 'Endeca - DGraph only': 'dgraph', 'OTD install only': 'otd', 
-                      'OTD configuration': 'otdconfig', 'Oracle Database': 'db'}
+                      'OTD configuration': 'otdconfig', 'Oracle Database on IaaS': 'db', 'Oracle Database Cloud': 'dbcs'}
         
     enc = json.JSONEncoder(sort_keys=True)
     print(enc.encode(instance_types))   
 
 # add a new instance    
 if (action == "add_instance"):
-    
+        
     data_type = "instances"
     
     instance_name = form.getvalue('instance_name')
@@ -369,7 +369,13 @@ if (action == "add_instance"):
     instance_data['jsonData'] = json_blob
     instance_data['attachedStorage'] = attached_storage
     instance_data['optional_data_types'] = ",".join(optional_data_types)
-
+    
+    # if this is a dbcs instance, we just get raw json from the textarea. Need to set values here.
+    if (instance_data['instanceTypes'] == "dbcs"):
+        tempjson = eval(instance_data['jsonData'])
+        instance_data['name'] = tempjson['serviceName']
+        instance_name = tempjson['serviceName']
+        
     try:
         orchestration_helper.add_config_section(selected_project, data_type, instance_name, instance_data)    
         response_data = {'instance': instance_name, 'status': 'success', 'message': 'Instance Added'}

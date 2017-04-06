@@ -106,7 +106,8 @@
                     "atgFdPort": ["[ATG File Deploy port]", "7210"],
                     "atgDrpPort": ["[ATG DRP port]", "7310"],
                     "atgServerType": ["[ATG server type. one of page,pes,bcc,lock]", "page"],
-                    "managedServerHost": ["[Hostname instance runs on]", "atg1"]          
+                    "managedServerHost": ["[Hostname instance runs on]", "atg1"],
+                    "wl_startManaged_onBoot": ["[Start WebLogic managed server on boot true/false]", "true"]        
                 }
                 ],
             "WEBLOGIC_datasources":
@@ -179,7 +180,9 @@
                     "loadDistribution": ["[OTD load distribution method]", "round-robin"],
                     "healthCheckUrl": ["[Healthcheck URL]", "/"],
                     "healthCheckMethod": ["[Healthcheck Method]", "OPTIONS"],
-                    "instanceHostname": ["[OTD vitrual server hostname]", "localhost"]                    
+                    "instanceHostname": ["[OTD vitrual server hostname]", "localhost"],
+                    "instanceHome": ["[OTD admin install path]", "/u01/otd/production"],
+                    "otd_start_onBoot": ["[Start OTD virtual server on boot true/false]", "true"]                                        
                 },
                 { 
                     "configName": ["[OTD config name]", "endeca-servers"],
@@ -195,7 +198,9 @@
                     "loadDistribution": ["[OTD load distribution method]", "round-robin"],
                     "healthCheckUrl": ["[Healthcheck URL]", "/admin?op=ping"],
                     "healthCheckMethod": ["[Healthcheck Method]", "GET"],
-                    "instanceHostname": ["[OTD vitrual server hostname]", "localhost"]                    
+                    "instanceHostname": ["[OTD vitrual server hostname]", "localhost"],
+                    "instanceHome": ["[OTD admin install path]", "/u01/otd/production"],
+                    "otd_start_onBoot": ["[Start OTD virtual server on boot true/false]", "true"]                                        
                 }                
                 ],                
             "ORACLE_RDBMS_install": 
@@ -212,6 +217,11 @@
                     "adminPW": ["[enter Oracle admin password]", "Password123"],
                     "dbStorageLoc": ["[enter Oracle db storage path]", "/u01/oracle/oradata"],
                     "db_onBoot": ["[Start Oracle Database on boot true/false]", "true"]
-                }                                                            
+                },
+            "ORACLE_DBCS": 
+                {
+                    "required": ["[required]", "true"],
+                    "dbcsJson": ["[Enter DBCS REST create instance body]", "see create-dbcs.json in templates, or DBCS docs"]
+                }                                                                               
         }
 }
