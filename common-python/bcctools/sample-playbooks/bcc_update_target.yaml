@@ -1,0 +1,43 @@
+- hosts: localhost
+  name: Update Target
+  tasks:
+  - name: Get Session Confirmation
+    # we need a valid session conf before we can do anything else
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    # save the result in session_data
+    register: session_data
+    
+  - name: Login
+    bcc_login:
+      action: login
+      # session_data set in bcc_session_confirmation contains the cookie data we need
+      cookie: "{{ session_data.session_cookie }}"
+      # get login credentials from environment variables
+      username: "{{ lookup('env','BCC_USER') }}"
+      password: "{{ lookup('env','BCC_PASSWORD') }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      
+  - name: Get Target By Name
+    bcc_get_target_by_name:
+      action: get_target
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      targetName: "Test"
+    register: targetresult
+       
+  - name: Update Target
+    bcc_update_target:
+      action: update_target
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      # change name of target to TestChange (it was test in our bcc_get_target_by_name lookup)
+      targetName: "TestChange"
+      delimitedRepositoryMappings: "/atg/userprofiling/PersonalizationRepository$$/atg/userprofiling/PersonalizationRepository_production"
+      # get the target ID from the targetresult we got in bcc_get_target_by_name
+      targetID: "{{ targetresult.target.targetDef.ID }}"
+
+ 
+
+

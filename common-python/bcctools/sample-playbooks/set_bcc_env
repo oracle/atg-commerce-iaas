@@ -1,0 +1,5 @@
+export BCC_ENDPOINT="http://localhost:7103"
+export BCC_USER="admin"
+export BCC_PASSWORD="Admin123"
+export ANSIBLE_INVENTORY=$PWD/ansible_hosts
+

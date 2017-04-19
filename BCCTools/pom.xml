@@ -1,0 +1,328 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.oracle.ateam</groupId>
+	<artifactId>BCCTools</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<properties>
+		<!-- Version of atg we are using. This is used to pull dependencies. -->
+		<atg.version>11.1</atg.version>
+		<!-- Path to root of ATG installation. -->
+		<atg.root>${env.DYNAMO_ROOT}</atg.root>
+		<!-- This is the top level ATG module that will be created. -->
+		<atg.ateam.home>${atg.root}/BCCTools</atg.ateam.home>
+		<module.dir.name>BCCTools</module.dir.name>
+		<!-- This is used by submodules to determine where they go on the filesystem. -->
+		<atg.module.home>${atg.ateam.home}</atg.module.home>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Our MANIFEST.MF in EStore contains Build-Date: ${timestamp} -->
+		<!-- Filtering will take this value and replace the variable in the MANIFEST when maven executes -->
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+		<!-- Used to populate ATG-Build in MANIFEST.MF. You can use this to track different code versions. -->
+		<!-- This will show up as Build Number in /dyn/admin under what's running -->
+		<build.number>123</build.number>
+		
+	</properties>
+	
+  <!-- OOTB Oracle Commerce dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>atg</groupId>
+			<artifactId>ADC-classes</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>atg</groupId>
+			<artifactId>DAS-classes</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>atg</groupId>
+			<artifactId>DAS-servlet</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>atg</groupId>
+			<artifactId>DASUI-uiclasses</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>atg</groupId>
+			<artifactId>DCS-classes</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>atg</groupId>
+			<artifactId>DPS-classes</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>atg</groupId>
+			<artifactId>DSS-classes</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>atg</groupId>
+			<artifactId>Publishing-Base</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+						<dependency>
+			<groupId>atg</groupId>
+			<artifactId>Publishing-agent-base</artifactId>
+			<version>${atg.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+	<!-- This tells maven to include files under the src/main/java tree with extensions other than the default .java/.class  -->
+	<!-- Without this, properties files in the src/main/java tree would not be included. -->
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<!-- Compile source code -->
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>1.7</source>
+						<target>1.7</target>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<configuration>
+						<includeEmptyDirs>true</includeEmptyDirs>
+					</configuration>
+					<executions>
+						<execution>
+							<!-- Copy MANIFEST.MF to the proper location in ATG_ROOT so this is setup as an ATG module -->
+							<id>copy-module-manifest</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${atg.module.home}</outputDirectory>
+								<overwrite>true</overwrite>
+								<resources>
+									<resource>
+										<directory>src/main/module</directory>
+										<!-- You can use filtering if you want to include a custom field in the manifest -->
+										<filtering>true</filtering>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+						<execution>
+							<!-- Copy our liveconfig layer to the module directory -->
+							<id>copy-liveconfig-layer</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${atg.module.home}</outputDirectory>
+								<overwrite>true</overwrite>
+								<resources>
+									<resource>
+										<directory>src/main/</directory>
+										<includes>
+											<include>liveconfig/**</include>
+										</includes>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+						<execution>
+							<!-- Copy extra configlayers to the module directory -->
+							<id>copy-configlayers</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${atg.module.home}</outputDirectory>
+								<overwrite>true</overwrite>
+								<resources>
+									<resource>
+										<directory>src/main/</directory>
+										<includes>
+											<include>configlayers/**</include>
+										</includes>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+						<execution>
+							<!-- Copy j2ee trees to the module directory -->
+							<id>copy-j2ee-app</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${atg.module.home}</outputDirectory>
+								<overwrite>true</overwrite>
+								<resources>
+									<resource>
+										<directory>src/main/j2ee-apps</directory>
+										<includes>
+											<include>*/**</include>
+										</includes>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+               <!-- Bundle classes.jar, config.jar, resources.jar -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.6</version>
+					<executions>
+						<execution>
+							<id>create-classes-jar</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+							<configuration>
+								<skipIfEmpty>true</skipIfEmpty>
+								<classesDirectory>target/classes</classesDirectory>
+								<finalName>classes</finalName>
+								<outputDirectory>${atg.module.home}/lib</outputDirectory>
+								<archive>
+									<!-- Add a timestamp to our manifest showing when this was built -->
+									<!-- You can add any other fields you want here. Common examples: build number, source control revision number, branch name -->
+									<manifest>
+										<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									</manifest>
+									<manifestEntries>
+										<Build-Time>${maven.build.timestamp}</Build-Time>
+									</manifestEntries>
+								</archive>
+							</configuration>
+						</execution>
+						<execution>
+							<id>create-config-jar</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+							<configuration>
+								<skipIfEmpty>true</skipIfEmpty>
+								<classesDirectory>src/main/config</classesDirectory>
+								<finalName>config</finalName>
+								<outputDirectory>${atg.module.home}/config</outputDirectory>
+								<archive>
+									<manifest>
+										<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									</manifest>
+									<manifestEntries>
+										<Build-Time>${maven.build.timestamp}</Build-Time>
+									</manifestEntries>
+								</archive>
+							</configuration>
+						</execution>
+						<execution>
+							<!-- This is for demonstration purposed. The default CRS install does not contain resources.jar assets. -->
+							<id>create-resources-jar</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+							<configuration>
+								<skipIfEmpty>true</skipIfEmpty>
+								<classesDirectory>target/classes</classesDirectory>
+								<finalName>resources</finalName>
+								<outputDirectory>${atg.module.home}/lib</outputDirectory>
+								<includes>
+									<include>**/*.properties</include>
+									<include>META-INF/*</include>
+								</includes>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-jar-plugin
+										</artifactId>
+										<versionRange>
+											[2.6,)
+										</versionRange>
+										<goals>
+											<goal>jar</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+			<!-- Copy dependencies to the module lib directory. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+			</plugin>
+			<plugin>
+			<!-- This cleans our atg.module directory when we run mvn clean. -->
+			<!-- This needs to be explicitly done since it is outside the maven default target directory. -->
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+			<plugin>
+			<!-- Will be used to copy resources. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+			</plugin>
+			<plugin>
+			<!-- Plugin that calls runAssembler to build ear files. -->
+				<groupId>com.oracle.atg.ateam</groupId>
+				<artifactId>atg-runAssembler-plugin</artifactId>
+				<version>1.0</version>
+			</plugin>		
+		</plugins>
+	</build>
+
+</project>

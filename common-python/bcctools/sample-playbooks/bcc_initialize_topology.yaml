@@ -1,0 +1,31 @@
+- hosts: localhost
+  name: Initialize Toplogy
+  tasks:
+  - name: Get Session Confirmation
+    # we need a valid session conf before we can do anything else
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    register: session_data
+    
+  - name: Login
+    bcc_login:
+      action: login
+      cookie: "{{ session_data.session_cookie }}"
+      # get login credentials from environment variables
+      username: "{{ lookup('env','BCC_USER') }}"
+      password: "{{ lookup('env','BCC_PASSWORD') }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}" 
+      
+    # make any pending changes live  
+  - name: Initialize Toplogy
+    bcc_initialize_topology:
+      action: initialize
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    register: result
+    
+  - debug: var=result
+      
+
+

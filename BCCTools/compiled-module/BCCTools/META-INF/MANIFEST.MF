@@ -1,0 +1,11 @@
+ATG-Product: BCCTools
+Manifest-Version: 1.0
+ATG-Client-Class-Path: lib/classes.jar
+ATG-Class-Path: lib/classes.jar
+ATG-Config-Path: config/config.jar
+ATG-Required: DAS
+Build-Date: 2017-04-19 13:40
+ATG-Build: 123
+
+Name: lib/classes.jar
+ATG-Client-Update-File: true

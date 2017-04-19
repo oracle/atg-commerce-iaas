@@ -1,0 +1,42 @@
+- hosts: localhost
+  name: Is Primary Agent
+  tasks:
+  - name: Get Session Confirmation
+    # we need a valid session conf before we can do anything else
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    register: session_data
+    
+  - name: Login
+    bcc_login:
+      action: login
+      cookie: "{{ session_data.session_cookie }}"
+      # get login credentials from environment variables
+      username: "{{ lookup('env','BCC_USER') }}"
+      password: "{{ lookup('env','BCC_PASSWORD') }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}" 
+      
+  - name: Get Agent ID
+    bcc_get_agent_id:
+      action: get_agent_id
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      # get tha agent ID for agent with name TestAgent that belongs to target name Test
+      targetName: "Test"
+      agentName: "TestAgent"
+    register: agentresult   
+    
+    # check if agent is primary (live)    
+  - name: Is Primary Agent
+    bcc_is_primary_agent:
+      action: is_primary_agent
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      agentID: "{{ agentresult.agentID.agentId }}"
+    register: result
+    
+  - debug: var=result.agentID.isPrimary
+      
+
+

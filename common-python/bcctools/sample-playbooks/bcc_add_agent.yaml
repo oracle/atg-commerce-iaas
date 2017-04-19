@@ -1,0 +1,41 @@
+- hosts: localhost
+  name: Add Agent
+  tasks:
+  - name: Get Session Confirmation
+    # we need a valid session conf before we can do anything else
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    register: session_data
+    
+  - name: Login
+    bcc_login:
+      action: login
+      cookie: "{{ session_data.session_cookie }}"
+      # get login credentials from environment variables
+      username: "{{ lookup('env','BCC_USER') }}"
+      password: "{{ lookup('env','BCC_PASSWORD') }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}" 
+         
+  - name: Get Target By Name
+    bcc_get_target_by_name:
+      action: get_target
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      # This assumes you have a target named Test. It will fail if you don't      
+      targetName: "Test"
+    # Save the results of getting the target into targetresult variable
+    register: targetresult
+    
+  - name: Add Agent
+    bcc_add_agent:
+      action: add_agent
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      agentDisplayName: "TestAgent"
+      agentEssential: True
+      transportURL: "rmi://localhost:8001"
+      includeAssetDestinations: "/atg/epub/file/ConfigFileSystem,/atg/epub/file/WWWFileSystem"
+      # get the target ID from the targetresult variable we set in get_target_by_name
+      targetID: "{{ targetresult.target.targetDef.ID }}"
+            

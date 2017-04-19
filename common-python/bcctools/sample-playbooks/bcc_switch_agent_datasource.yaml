@@ -1,0 +1,52 @@
+- hosts: localhost
+  name: Switch Agent Datasource
+  tasks:
+  - name: Get Session Confirmation
+    # we need a valid session conf before we can do anything else
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    # save the result in session_data
+    register: session_data
+    
+  - name: Login
+    bcc_login:
+      action: login
+      # session_data set in bcc_session_confirmation contains the cookie data we need
+      cookie: "{{ session_data.session_cookie }}"
+      # get login credentials from environment variables
+      username: "{{ lookup('env','BCC_USER') }}"
+      password: "{{ lookup('env','BCC_PASSWORD') }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      
+  - name: Get Agent ID
+    bcc_get_agent_id:
+      action: get_agent_id
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      # Get agent with name TestAgent, that belongs to target name Test
+      targetName: "Test"
+      agentName: "TestAgent"
+    register: agentresult
+    
+  - name: Get Target By Name
+    bcc_get_target_by_name:
+      action: get_target
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      targetName: "Test"
+    register: targetresult 
+            
+  - name: Switch Agent Datasource
+    bcc_switch_agent_datasource:
+      action: switch_agent_datasource
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      # get the target ID from the targetresult we got in bcc_get_target_by_name
+      switchTargetID: "{{ targetresult.target.targetDef.ID }}"
+      # get the agent ID from the agentresult we got in get_agent_id
+      agentIDs: "{{ agentresult.agentID.agentId }}"
+    register: result
+          
+
+

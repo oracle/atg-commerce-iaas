@@ -1,0 +1,7 @@
+deploymentTopology.xml is the original topology definition, in XML format.
+base64Topology is this file converted to a base64 string.
+
+To convert a file to a base64 string, on unix/linux, execute:
+base64 --wrap=0 deploymentTopology.xml > base64Topology
+
+Note the --wrap=0 arg. You want your base64 data as one continuous string.

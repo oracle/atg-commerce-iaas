@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<actor-template default-chain-id="addTarget" xsi:noNamespaceSchemaLocation="http://www.atg.com/xsds/actorChain_1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <actor-chain id="addTarget">
+    <form id="topologyEditFormHandler" name="/atg/epub/deployment/TopologyEditFormHandler" handle="addTarget" var="topologyEditFormHandler">
+      <input name="targetDisplayName" value="${param.targetName}"/>
+      <input name="description" value="${param.targetDescription}"/>
+      <input name="flagAgents" value="${param.flagAgents}"/>
+      <input name="targetOneOff" value="${param.targetOneOff}"/>
+      <input name="delimitedRepositoryMappings" value="${param.delimitedRepositoryMappings}"/>
+      <input name="successURL" value="${param.tefhSuccess}"/>
+      <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/tefh-failure"/>      
+    </form>
+  </actor-chain>
+  
+  <actor-chain id="updateTarget">
+    <form id="topologyEditFormHandler" name="/atg/epub/deployment/TopologyEditFormHandler" handle="updateTarget" var="topologyEditFormHandler">
+      <input name="targetDisplayName" value="${param.targetName}"/>
+      <input name="description" value="${param.targetDescription}"/>
+      <input name="flagAgents" value="${param.flagAgents}"/>
+      <input name="targetOneOff" value="${param.targetOneOff}"/>
+      <input name="delimitedRepositoryMappings" value="${param.delimitedRepositoryMappings}"/>
+      <input name="targetID" value="${param.targetID}"/>
+      <input name="successURL" value="${param.tefhSuccess}"/>
+      <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/tefh-failure"/>       
+    </form>
+  </actor-chain> 
+
+  <actor-chain id="deleteTarget">
+    <form id="topologyEditFormHandler" name="/atg/epub/deployment/TopologyEditFormHandler" handle="deleteTarget" var="topologyEditFormHandler">
+      <input name="targetID" value="${param.targetID}"/>
+      <input name="successURL" value="${param.tefhSuccess}"/>
+      <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/tefh-failure"/>       
+    </form>
+  </actor-chain>        
+  
+  <actor-chain id="tefh-failure" transaction="TX_SUPPORTS">
+    <actor id="error" name="/com/oracle/ateam/bcctools/BCCActor" chain-id="tefh-error" return-model-var="model">
+      <output id="model" add-map-children="true" value="${model}"/>
+    </actor>
+  </actor-chain>
+  
+  <actor-chain id="tefh-error" transaction="TX_SUPPORTS">
+    <component id="fh" name="/atg/epub/deployment/TopologyEditFormHandler" component-var="fh">
+      <output id="formError" name="formError" value="${fh.formError}"/>
+      <output id="formExceptions" name="formExceptions" value="${fh.formExceptions}"/>
+    </component>
+  </actor-chain>  
+  
+  <actor-chain id="addAgent">
+    <form id="topologyEditFormHandler" name="/atg/epub/deployment/TopologyEditFormHandler" handle="addAgent" var="topologyEditFormHandler">
+      <input name="agentDisplayName" value="${param.agentDisplayName}"/>
+      <input name="description" value="${param.agentDescription}"/>
+      <input name="excludeAssetDestinations" class-name="[Ljava.lang.String;" value="${param.excludeAssetDestinations}">
+      	<tag-converter class-name="atg.droplet.ArrayTagConverter"/>
+      </input>
+      <input name="includeAssetDestinations" class-name="[Ljava.lang.String;" value="${param.includeAssetDestinations}">
+      	<tag-converter class-name="atg.droplet.ArrayTagConverter"/>
+      </input>
+      <input name="delimitedDestinationMap" value="${param.delimitedDestinationMap}"/>
+      <input name="agentEssential" value="${param.agentEssential}"/>
+      <input name="transportURL" value="${param.transportURL}"/>
+      <input name="targetID" value="${param.targetID}"/>
+      <input name="successURL" value="${param.tefhSuccess}"/>
+      <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/tefh-failure"/>        
+    </form>
+  </actor-chain> 
+
+  <actor-chain id="updateAgent">
+    <form id="topologyEditFormHandler" name="/atg/epub/deployment/TopologyEditFormHandler" handle="updateAgent" var="topologyEditFormHandler">
+      <input name="agentDisplayName" value="${param.agentDisplayName}"/>
+      <input name="description" value="${param.agentDescription}"/>
+      <input name="excludeAssetDestinations" class-name="[Ljava.lang.String;" value="${param.excludeAssetDestinations}">
+      	<tag-converter class-name="atg.droplet.ArrayTagConverter"/>
+      </input>
+      <input name="includeAssetDestinations" class-name="[Ljava.lang.String;" value="${param.includeAssetDestinations}">
+      	<tag-converter class-name="atg.droplet.ArrayTagConverter"/>
+      </input>
+      <input name="delimitedDestinationMap" value="${param.delimitedDestinationMap}"/>
+      <input name="agentEssential" value="${param.agentEssential}"/>
+      <input name="transportURL" value="${param.transportURL}"/>
+      <input name="transportType" value="${param.transportType}"/>
+      <input name="targetID" value="${param.targetID}"/>
+      <input name="agentID" value="${param.agentID}"/>
+      <input name="successURL" value="${param.tefhSuccess}"/>
+      <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/tefh-failure"/>         
+    </form>
+  </actor-chain> 
+   
+  <actor-chain id="deleteAgent">
+    <form id="topologyEditFormHandler" name="/atg/epub/deployment/TopologyEditFormHandler" handle="deleteAgent" var="topologyEditFormHandler">
+      <input name="agentID" value="${param.agentID}"/>
+      <input name="successURL" value="${param.tefhSuccess}"/>
+      <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/tefh-failure"/>        
+    </form>
+  </actor-chain>    
+   
+   <actor-chain id="initializeTopology">
+    <form id="topologyEditFormHandler" name="/atg/epub/deployment/TopologyEditFormHandler" handle="initializeTopology" var="topologyEditFormHandler">
+    	<input name="surrogateTargetIDToInitOptionMap" class-name="java.util.Map" value="${param.surrogateTargetIDToInitOptionMap}">
+    		<tag-converter class-name="atg.droplet.MapTagConverter"/>
+    	</input>
+        <input name="successURL" value="${param.tefhSuccess}"/>
+        <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/tefh-failure"/>     	
+    </form>
+  </actor-chain>      
+  
+   <actor-chain id="getAllTopologies">
+	<component id="topologyManager" name="/atg/epub/deployment/TopologyManager" method="getAllTopologies" component-var="topologyManager" method-return-var="topologies">
+	  <output id="topologies" name="topologies" value="${topologies}" />
+	</component>
+  </actor-chain>  
+  
+   <actor-chain id="getTargetByID">
+	<component id="topologyManager" name="/atg/epub/deployment/TopologyManager" method="getTargetByID" component-var="topologyManager" method-return-var="target">
+	  <input name="targetID" class-name="java.lang.String" value="${param.targetID}" />
+	  <output id="target" name="target" value="${target}" />
+	</component>
+  </actor-chain>
+  
+   <actor-chain id="isPrimaryTarget">
+	<component id="topologyManager" name="/atg/epub/deployment/TopologyManager" method="getTargetByID" component-var="topologyManager" method-return-var="target">
+	  <input name="targetID" class-name="java.lang.String" value="${param.targetID}" />
+	  <output id="isPrimary" name="isPrimary" value="${target.primary}" />
+	</component>
+  </actor-chain> 
+  
+   <actor-chain id="isPrimaryAgent">
+	<component id="topologyManager" name="/atg/epub/deployment/TopologyManager" method="getAgentByID" component-var="topologyManager" method-return-var="agent">
+	  <input name="agentID" class-name="java.lang.String" value="${param.agentID}" />
+	  <output id="isPrimary" name="isPrimary" value="${agent.primary}" />
+	</component>
+  </actor-chain>                  
+  
+   <actor-chain id="getTargetByName">
+	<component id="bccTools" name="/com/oracle/ateam/bcctools/BCCTools" method="getTargetByName" component-var="bccTools" method-return-var="targetDef">
+	  <input name="targetName" class-name="java.lang.String" value="${param.targetName}" />
+	  <output id="targetDef" name="targetDef" value="${targetDef}" />
+	</component>
+  </actor-chain>   
+  
+   <actor-chain id="getLiveTargetByName">
+	<component id="bccTools" name="/com/oracle/ateam/bcctools/BCCTools" method="getLiveTargetByName" component-var="bccTools" method-return-var="target">
+	  <input name="targetName" class-name="java.lang.String" value="${param.targetName}" />
+	  <output id="target" name="target" value="${target}" />
+	</component>
+  </actor-chain>       
+  
+  <actor-chain id="createInitialDeployment">
+    <form id="deploymentFormHandler" name="/atg/epub/deployment/DeploymentFormHandler" handle="createInitialDeployment" var="deploymentFormHandler">
+    	<input name="initialDeploymentTargetID" class-name="java.lang.String" value="${param.initialDeploymentTargetID}" />
+    	<input name="flagAgents" value="${param.flagAgents}"/>
+        <input name="successURL" value="${param.dfhSuccess}"/>
+        <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/dfh-failure"/>    	
+    </form>
+  </actor-chain>  
+  
+  <actor-chain id="fullDeployNow">
+    <form id="deploymentFormHandler" name="/atg/epub/deployment/DeploymentFormHandler" handle="fullDeployTarget" var="deploymentFormHandler">
+    	<input name="fullDeployTarget" class-name="java.lang.String" value="${param.targetID}" />
+        <input name="successURL" value="${param.dfhSuccess}"/>
+        <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/dfh-failure"/>     	
+    </form>
+  </actor-chain>   
+  
+  <actor-chain id="switchAgentDatastores">
+    <form id="deploymentFormHandler" name="/atg/epub/deployment/DeploymentFormHandler" handle="switchAgentDatastores" var="deploymentFormHandler">
+      <input name="agentIDs" class-name="[Ljava.lang.String;" value="${param.agentIDs}">
+      	<tag-converter class-name="atg.droplet.ArrayTagConverter"/>
+      </input>
+    	<input name="switchTargetID" value="${param.switchTargetID}"/>
+        <input name="successURL" value="${param.dfhSuccess}"/>
+        <input name="failureURL" value="/rest/model/com/oracle/ateam/bcctools/BCCActor/dfh-failure"/>     	
+    </form>
+  </actor-chain>    
+  
+  <actor-chain id="dfh-failure" transaction="TX_SUPPORTS">
+    <actor id="error" name="/com/oracle/ateam/bcctools/BCCActor" chain-id="dfh-error" return-model-var="model">
+      <output id="model" add-map-children="true" value="${model}"/>
+    </actor>
+  </actor-chain>
+  
+  <actor-chain id="dfh-error" transaction="TX_SUPPORTS">
+    <component id="fh" name="/atg/epub/deployment/DeploymentFormHandler" component-var="fh">
+      <output id="formError" name="formError" value="${fh.formError}"/>
+      <output id="formExceptions" name="formExceptions" value="${fh.formExceptions}"/>
+    </component>
+  </actor-chain>      
+  
+   <actor-chain id="importFromXML">
+	<component id="bccTools" name="/com/oracle/ateam/bcctools/BCCTools" method="importTopologyFromXML" component-var="bccTools" method-return-var="imported">
+	  <input name="xmlData" class-name="java.lang.String" value="${param.xmlData}" />
+	  <output id="imported" name="imported" value="${imported}" />
+	</component>
+  </actor-chain>   
+  
+  <actor-chain id="getAgentID">
+    <component id="bccTools" name="/com/oracle/ateam/bcctools/BCCTools" method="getTargetByName" component-var="bccTools" method-return-var="targetDef">
+      <input name="targetName" class-name="java.lang.String" value="${param.targetName}" />
+    </component>
+    <droplet id="forEach" name="/atg/dynamo/droplet/ForEach" var="topo">
+      <input name="array" value="${targetDef.agents}" />
+      <oparam name="output">
+	      <droplet id="agentSwitch" name="/atg/dynamo/droplet/Switch">
+	        <input name="value" value="${topo.element.displayName == param.agentName}"/>
+	        <oparam name="true">
+	          <output id="agentId" name="agentId" value="${topo.element.ID}"/>
+	        </oparam>
+	      </droplet>      
+      </oparam>
+    </droplet>
+  </actor-chain>        
+ 
+</actor-template>
+  

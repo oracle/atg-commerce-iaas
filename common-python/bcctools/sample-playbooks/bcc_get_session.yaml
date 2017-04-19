@@ -1,0 +1,10 @@
+- hosts: localhost
+  name: Get Session Confirmation
+  tasks:
+  - name: Get Session Confirmation
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    register: session_data
+    
+  - debug: var=session_data    

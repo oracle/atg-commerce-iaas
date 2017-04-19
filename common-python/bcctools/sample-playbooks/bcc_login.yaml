@@ -1,0 +1,19 @@
+- hosts: localhost
+  name: Login
+  tasks:
+  - name: Get Session Confirmation
+    # we need a valid session conf before we can do anything else
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    # save the result in session_data
+    register: session_data
+    
+  - name: Login
+    bcc_login:
+      action: login
+      cookie: "{{ session_data.session_cookie }}"
+      username: "admin"
+      password: "Admin123"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    no_log: True

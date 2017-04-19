@@ -1,0 +1,31 @@
+- hosts: localhost
+  name: List Topologies
+  tasks:
+  - name: Get Session Confirmation
+    # we need a valid session conf before we can do anything else
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    # save the result in session_data
+    register: session_data
+    
+  - name: Login
+    bcc_login:
+      action: login
+      # session_data set in bcc_session_confirmation contains the cookie data we need
+      cookie: "{{ session_data.session_cookie }}"
+      # get login credentials from environment variables
+      username: "{{ lookup('env','BCC_USER') }}"
+      password: "{{ lookup('env','BCC_PASSWORD') }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+       
+    # List all topologies   
+  - name: List Topologies
+    bcc_list_topologies:
+      action: list
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    register: topologies
+      
+    # Print all topologies to stdout  
+  - debug: var=topologies.topologies
