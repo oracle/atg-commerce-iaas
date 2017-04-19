@@ -88,5 +88,7 @@ Not all the sample playbooks will run successfully on their own. They are provid
 The playbook bcc_add_complete_site.yaml is an entire process that will create a new target, add agents to it, and make the changes live.  
 
 # Module Documentation
-See ANSIBLE-MODULES.md for complete module docs  
+See 
+[ANSIBLE-MODULES](https://github.com/oracle/atg-commerce-iaas/blob/master/common-python/bcctools/ANSIBLE-MODULES.md)
+for complete module docs  
 

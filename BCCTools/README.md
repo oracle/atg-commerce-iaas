@@ -83,6 +83,8 @@ If you are not properly authenticated, you will get an error message returned.
 If you receive 409 errors, that indicates the _dynSessConf value you are using is not valid, or not a correct match for your JSESSIONID.  
 
 # Additional API info
-See the REST-APIs.md file for details on each REST service.
+See
+[REST-APIs](https://github.com/oracle/atg-commerce-iaas/blob/master/BCCTools/REST-APIs.md)
+for details on each REST service.
 
   
