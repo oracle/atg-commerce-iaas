@@ -41,8 +41,6 @@ The required chain of events with security enabled is:
 
 # Provided REST services
 The REST services provided by the BCCTools module are defined in the ActorChainRestRegistry.properties file.
-
-/com/oracle/ateam/bcctools/BCCActor/addTarget
  
 # CURL examples  
 The following are a few curl examples of interacting with the REST services.  
