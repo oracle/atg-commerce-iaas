@@ -45,7 +45,10 @@ The REST services provided by the BCCTools module are defined in the ActorChainR
 /com/oracle/ateam/bcctools/BCCActor/addTarget
  
 # CURL examples  
-The following are a few curl examples of interacting with the REST services. 
+The following are a few curl examples of interacting with the REST services.  
+Note that the complete URL must follow the ATG MVC REST framework format.  
+For example, the URL to get a session confirmation number is /atg/rest/SessionConfirmationActor. That must be prefixed with /rest/model.
+
 
 ## Get a session confirmation number and JSESSIONID
 Request:  

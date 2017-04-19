@@ -1,5 +1,8 @@
 # API documentation for BCCTools REST services
 
+Note that the complete URL must follow the ATG MVC REST framework format.  
+For example, the URL to get a session confirmation number is /atg/rest/SessionConfirmationActor. That must be prefixed with /rest/model.
+
 ### API's
   * [Add Target](#addTarget)
   * [Update Target](#updateTarget)
@@ -18,6 +21,9 @@
   * [Switch Agent Datasources](#switchAgentDatastores)
   * [Get Agent ID from name](#getAgentID)
   * [Import topology from XML](#importFromXML)
+  * [Get a session confirmation number](#getSessionConfirmationNumber)
+  * [Log a user in](#loginUser)    
+  * [Log a user out](#logoutUser)
 
 **Add Target** <a id="addTarget">
 ----
@@ -659,4 +665,98 @@
   * **Code:** 200 <br />
     **Content:** `{"error":{"localizedMessage":"User must be logged in to access this resource","messageCode":"USER_NOT_AUTHENTICATED"}}`
     
+**Get a session confirmation number** <a id="getSessionConfirmationNumber">
+----
+  Get a session confirmation number (_dynSessConf)
+
+* **URL**
+
+  /atg/rest/SessionConfirmationActor/getSessionConfirmationNumber
+
+* **Method:**
+
+  `GET`
+  
+*  **Data Params**
+
+   **Required:**
+    None
+   
+   **Optional:**
+    None
     
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"sessionConfirmationNumber":-6957835531229764888}`
+ 
+**Log user in** <a id="loginUser">
+----
+  Log in as a user. Note this is internal users only.
+  Returns the repository id (userId) of the user if successfully authenticated.
+
+* **URL**
+
+  /atg/userprofiling/InternalProfileActor/login
+
+* **Method:**
+
+  `POST`
+  
+*  **Data Params**
+
+   **Required:**
+    `login=[string]` Username to log in with. <br />
+    `password=[string]` Password to log in with. <br />
+   
+   **Optional:**
+    None
+    
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"userId":"portal-admin"}`
+ 
+* **Error Response:**
+
+  * **Code:** 409 <br />
+    **Content:** `Your session expired due to inactivity`
+
+  OR
+
+  * **Code:** 200 <br />
+    **Content:** `{"formError":true,"formExceptions":[{"localizedMessage":"The password is incorrect","errorCode":"invalidPassword"}]}`
+ 
+**Log user out** <a id="logoutUser">
+----
+  Log out a user. Note this is internal users only.
+  This makes the JSESSIONID no longer authenticated for a user.
+
+* **URL**
+
+  /atg/userprofiling/InternalProfileActor/logout
+
+* **Method:**
+
+  `POST`
+  
+*  **Data Params**
+
+   **Required:**
+    None
+   
+   **Optional:**
+    None
+    
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"atgResponse": "void"}`
+ 
+* **Error Response:**
+
+  * **Code:** 409 <br />
+    **Content:** `Your session expired due to inactivity`
+
+
+        
