@@ -1,6 +1,7 @@
 # ATG BCCTools module
 
-This is a module for Oracle ATG Commerce that provides REST services for interacting with ATG Content Administration, a.k.a, the BCC.
+This is a module for Oracle ATG Commerce that provides REST services for interacting with ATG Content Administration, a.k.a, the BCC.  
+This code is designed to work with Oracle ATG Commerce 11.1 or later.
 
 # Installation
 

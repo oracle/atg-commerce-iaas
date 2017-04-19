@@ -54,7 +54,7 @@ Some of the features in the tool set include:
 * Install and Configure WebLogic
     * Create managed servers
  	* Create instances with host/port bindings
- 	* Create and bind datasources to instances<
+ 	* Create and bind datasources to instances
  	* Generate ATG server layers for each instance
  	* Generate start/stop scripts
     * Optionally install WebLogic patches
@@ -63,10 +63,15 @@ Some of the features in the tool set include:
 
 # Components
 * common_python contains the python libraries for the provisioning services, and REST api wrappers to talk to OpenStack and Oracle Public Cloud.
+	* barmetal contains REST wrappers for working with baremetal cloud (in progress)
+	* bcctools contains REST wrappers and Ansible wrappers for managing ATG Content Administration via REST services
+	* oc_provisioning contains modules that install and configure various software packages/products
+	* rest_wrappers contain python wrappers for talking to Oracle Cloud REST services
 * iaas-11.1 contains the entry point to install and configure the Oracle ATG Commerce 11.1 stack
 * iaas-11.2 contains the entry point to install and configure the Oracle ATG Commerce 11.2 stack
 * webui contains the WebUI tool for assist in generating configuration data and Ansible playbooks.
 * openstack-metadata contains a script to retrieve user metadata from OpenStack.
+* BCCTools contains an ATG module that exposes ATG Content Administration functions as REST services
 
 ## Additional instructions
 Installation and additional instructions are contained in each top level folder.
@@ -76,6 +81,5 @@ Installation and additional instructions are contained in each top level folder.
 See
 [CONTRIBUTING](https://github.com/oracle/atg-commerce-iaas/tree/master/CONTRIBUTING.md)
 for details.
-
 
 
