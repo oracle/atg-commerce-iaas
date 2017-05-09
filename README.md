@@ -67,8 +67,9 @@ Some of the features in the tool set include:
 	* bcctools contains REST wrappers and Ansible wrappers for managing ATG Content Administration via REST services
 	* oc_provisioning contains modules that install and configure various software packages/products
 	* rest_wrappers contain python wrappers for talking to Oracle Cloud REST services
-* iaas-11.1 contains the entry point to install and configure the Oracle ATG Commerce 11.1 stack
-* iaas-11.2 contains the entry point to install and configure the Oracle ATG Commerce 11.2 stack
+* 11.1 contains the entry point to install and configure the Oracle ATG Commerce 11.1 stack
+* 11.2 contains the entry point to install and configure the Oracle ATG Commerce 11.2 stack
+* 11.3 contains the entry point to install and configure the Oracle ATG Commerce 11.3 stack
 * webui contains the WebUI tool for assist in generating configuration data and Ansible playbooks.
 * openstack-metadata contains a script to retrieve user metadata from OpenStack.
 * BCCTools contains an ATG module that exposes ATG Content Administration functions as REST services
