@@ -115,7 +115,7 @@ def patch_weblogic(configData, full_path):
         logging.error(json_key + " config data missing from json. will not install")
         return
 
-    binary_path = full_path + "/binaries/wls-12.1.3"
+    binary_path = full_path + "/binaries/wls-12.2.1"
     patches_path = binary_path + "/patches"
     # json key containing patch files
     patchKey = "wl_patches";
