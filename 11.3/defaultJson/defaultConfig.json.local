@@ -2,6 +2,10 @@
     "commerceSetup": 
     
         {
+        	"installer_data":
+        		{
+        			"installer_properties": "installers_x86.properties"
+        		},        
             "JAVA_install": 
                 {
                     "javaHome": "/usr/java",

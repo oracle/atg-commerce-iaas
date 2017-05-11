@@ -24,6 +24,7 @@ from oc_provision_wrappers.endeca.v11_3 import mdex_helper
 from oc_provision_wrappers.endeca.v11_3 import platform_helper
 from oc_provision_wrappers.endeca.v11_3 import tools_helper
 from oc_provision_wrappers.java import java8_helper
+from oc_provision_wrappers.java import java_generic
 from oc_provision_wrappers.otd.v11_1 import otd_config
 from oc_provision_wrappers.otd.v11_1 import otd_helper
 from oc_provision_wrappers.sshkeys import copy_ssh_keys_helper
@@ -197,7 +198,8 @@ if advanced_storage:
        
 if install_java:
     try:
-        java8_helper.install_java(configData, full_path)  
+        #java8_helper.install_java(configData, full_path)  
+        java_generic.install_java(configData, full_path)
     except:
         traceback.print_exc()
         pass
