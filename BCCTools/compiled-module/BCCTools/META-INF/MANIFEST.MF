@@ -4,7 +4,7 @@ ATG-Client-Class-Path: lib/classes.jar
 ATG-Class-Path: lib/classes.jar
 ATG-Config-Path: config/config.jar
 ATG-Required: DAS
-Build-Date: 2017-04-19 13:40
+Build-Date: 2017-05-15 13:15
 ATG-Build: 123
 
 Name: lib/classes.jar
