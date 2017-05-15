@@ -210,7 +210,31 @@
 	      </droplet>      
       </oparam>
     </droplet>
-  </actor-chain>        
+  </actor-chain> 
+  
+  <actor-chain id="getAgentByName">
+    <component id="bccTools" name="/com/oracle/ateam/bcctools/BCCTools" method="getTargetByName" component-var="bccTools" method-return-var="targetDef">
+      <input name="targetName" class-name="java.lang.String" value="${param.targetName}" />
+    </component>
+    <droplet id="forEach" name="/atg/dynamo/droplet/ForEach" var="topo">
+      <input name="array" value="${targetDef.agents}" />
+      <oparam name="output">
+          <droplet id="agentSwitch" name="/atg/dynamo/droplet/Switch">
+            <input name="value" value="${topo.element.displayName == param.agentName}"/>
+            <oparam name="true">
+              <output id="agent" name="agent" value="${topo.element}"/>
+            </oparam>
+          </droplet>      
+      </oparam>
+    </droplet>
+  </actor-chain>
+  
+   <actor-chain id="getAgentByID">
+    <component id="topologyManager" name="/atg/epub/deployment/TopologyManager" method="getAgentByID" component-var="topologyManager" method-return-var="agent">
+      <input name="agentID" class-name="java.lang.String" value="${param.agentID}" />
+      <output id="agent" name="agent" value="${agent}" />
+    </component>
+  </actor-chain>       
  
 </actor-template>
   

@@ -1,0 +1,34 @@
+- hosts: localhost
+  name: Get Agent by ID
+  tasks:
+  - name: Get Session Confirmation
+    # we need a valid session conf before we can do anything else
+    bcc_session_confirmation:
+      action: get_session
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+    register: session_data
+    
+  - name: Login
+    bcc_login:
+      action: login
+      cookie: "{{ session_data.session_cookie }}"
+      # get login credentials from environment variables
+      username: "{{ lookup('env','BCC_USER') }}"
+      password: "{{ lookup('env','BCC_PASSWORD') }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}" 
+         
+  - name: Get Agent by ID
+    bcc_get_agent_by_id:
+      action: get_agent_by_id
+      cookie: "{{ session_data.session_cookie }}"
+      endpoint: "{{ lookup('env','BCC_ENDPOINT') }}"
+      # Lookup agent with ID 2900004
+      agentID: "2900004"
+    # Save the result to agentresult
+    register: agentresult
+    
+    # dump the agentID to stdout
+  - debug: var=agentresult.agent
+      
+
+

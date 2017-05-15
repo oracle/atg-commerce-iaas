@@ -16,6 +16,8 @@ For example, the URL to get a session confirmation number is /atg/rest/SessionCo
   * [Is Primary Target](#isPrimaryTarget)
   * [Is Primary Agent](#isPrimaryAgent)
   * [Get Target By Name](#getTargetByName)
+  * [Get Agent By ID](#getAgentByID)
+  * [Get Agent By Name](#getAgentByName)
   * [Get Live Target By Name](#getLiveTargetByName)
   * [Full Deployment](#fullDeployNow)
   * [Switch Agent Datasources](#switchAgentDatastores)
@@ -477,6 +479,77 @@ For example, the URL to get a session confirmation number is /atg/rest/SessionCo
 
   * **Code:** 200 <br />
     **Content:** `{"targetDef":{"ID":"tar341","agents":[{"ID":"2900002",`
+ 
+* **Error Response:**
+
+  * **Code:** 409 <br />
+    **Content:** `Your session expired due to inactivity`
+
+  OR
+
+  * **Code:** 200 <br />
+    **Content:** `{"error":{"localizedMessage":"User must be logged in to access this resource","messageCode":"USER_NOT_AUTHENTICATED"}}`
+
+**Get Agent By ID** <a id="getAgentByID">
+----
+  Get an agent by its ID, and return its agentDef.
+
+* **URL**
+
+  /com/oracle/ateam/bcctools/BCCActor/getAgentByID
+
+* **Method:**
+
+  `POST`
+  
+*  **Data Params**
+
+   **Required:**
+    `agentID=[string]` agent ID to get <br />
+   
+   **Optional:**
+    None
+    
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"agent":{"ID":"2900004","displayName": "CompleteTest",...`
+ 
+* **Error Response:**
+
+  * **Code:** 409 <br />
+    **Content:** `Your session expired due to inactivity`
+
+  OR
+
+  * **Code:** 200 <br />
+    **Content:** `{"error":{"localizedMessage":"User must be logged in to access this resource","messageCode":"USER_NOT_AUTHENTICATED"}}`
+
+**Get Agent By Name** <a id="getAgentByName">
+----
+  Get an agent by its name, and return its agentDef.
+
+* **URL**
+
+  /com/oracle/ateam/bcctools/BCCActor/getAgentByName
+
+* **Method:**
+
+  `POST`
+  
+*  **Data Params**
+
+   **Required:**
+    `targetName=[string]` target name agent is tied to <br />
+    `agentName=[string]` agent ID to get <br />
+   
+   **Optional:**
+    None
+    
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"agent":{"ID":"2900004","displayName": "CompleteTest",...`
  
 * **Error Response:**
 
