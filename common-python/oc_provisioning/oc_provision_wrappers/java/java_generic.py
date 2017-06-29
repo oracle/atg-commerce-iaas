@@ -57,9 +57,12 @@ def install_java(configData, full_path):
     logging.info("installing " + service_name)
     
     config = ConfigParser.ConfigParser()
-    config_file = installerData['installer_properties']
+    installer_props = installerData['installer_properties']
+    config_file = full_path + '/' + installer_props
+    
     if (not os.path.exists(config_file)):
         logging.error("Cannot load installer config data. Halting")
+    logging.info("config file is " + config_file)
     config.read(config_file)
     rel_path = config.get(service_name, 'java_binary')
     java_version = config.get(service_name, 'java_version')
