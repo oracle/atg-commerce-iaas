@@ -38,6 +38,13 @@ The required chain of events with security enabled is:
 2. Authenticate/login a user using this session confirmation number and associated JSESSION ID.  
 3. You can now make calls to the other REST services. You must use this authenticated session confirmation number and associated JSESSION ID for subsequent REST calls.  
 
+## Warning messages
+You may notice Warning messages in the log like the following:  
+
+/com/oracle/ateam/bcctools/BCCActor [WARNING][/com/oracle/ateam/bcctools/BCCActor (initializeTopology)] No error URL found for form handler /atg/epub/deployment/TopologyEditFormHandler
+
+These are not a problem. These are due to different naming conventions in the product code. The product REST framework expects form handlers to have a specifically named error URL handler. If that specific name is not found, this warning is produced.    
+
 
 # Provided REST services
 The REST services provided by the BCCTools module are defined in the ActorChainRestRegistry.properties file.

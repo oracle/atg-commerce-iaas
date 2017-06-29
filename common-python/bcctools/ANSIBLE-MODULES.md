@@ -11,6 +11,8 @@
   * [bcc_get_agent_id - get an agent id](#bcc_get_agent_id)
   * [bcc_get_target_by_id - get a target by id](#bcc_get_target_by_id)
   * [bcc_get_target_by_name - get a target by name](#bcc_get_target_by_name)
+  * [bcc_get_agent_by_id - get an agent by ID](#bcc_get_agent_by_id)
+  * [bcc_get_agent_by_name - get an agent by name](#bcc_get_agent_by_name)
   * [bcc_import_topology - import bcc topology](#bcc_import_topology)
   * [bcc_initial_deployment - start the first deployment on a new site](#bcc_initial_deployment)
   * [bcc_initialize_topology - initialize bcc topology](#bcc_initialize_topology)
@@ -302,6 +304,66 @@ Get a target by name
 
 ---
 
+## <a name="bcc_get_agent_by_id"></a> bcc_get_agent_by_id
+Get an agent by ID
+
+  * Synopsis
+  * Options
+  * Examples
+
+#### Synopsis
+ Get an agent by ID
+
+#### Options
+
+| Parameter     | required    | default  | choices    | datatype | comments |
+| ------------- |-------------| ---------|----------- |--------- |--------- |
+| action  |   no  |  get_agent_by_id  | <ul> <li>get_agent_by_id</li> </ul> |  |  Action to be executed against the BCC  |
+| cookie  |   no  |  | |  str  |  ATG Cookie  |
+| endpoint  |   yes  |  | |  str  |  BCC REST Endpoint  |
+| agentID  |   yes  |  | |  str  |  ID of the agent you want returned  |
+
+
+ 
+#### Examples
+
+```
+
+```
+
+
+---
+
+## <a name="bcc_get_agent_by_name"></a> bcc_get_agent_by_name
+Get an agent by name
+
+  * Synopsis
+  * Options
+  * Examples
+
+#### Synopsis
+ Get an agent by name
+
+#### Options
+
+| Parameter     | required    | default  | choices    | datatype | comments |
+| ------------- |-------------| ---------|----------- |--------- |--------- |
+| action  |   no  |  get_agent_by_name  | <ul> <li>get_agent_by_name</li> </ul> |  |  Action to be executed against the BCC  |
+| cookie  |   no  |  | |  str  |  ATG Cookie  |
+| endpoint  |   yes  |  | |  str  |  BCC REST Endpoint  |
+| targetName  |   yes  |  | |  str  |  Name of the target the agent is tied to  |
+| agentName  |   yes  |  | |  str  |  Name of the agent you want returned  |
+
+
+ 
+#### Examples
+
+```
+
+```
+
+
+---
 
 ## <a name="bcc_import_topology"></a> bcc_import_topology
 Import BCC topology

@@ -41,7 +41,7 @@ This required that you perform 2 tasks at the start of every REST call:
 1. Get an ATG session confirmation number (_dynSessConf)
 2. Login in with a valid BCC user and password, tied to the session you obtained in step 1.
 
-## Sample Session and Login
+## Ansible Sample Session and Login
 The following is the contents of the bcc_login.yaml playbook, with explanations of some steps.
 ```
   - name: Get Session Confirmation
@@ -68,6 +68,20 @@ The following is the contents of the bcc_login.yaml playbook, with explanations 
 * cookie: "{{ session_data.session_cookie }}" - The session_data variable obtained by bcc_session_confirmation holds the cookie data you must use on all REST calls. When you login, the JSESSIONID in the cookie is used to persist the elevated security status of the authenticated user between REST calls.
 
 Every playbook should begin with getting a session confirmation number, and logging a user in. Without this, your REST calls will fail due to unauthorized access.
+
+## REST wrapper example
+To call REST wrappers directly, call them as a normal python script and pass in the required parameters.
+
+To get a session confirmation:  
+````
+python bcc_session_confirmation.py --endpoint=http://localhost:7103
+````  
+This will return a session confirmation number and JSESSION ID. You are responsible for saving this as appropriate cookie data and passing to subsequent REST calls.  
+
+To login:
+````
+python bcc_login.py --endpoint=http://localhost:7103 --login=admin --password=admin123  
+````
 
 ## Importing a topology
 You can import an existing topology. Yout topology XML data must be converted to a base64 string, with no line wraps. This string is what is passed to the REST API.  

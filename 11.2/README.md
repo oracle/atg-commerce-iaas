@@ -15,3 +15,10 @@ If you are installing the library dependencies into another python installation,
 
 ## Detailed usage
 Detailed usage instructions are contained in the PDF manual included with the code.
+
+## Performance and tuning considerations
+The following are some best practices and tuning tips for Oracle Cloud.  
+Your individual needs will vary based on your specific application configuration. These are some tips that can assist with tuning your Commerce implementation on Oracle Cloud.  
+
+http://www.oracle.com/webfolder/technetwork/tutorials/ohc/E83035_01.pdf
+
