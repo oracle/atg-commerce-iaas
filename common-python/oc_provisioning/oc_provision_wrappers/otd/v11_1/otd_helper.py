@@ -97,6 +97,9 @@ def install_otd(configData, full_path):
     # setup password file
     commerce_setup_helper.substitute_file_fields(response_files_path + '/otdPassword.pwd.master', response_files_path + '/otdPassword.pwd', otdPassword_replacements)
     
+    # install patches if any were listed
+    patch_otd(configData, full_path)    
+    
     # exec base admin server creation
     configCommand = "\"" + INSTALL_DIR + "/bin/tadm configure-server --user=" + ADMIN_USER + " --instance-home=" + INSTANCE_HOME + " --password-file=" + response_files_path + "/otdPassword.pwd\""
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, configCommand)
@@ -115,5 +118,54 @@ def install_otd(configData, full_path):
     commerce_setup_helper.exec_cmd(startCmd + " start")
 
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "# echo " + service_name + " start/stop script: " + startCmd + "\n\n")    
+    
+def patch_otd(configData, full_path):
+    if json_key in configData:
+        jsonData = configData[json_key]
+    else:
+        logging.error(json_key + " config data missing from json. will not patch")
+        return
+    
+    binary_path = full_path + "/binaries/OTD11.1.1.9"
+    patches_path = binary_path + "/patches"
+    # json key containing patch files
+    patchKey = "otd_patches";
+                                   
+    requiredFields = ['installDir', 'installOwner']
+    commerce_setup_helper.check_required_fields(jsonData, requiredFields)
+
+    INSTALL_DIR = jsonData['installDir']
+    INSTALL_OWNER = jsonData['installOwner']
+    PATCH_FILES = None
+    
+    # if the patches key was provided, get the list of patches to apply
+    if patchKey in jsonData:
+        PATCH_FILES = jsonData['otd_patches']
+        
+    
+    if PATCH_FILES:
+        logging.info("patching " + service_name) 
+        patches = PATCH_FILES.split(',')
+        patchList = []
+        patchScript = INSTALL_DIR + "/OPatch/opatch"
+        tmpPatchDir = "/tmp/otdpatches"
+        for patch in patches:
+            # get list of patches - comma separated
+            patchParts = patch.split('_')
+            # get just the patch numbner
+            patchNum = patchParts[0][1:]
+            # keep a running list of all patch numbers
+            patchList.append(patchNum)
+            if not os.path.exists(patches_path + "/" + patch):
+                logging.error("patch file " + patches_path + "/" + patch + " missing - will not install")
+                return
+            # unzip patch to /tmp. This will create a dir with the patchNum as the name
+            unzipCommand = "\"" + "unzip " + patches_path + "/" + patch + " -d " + tmpPatchDir + "\""
+            commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipCommand)
+        patchCommand = "\"" + patchScript + " napply " + tmpPatchDir + " -silent -id " + ','.join(patchList) + "\""
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, patchCommand)
+        # cleanup our files from /tmp
+        shutil.rmtree(tmpPatchDir, ignore_errors=True)
+        
   
     

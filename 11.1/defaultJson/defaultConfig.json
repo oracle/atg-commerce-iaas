@@ -2,6 +2,10 @@
     "commerceSetup": 
     
         {
+        	"installer_data":
+        		{
+        			"installer_properties": "installers_x86.properties"
+        		},        
             "JAVA_install": 
                 {
                     "javaHome": "/usr/java",
@@ -68,7 +72,7 @@
                     "wl_adminHttpPort": "7001",
                     "wl_adminHttpsPort": "7002",  
                     "wl_domain": "base_domain",
-                    "wl_patches": "p22505331_121200_Generic.zip"                             
+                    "wl_patches": "p25388793_121300_Generic.zip,p24399682_12130170418_Generic.zip"                             
                 },
             "WEBLOGIC_domain_setup": 
                 {
@@ -284,7 +288,8 @@
                     "instanceHome": "/u01/otd/production",
                     "oraInventoryDir": "/u01/oraInventory",
                     "oraInventoryGroup": "oinstall",
-                    "otd_startAdmin_onBoot": "true"
+                    "otd_startAdmin_onBoot": "true",
+                    "otd_patches": "p25826581_111190_Linux-x86-64.zip"
                 },
             "OTD_config":
                  [ 

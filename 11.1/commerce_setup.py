@@ -28,6 +28,8 @@ __copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights re
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+# Modified for Natura POC
+
 import getopt
 import os
 from pprint import pprint
@@ -40,25 +42,26 @@ from oc_provision_wrappers import load_user_metadata
 from oc_provision_wrappers.atg import create_atg_server_layers 
 from oc_provision_wrappers.atg.v11_1 import atg_helper, atgpatch_postinstall
 from oc_provision_wrappers.atg.v11_1 import atgpatch_helper
+from oc_provision_wrappers.atg.v11_1 import atg_hotfixes
 from oc_provision_wrappers.database.v11g import oracle_rdbms_install
 from oc_provision_wrappers.endeca.v11_1 import cas_helper
-from oc_provision_wrappers.endeca.v11_1 import mdex_helper
+from oc_provision_wrappers.endeca.v11_1 import mdex_helper1060188
 from oc_provision_wrappers.endeca.v11_1 import platform_helper
 from oc_provision_wrappers.endeca.v11_1 import tools_helper
-from oc_provision_wrappers.java import java_helper
+from oc_provision_wrappers.java import java_generic
 from oc_provision_wrappers.otd.v11_1 import otd_config
-from oc_provision_wrappers.otd.v11_1 import otd_helper
+from oc_provision_wrappers.otd.v11_1 import otd_helper 
 from oc_provision_wrappers.sshkeys import copy_ssh_keys_helper
 from oc_provision_wrappers.storage import advanced_storage_helper
 from oc_provision_wrappers.storage import storage_helper
-from oc_provision_wrappers.wls.v12_1_2 import weblogic_create_datasources    
-from oc_provision_wrappers.wls.v12_1_2 import weblogic_create_machine
-from oc_provision_wrappers.wls.v12_1_2 import weblogic_create_managed_server
-from oc_provision_wrappers.wls.v12_1_2 import weblogic_domain_config
-from oc_provision_wrappers.wls.v12_1_2 import weblogic_domain_settings
-from oc_provision_wrappers.wls.v12_1_2 import weblogic_helper
-from oc_provision_wrappers.wls.v12_1_2 import weblogic_install_managed_server
-from oc_provision_wrappers.wls.v12_1_2 import weblogic_packer
+from oc_provision_wrappers.wls.v12_1_3 import weblogic_create_datasources    
+from oc_provision_wrappers.wls.v12_1_3 import weblogic_create_machine
+from oc_provision_wrappers.wls.v12_1_3 import weblogic_create_managed_server
+from oc_provision_wrappers.wls.v12_1_3 import weblogic_domain_config
+from oc_provision_wrappers.wls.v12_1_3 import weblogic_domain_settings
+from oc_provision_wrappers.wls.v12_1_3 import weblogic_helper
+from oc_provision_wrappers.wls.v12_1_3 import weblogic_install_managed_server
+from oc_provision_wrappers.wls.v12_1_3 import weblogic_packer
 from oc_provision_wrappers.wls import weblogic_boot_properties
 from oc_provision_wrappers.wls import weblogic_create_managed_scripts
 from oc_provision_wrappers import setup_logger
@@ -169,7 +172,10 @@ configData = None
 
 logger = setup_logger.setup_shared_logger('')
 
-# decide where to load our JSON data from
+logger.info("called with options:")
+logger.info(opts)
+
+# decide where to load our JSON data from 
 if json_ds == None:
     logger.info("using default json configs ")
     json_ds = full_path + '/defaultJson/defaultConfig.json'
@@ -192,6 +198,8 @@ else:
     if isUrl: 
         print "loading json from external URL"
         configData = commerce_setup_helper.load_json_from_url(json_ds, root_json_key)    
+
+
 
 if configData == None:
     print "no configuration data could be loading. Exiting"
@@ -224,7 +232,7 @@ if advanced_storage:
        
 if install_java:
     try:
-        java_helper.install_java(configData, full_path)  
+        java_generic.install_java(configData, full_path)  
     except:
         traceback.print_exc()
         pass    
@@ -305,6 +313,8 @@ if managed_wl_server or create_wl_domain:
 if install_atg:
     try:
         atg_helper.install_atg(configData, full_path)
+        # apply Natura hotfixes
+        atg_hotfixes.copy_atg_hotfixes(configData, full_path)
         # This may be useful as its own option in the future. Leave here w/ATG install for now
         create_atg_server_layers.generate_atg_server_layers(configData, full_path)
     except:
@@ -323,7 +333,7 @@ if install_atgpatch:
             
 if install_mdex:
     try:
-        mdex_helper.install_mdex(configData, full_path)
+        mdex_helper1060188.install_mdex(configData, full_path)
     except:
         traceback.print_exc()
         pass    
