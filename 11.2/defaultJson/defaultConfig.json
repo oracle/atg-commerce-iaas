@@ -2,6 +2,10 @@
     "commerceSetup": 
     
         {
+            "installer_data":
+                {
+                    "installer_properties": "installers_x86.properties"
+                },        
             "JAVA_install": 
                 {
                     "javaHome": "/usr/java",
@@ -54,8 +58,8 @@
                 {
                     "dynamoRoot": "/u02/atg11.2",
                     "installOwner": "oracle",
-                    "atg_patch_archive": "p23147552_112000_Generic.zip",
-                    "atg_patch_destination": "OCPlatform11.2_p1"
+                    "atg_patch_archive": "p26260521_112000_Generic.zip",
+                    "atg_patch_destination": "OCPlatform11.2_p3"
                 },                
             "WEBLOGIC_common":
                 {
@@ -69,7 +73,7 @@
                     "wl_adminHttpPort": "7001",
                     "wl_adminHttpsPort": "7002",  
                     "wl_domain": "base_domain",
-                    "wl_patches": "p23094292_121300_Generic.zip"                            
+                    "wl_patches": "p25869659_121300_Generic.zip"                            
                 },
             "WEBLOGIC_domain_setup": 
                 {

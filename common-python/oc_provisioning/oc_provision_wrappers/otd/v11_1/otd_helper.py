@@ -31,10 +31,12 @@ from oc_provision_wrappers import commerce_setup_helper
 import os
 import platform
 import shutil
+import ConfigParser
 import logging
 
 logger = logging.getLogger(__name__)
 
+installer_key = 'installer_data'
 json_key = 'OTD_install'
 service_name = "OTD"
 
@@ -45,23 +47,36 @@ def install_otd(configData, full_path):
     else:
         logging.error(json_key + " config data missing from json. will not install")
         return False
+    
+    if installer_key in configData:
+        installerData = configData[installer_key]
+    else:
+        logging.error("installer json data missing. Cannot continue")
+        return False        
 
     logging.info("installing " + service_name) 
     
-    if (platform.system() == "SunOS"):
-        binary_path = full_path + "/binaries/OTD11.1.1.9/solaris"
-    else:
-        binary_path = full_path + "/binaries/OTD11.1.1.9"
-        
-    install_exec = "/Disk1/runInstaller"
+    config = ConfigParser.ConfigParser()
+    installer_props = installerData['installer_properties']
+    config_file = full_path + '/' + installer_props
+    
+    if (not os.path.exists(config_file)):
+        logging.error("Installer config " + config_file + " not found. Halting")
+        return False
+    
+    logging.info("config file is " + config_file)
+    config.read(config_file)
+    try:            
+        binary_path = config.get(service_name, 'otd_binary')
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file. Halting")
+        return False
+
+    if (not os.path.exists(binary_path)):
+        logging.error("Cannot find installer file " + binary_path + "   Halting")
+        return    
     
     response_files_path = full_path + "/responseFiles/OTD11"
-    
-    full_exec_path = binary_path + install_exec
-    
-    if not os.path.exists(full_exec_path):
-        logging.error("Binary " + full_exec_path + " does not exist - will not install")
-        return False  
                       
     requiredFields = ['instanceHome', 'installDir', 'adminUser', 'installOwner', 'adminPassword', 'oraInventoryDir']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
@@ -91,11 +106,14 @@ def install_otd(configData, full_path):
     commerce_setup_helper.mkdir_with_perms(INSTALL_DIR, INSTALL_OWNER, ORACLE_INVENTORY_GROUP)
     
     # exec the install command
-    installCommand = "\"" + binary_path + "/Disk1/runInstaller -silent -waitforcompletion -invPtrLoc /etc/oraInst.loc ORACLE_HOME=" + INSTALL_DIR + " SKIP_SOFTWARE_UPDATES=true\"" 
+    installCommand = "\"" + binary_path + " -silent -waitforcompletion -invPtrLoc /etc/oraInst.loc ORACLE_HOME=" + INSTALL_DIR + " SKIP_SOFTWARE_UPDATES=true\"" 
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
 
     # setup password file
     commerce_setup_helper.substitute_file_fields(response_files_path + '/otdPassword.pwd.master', response_files_path + '/otdPassword.pwd', otdPassword_replacements)
+
+    # install patches if any were listed
+    patch_otd(configData, full_path) 
     
     # exec base admin server creation
     configCommand = "\"" + INSTALL_DIR + "/bin/tadm configure-server --user=" + ADMIN_USER + " --instance-home=" + INSTANCE_HOME + " --password-file=" + response_files_path + "/otdPassword.pwd\""
@@ -116,4 +134,75 @@ def install_otd(configData, full_path):
 
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "# echo " + service_name + " start/stop script: " + startCmd + "\n\n")    
   
+def patch_otd(configData, full_path):
+    if json_key in configData:
+        jsonData = configData[json_key]
+    else:
+        logging.error(json_key + " config data missing from json. will not patch")
+        return
+
+    if installer_key in configData:
+        installerData = configData[installer_key]
+    else:
+        logging.error("installer json data missing. Cannot continue")
+        return False        
+            
+    config = ConfigParser.ConfigParser()
+    installer_props = installerData['installer_properties']
+    config_file = full_path + '/' + installer_props
     
+    if (not os.path.exists(config_file)):
+        logging.error("Installer config " + config_file + " not found. Halting")
+        return False
+    
+    logging.info("config file is " + config_file)
+    
+    config.read(config_file)
+    try:            
+        patches_path = config.get(service_name, 'otd_patches')
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file. Halting")
+        return False
+
+    if (not os.path.exists(patches_path)):
+        logging.error("Cannot find installer file " + patches_path + "   Halting")
+        return    
+        
+    # json key containing patch files
+    patchKey = "otd_patches";
+                                   
+    requiredFields = ['installDir', 'installOwner']
+    commerce_setup_helper.check_required_fields(jsonData, requiredFields)
+
+    INSTALL_DIR = jsonData['installDir']
+    INSTALL_OWNER = jsonData['installOwner']
+    PATCH_FILES = None
+    
+    # if the patches key was provided, get the list of patches to apply
+    if patchKey in jsonData:
+        PATCH_FILES = jsonData['otd_patches']
+        
+    
+    if PATCH_FILES:
+        logging.info("patching " + service_name) 
+        patches = PATCH_FILES.split(',')
+        patchList = []
+        patchScript = INSTALL_DIR + "/OPatch/opatch"
+        tmpPatchDir = "/tmp/otdpatches"
+        for patch in patches:
+            # get list of patches - comma separated
+            patchParts = patch.split('_')
+            # get just the patch numbner
+            patchNum = patchParts[0][1:]
+            # keep a running list of all patch numbers
+            patchList.append(patchNum)
+            if not os.path.exists(patches_path + "/" + patch):
+                logging.error("patch file " + patches_path + "/" + patch + " missing - will not install")
+                return
+            # unzip patch to /tmp. This will create a dir with the patchNum as the name
+            unzipCommand = "\"" + "unzip " + patches_path + "/" + patch + " -d " + tmpPatchDir + "\""
+            commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipCommand)
+        patchCommand = "\"" + patchScript + " napply " + tmpPatchDir + " -silent -id " + ','.join(patchList) + "\""
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, patchCommand)
+        # cleanup our files from /tmp
+        shutil.rmtree(tmpPatchDir, ignore_errors=True)    

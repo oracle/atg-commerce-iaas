@@ -29,12 +29,14 @@ __version__ = "1.0.0.0"
 from oc_provision_wrappers import commerce_setup_helper
 import platform
 import os
+import ConfigParser
 import logging
 
 logger = logging.getLogger(__name__)
 
+installer_key = 'installer_data'
 json_key = 'ENDECA_install'
-service_name = "cas"
+service_name = "CAS"
 service_key = "cas"
 
 def install_cas(configData, full_path): 
@@ -52,22 +54,35 @@ def install_cas(configData, full_path):
         logging.error(service_name + " config data missing from json. will not install")
         return
 
-    logging.info("installing " + service_name)
-    
-    if (platform.system() == "SunOS"):
-        binary_path = full_path + "/binaries/endeca11.1/solaris"
-        install_exec = "/CAS_Install/OCcas11.1.0-Solaris.sh"
+    if installer_key in configData:
+        installerData = configData[installer_key]
     else:
-        binary_path = full_path + "/binaries/endeca11.1"
-        install_exec = "/CAS_Install/OCcas11.1.0-Linux64.sh"
-        
-    response_files_path = full_path + "/responseFiles/endeca11.1"
-    
-    full_exec_path = binary_path + install_exec
-    
-    if not os.path.exists(full_exec_path):
-        logging.error("Binary " + full_exec_path + " does not exist - will not install")
+        logging.error("installer json data missing. Cannot continue")
         return False    
+    
+    logging.info("installing " + service_name)
+
+    config = ConfigParser.ConfigParser()
+    installer_props = installerData['installer_properties']
+    config_file = full_path + '/' + installer_props
+    
+    if (not os.path.exists(config_file)):
+        logging.error("Installer config " + config_file + " not found. Halting")
+        return False
+    
+    logging.info("config file is " + config_file)
+    config.read(config_file)
+    try:            
+        binary_path = config.get(service_name, 'cas_binary')
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file. Halting")
+        return False
+
+    if (not os.path.exists(binary_path)):
+        logging.error("Cannot find installer file " + binary_path + "   Halting")
+        return
+        
+    response_files_path = full_path + "/responseFiles/endeca11.1"  
        
     if jsonData is not None:
         
@@ -84,7 +99,7 @@ def install_cas(configData, full_path):
 
         commerce_setup_helper.substitute_file_fields(response_files_path + '/cas_silent.txt.master', response_files_path + '/cas_silent.txt', field_replacements)
         
-        installCommand = "\"" + full_exec_path + " --silent --target " + ENDECA_ROOT + \
+        installCommand = "\"" + binary_path + " --silent --target " + ENDECA_ROOT + \
         " --endeca_tools_root " + ENDECA_ROOT + "/endeca/ToolsAndFrameworks/11.1.0 --endeca_tools_conf " + ENDECA_ROOT + "/endeca/ToolsAndFrameworks/11.1.0/server/workspace < " + \
         response_files_path + "/cas_silent.txt \""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)         

@@ -27,12 +27,13 @@ __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
-import platform
 import os
+import ConfigParser
 import logging
 
 logger = logging.getLogger(__name__)
 
+installer_key = 'installer_data'
 json_key = 'ENDECA_install'
 service_name = "MDEX"
 
@@ -49,21 +50,34 @@ def install_mdex(configData, full_path):
     else:
         logging.error(service_name + " config data missing from json. will not install")
         return
-    
-    logging.info("installing " + service_name)
-    
-    if (platform.system() == "SunOS"):
-        binary_path = full_path + "/binaries/endeca11.1/solaris"
-        install_exec = "/MDEX_Install/OCmdex6.5.1-Solaris_829811.sh"
+
+    if installer_key in configData:
+        installerData = configData[installer_key]
     else:
-        binary_path = full_path + "/binaries/endeca11.1"
-        install_exec = "/MDEX_Install/OCmdex6.5.1-Linux64_829811.sh"
+        logging.error("installer json data missing. Cannot continue")
+        return False    
         
-    full_exec_path = binary_path + install_exec
+    logging.info("installing " + service_name)
+
+    config = ConfigParser.ConfigParser()
+    installer_props = installerData['installer_properties']
+    config_file = full_path + '/' + installer_props
     
-    if not os.path.exists(full_exec_path):
-        logging.error("Binary " + full_exec_path + " does not exist - will not install")
-        return False      
+    if (not os.path.exists(config_file)):
+        logging.error("Installer config " + config_file + " not found. Halting")
+        return False
+    
+    logging.info("config file is " + config_file)
+    config.read(config_file)
+    try:            
+        binary_path = config.get(service_name, 'mdex_binary')
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file. Halting")
+        return False
+
+    if (not os.path.exists(binary_path)):
+        logging.error("Cannot find installer file " + binary_path + "   Halting")
+        return 
         
     if jsonData is not None:
         
@@ -71,7 +85,7 @@ def install_mdex(configData, full_path):
         # make the install tree with correct owner if needed
         commerce_setup_helper.mkdir_with_perms(ENDECA_ROOT, INSTALL_OWNER, INSTALL_GROUP)
 
-        installCommand = "\"" + full_exec_path + " --target " + ENDECA_ROOT + "\""
+        installCommand = "\"" + binary_path + " --target " + ENDECA_ROOT + "\""
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
          
         # add bashrc entries

@@ -33,7 +33,6 @@ import platform
 import ConfigParser 
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 installer_key = 'installer_data'
@@ -46,13 +45,13 @@ def install_java(configData, full_path):
         jsonData = configData[json_key]
     else:
         logging.error(service_name + " config data missing from json. will not install")
-        return
+        return False
     
     if installer_key in configData:
         installerData = configData[installer_key]
     else:
-        logging.error("installer data missing. Cannot continue")
-        return    
+        logging.error("installer json data missing. Cannot continue")
+        return False    
 
     logging.info("installing " + service_name)
     
@@ -61,13 +60,23 @@ def install_java(configData, full_path):
     config_file = full_path + '/' + installer_props
     
     if (not os.path.exists(config_file)):
-        logging.error("Cannot load installer config data. Halting")
+        logging.error("Installer config " + config_file + " not found. Halting")
+        return False
+    
     logging.info("config file is " + config_file)
     config.read(config_file)
-    rel_path = config.get(service_name, 'java_binary')
-    java_version = config.get(service_name, 'java_version')
-    binary_path = full_path + '/' + rel_path
-                
+    try:            
+        binary_path = config.get(service_name, 'java_binary')
+        # java version needed to create latest symlink
+        java_version = config.get(service_name, 'java_version')
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file. Halting")
+        return False
+
+    if (not os.path.exists(binary_path)):
+        logging.error("Cannot find installer file " + binary_path + "   Halting")
+        return
+                        
     requiredFields = ['javaHome', 'installOwner', 'installGroup']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
     INSTALL_OWNER = jsonData['installOwner']

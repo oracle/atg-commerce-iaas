@@ -29,10 +29,12 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import os
+import ConfigParser
 import logging
 
+installer_key = 'installer_data'
 json_key = 'ATGPATCH_install'
-service_name = "ATG Patch"
+service_name = "ATG_Patch"
 
 logger = logging.getLogger(__name__)
 
@@ -44,11 +46,36 @@ def install_atgpatch(configData, full_path):
         logging.error(json_key + " config data missing from json. will not install")
         return False
 
-    binary_path = full_path + "/binaries/atg11.1"
+    if installer_key in configData:
+        installerData = configData[installer_key]
+    else:
+        logging.error("installer json data missing. Cannot continue")
+        return False    
+    
     response_files_path = full_path + "/responseFiles/atg11.1"
                     
     logging.info("installing " + service_name)
-                    
+
+    config = ConfigParser.ConfigParser()
+    installer_props = installerData['installer_properties']
+    config_file = full_path + '/' + installer_props
+    
+    if (not os.path.exists(config_file)):
+        logging.error("Installer config " + config_file + " not found. Halting")
+        return False
+    
+    logging.info("config file is " + config_file)
+    config.read(config_file)
+    try:            
+        patches_path = config.get(service_name, 'atg_patches')
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file. Halting")
+        return False
+
+    if (not os.path.exists(patches_path)):
+        logging.error("Cannot find installer file " + patches_path + "   Halting")
+        return
+                        
     requiredFields = ['dynamoRoot', 'installOwner']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
 
@@ -57,7 +84,7 @@ def install_atgpatch(configData, full_path):
     PATCH_ARCHIVE = jsonData['atg_patch_archive']
     PATCH_NAME = jsonData['atg_patch_destination']
     
-    path_to_patch = binary_path + "/patches/" + PATCH_ARCHIVE
+    path_to_patch = patches_path + "/" + PATCH_ARCHIVE
     patch_destination = INSTALL_DIR + "/patch/" + PATCH_NAME
     
     if not os.path.exists(path_to_patch):

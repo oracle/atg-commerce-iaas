@@ -15,7 +15,7 @@ import traceback
 
 from oc_provision_wrappers import commerce_setup_helper 
 from oc_provision_wrappers import load_user_metadata
-from oc_provision_wrappers.atg import create_atg_server_layers 
+from oc_provision_wrappers.atg import create_atg_server_layers
 from oc_provision_wrappers.atg.v11_3 import atg_helper
 from oc_provision_wrappers.atg.v11_3 import atgpatch_helper
 from oc_provision_wrappers.database.v12c import oracle_rdbms_install
@@ -23,7 +23,6 @@ from oc_provision_wrappers.endeca.v11_3 import cas_helper
 from oc_provision_wrappers.endeca.v11_3 import mdex_helper
 from oc_provision_wrappers.endeca.v11_3 import platform_helper
 from oc_provision_wrappers.endeca.v11_3 import tools_helper
-from oc_provision_wrappers.java import java8_helper
 from oc_provision_wrappers.java import java_generic
 from oc_provision_wrappers.otd.v11_1 import otd_config
 from oc_provision_wrappers.otd.v11_1 import otd_helper
@@ -35,7 +34,7 @@ from oc_provision_wrappers.wls.v12_2_1 import weblogic_create_machine
 from oc_provision_wrappers.wls.v12_2_1 import weblogic_create_managed_server
 from oc_provision_wrappers.wls.v12_2_1 import weblogic_domain_config
 from oc_provision_wrappers.wls.v12_2_1 import weblogic_domain_settings
-from oc_provision_wrappers.wls.v12_2_1 import weblogic_helper
+from oc_provision_wrappers.wls.v12c import weblogic_helper
 from oc_provision_wrappers.wls.v12_2_1 import weblogic_install_managed_server
 from oc_provision_wrappers.wls.v12_2_1 import weblogic_packer
 from oc_provision_wrappers.wls import weblogic_boot_properties
@@ -198,7 +197,6 @@ if advanced_storage:
        
 if install_java:
     try:
-        #java8_helper.install_java(configData, full_path)  
         java_generic.install_java(configData, full_path)
     except:
         traceback.print_exc()

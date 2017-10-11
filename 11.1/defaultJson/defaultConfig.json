@@ -2,6 +2,10 @@
     "commerceSetup": 
     
         {
+            "installer_data":
+                {
+                    "installer_properties": "installers_x86.properties"
+                },        
             "JAVA_install": 
                 {
                     "javaHome": "/usr/java",
@@ -53,8 +57,8 @@
                 {
                     "dynamoRoot": "/u02/atg11.1",
                     "installOwner": "oracle",
-                    "atg_patch_archive": "p20173321_111000_Generic.zip",
-                    "atg_patch_destination": "OCPlatform11.1_p1"
+                    "atg_patch_archive": "p21874882_111000_Generic.zip",
+                    "atg_patch_destination": "OCPlatform11.1_p2"
                 },
             "WEBLOGIC_common":
                 {
@@ -284,7 +288,8 @@
                     "instanceHome": "/u01/otd/production",
                     "oraInventoryDir": "/u01/oraInventory",
                     "oraInventoryGroup": "oinstall",
-                    "otd_startAdmin_onBoot": "true"
+                    "otd_startAdmin_onBoot": "true",
+                    "otd_patches": "p24794531_111190_Linux-x86-64.zip"
                 },
             "OTD_config":
                  [ 

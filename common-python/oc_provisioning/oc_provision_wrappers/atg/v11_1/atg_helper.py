@@ -28,10 +28,12 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import os
+import ConfigParser 
 import logging
 
 logger = logging.getLogger(__name__)
 
+installer_key = 'installer_data'
 json_key = 'ATG_install'
 service_name = "ATG"
 
@@ -43,18 +45,36 @@ def install_atg(configData, full_path):
         logging.error(json_key + " config data missing from json. will not install")
         return False
 
+    if installer_key in configData:
+        installerData = configData[installer_key]
+    else:
+        logging.error("installer json data missing. Cannot continue")
+        return False    
+    
     logging.info("installing " + service_name)
-     
-    binary_path = full_path + "/binaries/atg11.1"
-    response_files_path = full_path + "/responseFiles/atg11.1"
-    install_exec = "/linux/OCPlatform11.1.bin"
-    full_exec_path = binary_path + install_exec
 
-    if not os.path.exists(full_exec_path):
-        logging.error("Binary " + full_exec_path + " does not exist - will not install")
+    config = ConfigParser.ConfigParser()
+    installer_props = installerData['installer_properties']
+    config_file = full_path + '/' + installer_props
+    
+    if (not os.path.exists(config_file)):
+        logging.error("Installer config " + config_file + " not found. Halting")
         return False
+    
+    logging.info("config file is " + config_file)
+    config.read(config_file)
+    try:            
+        binary_path = config.get(service_name, 'atg_binary')
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file. Halting")
+        return False
+
+    if (not os.path.exists(binary_path)):
+        logging.error("Cannot find installer file " + binary_path + "   Halting")
+        return
+         
+    response_files_path = full_path + "/responseFiles/atg11.1"
                          
-                   
     requiredFields = ['dynamoRoot', 'installOwner', 'installGroup', 'rmiPort', 'javaHome', 'wl_home', 'wl_domain', 'wl_adminPort', 'install_crs']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
 
@@ -75,7 +95,7 @@ def install_atg(configData, full_path):
     # make the install tree with correct owner if needed
     commerce_setup_helper.mkdir_with_perms(INSTALL_DIR, INSTALL_OWNER, INSTALL_GROUP)
     
-    installCommand = "\"" + full_exec_path + " -i silent -f " + response_files_path + "/linux/installer.properties" + "\"" 
+    installCommand = "\"" + binary_path + " -i silent -f " + response_files_path + "/linux/installer.properties" + "\"" 
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
     
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "##################### \n")
@@ -88,14 +108,19 @@ def install_atg(configData, full_path):
         
         logging.info("installing CRS")
         
-        crs_exec_path = binary_path + "/crs/OCReferenceStore11.1.bin"
-        if not os.path.exists(crs_exec_path):
-            logging.error("Binary " + crs_exec_path + " does not exist - will not install")
-            return
+        try:            
+            crs_binary_path = config.get(service_name, 'crs_binary')
+        except ConfigParser.NoSectionError:
+            logging.error("Config section " + service_name + " not found in config file. Halting")
+            return False
+    
+        if (not os.path.exists(crs_binary_path)):
+            logging.error("Cannot find installer file " + crs_binary_path + " - will not install")
+            return        
         
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}
         commerce_setup_helper.substitute_file_fields(response_files_path + '/crs/crsinstaller.properties.master', response_files_path + '/crs/crsinstaller.properties', field_replacements)
-        installCommand = "\"" + crs_exec_path + " -i silent -f " + response_files_path + "/crs/crsinstaller.properties" + "\"" 
+        installCommand = "\"" + crs_binary_path + " -i silent -f " + response_files_path + "/crs/crsinstaller.properties" + "\"" 
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
         
         # If patch1 is installed, these are not updated. fix it.
@@ -113,13 +138,18 @@ def install_atg(configData, full_path):
     if (INSTALL_SERVICE == "true"):
         
         logging.info("installing Service")
-        
-        service_exec_path = binary_path + "/service/OCServiceCenter11.1.bin"
-        if not os.path.exists(service_exec_path):
-            logging.error("Binary " + service_exec_path + " does not exist - will not install")
-            return
+
+        try:            
+            service_binary_path = config.get(service_name, 'service_binary')
+        except ConfigParser.NoSectionError:
+            logging.error("Config section " + service_name + " not found in config file. Halting")
+            return False
+    
+        if (not os.path.exists(service_binary_path)):
+            logging.error("Cannot find installer file " + service_binary_path + " - will not install")
+            return           
         
         field_replacements = {'INSTALL_HOME':INSTALL_DIR}
         commerce_setup_helper.substitute_file_fields(response_files_path + '/service/serviceinstaller.properties.master', response_files_path + '/service/serviceinstaller.properties', field_replacements)
-        installCommand = "\"" + service_exec_path + " -i silent -f " + response_files_path + "/service/serviceinstaller.properties" + "\"" 
+        installCommand = "\"" + service_binary_path + " -i silent -f " + response_files_path + "/service/serviceinstaller.properties" + "\"" 
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)               

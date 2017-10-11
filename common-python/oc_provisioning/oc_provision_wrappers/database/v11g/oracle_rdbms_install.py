@@ -31,12 +31,14 @@ from oc_provision_wrappers import commerce_setup_helper
 import fileinput
 import platform
 import os
+import ConfigParser 
 import logging
 
 logger = logging.getLogger(__name__)
 
+installer_key = 'installer_data'
 json_key = 'ORACLE_11g_install'
-service_name = "Oracle DB"
+service_name = "Oracle_DB"
 
 def install_oracle(configData, full_path): 
     
@@ -45,21 +47,36 @@ def install_oracle(configData, full_path):
     else:
         logging.error(json_key + " config data missing from json. will not install")
         return
+    
+    if installer_key in configData:
+        installerData = configData[installer_key]
+    else:
+        logging.error("installer json data missing. Cannot continue")
+        return False   
+        
     logging.info("installing " + service_name)
     
-    if (platform.system() == "SunOS"):
-        binary_path = full_path + "/binaries/oracleDB11g/solaris"
-    else:
-        binary_path = full_path + "/binaries/oracleDB11g"
+    config = ConfigParser.ConfigParser()
+    installer_props = installerData['installer_properties']
+    config_file = full_path + '/' + installer_props
+    
+    if (not os.path.exists(config_file)):
+        logging.error("Installer config " + config_file + " not found. Halting")
+        return False
+    
+    logging.info("config file is " + config_file)
+    config.read(config_file)
+    try:            
+        binary_path = config.get(service_name, 'db_binary')
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file. Halting")
+        return False
+
+    if (not os.path.exists(binary_path)):
+        logging.error("Cannot find installer file " + binary_path + "   Halting")
+        return    
         
     response_files_path = full_path + "/responseFiles/oracle11g"
-
-    install_exec = "/database/runInstaller"
-    full_exec_path = binary_path + install_exec
-    
-    if not os.path.exists(full_exec_path):
-        logging.error("Binary " + full_exec_path + " does not exist - will not install")
-        return False
                                         
     requiredFields = ['oracleBase', 'installOwner', 'installGroup', 'installHost', 'oraInventoryDir', 'oracleHome', 'oracleSID', 'adminPW', 'dbStorageLoc']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
@@ -87,7 +104,7 @@ def install_oracle(configData, full_path):
     commerce_setup_helper.mkdir_with_perms(DB_FILE_DIR, INSTALL_OWNER, INSTALL_GROUP)
     
     # install db
-    installCommand = "\"" + full_exec_path + " -silent -waitforcompletion -responseFile " + response_files_path + "/db.rsp" + "\""
+    installCommand = "\"" + binary_path + " -silent -waitforcompletion -responseFile " + response_files_path + "/db.rsp" + "\""
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
     
     invCmd = ORACLE_INVENTORY_DIR + "/orainstRoot.sh"
