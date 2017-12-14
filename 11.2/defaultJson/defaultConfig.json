@@ -4,7 +4,7 @@
         {
             "installer_data":
                 {
-                    "installer_properties": "installers_x86.properties"
+                    "installer_properties": "installers_11_2_x86.properties"
                 },        
             "JAVA_install": 
                 {

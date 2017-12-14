@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 json_key = 'WEBLOGIC_machines'
 common_key = 'WEBLOGIC_common'
 service_name = "WebLogic Machines"
+service_version = 'weblogic_12.1.3'
 
 def create_machines(configData, full_path): 
     
@@ -50,7 +51,7 @@ def create_machines(configData, full_path):
         logging.error(common_key + " config data missing from json. will not install")
         return 
 
-    response_files_path = full_path + "/responseFiles/wls-12.1.2"
+    response_files_path = full_path + "/responseFiles/" + service_version
                         
     logging.info("Updating " + service_name)   
 

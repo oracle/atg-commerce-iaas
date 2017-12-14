@@ -1,0 +1,102 @@
+#!/bin/sh
+# oracleDatabase:      Oracle Database dbconsole
+#
+# chkconfig: 345 99 10
+#
+# description:       Oracle Database dbconsole
+#
+#
+
+### BEGIN INIT INFO
+# Provides: dbconsole
+# Required-Start: $local_fs $remote_fs $network $named
+# Required-Stop: $local_fs $remote_fs $network
+# Should-Start:
+# Should-Stop:
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 2 6
+# Short-Description: Oracle Database dbconsole
+# Description: Service to start and stop Oracle Database dbconsole
+### END INIT INFO
+
+
+# Source function library.
+. /etc/init.d/functions
+
+# Check for root
+if [ `id -u` != 0 ]; then
+    echo "you must be root to use this script"
+    exit 4
+fi
+
+PROCESS_OWNER="ORACLE_PROCESS_OWNER"
+ORA_HOME="ORACLE_HOME"
+
+COMMAND_PREFIX="su - ${PROCESS_OWNER} -c"
+
+# start script
+PROGRAM_START="$ORA_HOME/bin/emctl start dbconsole"
+
+# stop script
+PROGRAM_STOP="$ORA_HOME/bin/emctl stop dbconsole"
+
+ 
+SERVICE_NAME=`/bin/basename $0`
+LOCKFILE="/var/lock/subsys/$SERVICE_NAME"
+ 
+RETVAL=0
+ 
+start() {
+        echo -n $"Starting $SERVICE_NAME ... "
+
+        ${COMMAND_PREFIX} "$PROGRAM_START"
+ 
+         RETVAL=$?
+        if [ $RETVAL -eq 0 ] ; then
+          touch $LOCKFILE
+        else
+          echo "FAILED: $RETVAL. Please check logs for more information."
+        fi
+        echo        
+}
+
+ 
+stop() {        
+        echo -n $"Stopping $SERVICE_NAME ... "
+
+        # stop process
+        ${COMMAND_PREFIX} "${PROGRAM_STOP}"
+        
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && rm -f $LOCKFILE
+}
+ 
+restart() {
+        stop
+        start
+}
+ 
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|force-reload|reload)
+        restart
+        ;;
+  condrestart|try-restart)
+        [ -f $LOCKFILE ] && restart
+        ;;
+  status)
+        echo
+        RETVAL=$?
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+        exit 1
+esac
+ 
+exit $RETVAL

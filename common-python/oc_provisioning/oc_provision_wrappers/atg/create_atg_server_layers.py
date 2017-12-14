@@ -34,6 +34,8 @@ from oc_provision_wrappers import commerce_setup_helper
 
 logger = logging.getLogger(__name__)
 
+installer_key = 'atg'
+
 def generate_atg_server_layers(configData, full_path):
     """
     Create ATG server layers based on the instance type
@@ -101,7 +103,15 @@ def generate_atg_server_layers(configData, full_path):
         PROD_LOCK_PORTS = ','.join(PROD_LOCK_PORTS_ARRAY)
         PROD_LOCK_SERVERS = ','.join(PROD_LOCK_SERVERS_ARRAY)
         
-        server_layer_path = full_path + "/atg-server-layers/"
+        # get info from json on what version we are installing
+        installer_config_data = commerce_setup_helper.get_installer_config_data(configData, full_path, installer_key)
+    
+        if (not installer_config_data):
+            return False
+    
+        service_version = installer_config_data['service_version']         
+        
+        server_layer_path = full_path + "/responseFiles/" + service_version + "/atg-server-layers/"
          
         cpCmd = "\"" + "cp -R " + server_layer_path + ATG_SERVER_TYPE + " " + ATG_SERVERS_HOME + "/" + WL_SERVER_NAME + "\""
         commerce_setup_helper.exec_as_user(ATG_INSTALL_OWNER, cpCmd)

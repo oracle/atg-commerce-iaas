@@ -29,14 +29,14 @@ __version__ = "1.0.0.0"
 from oc_provision_wrappers import commerce_setup_helper
 import platform
 import os
-import ConfigParser
 import logging
 
 logger = logging.getLogger(__name__)
 
-installer_key = 'installer_data'
 json_key = 'ENDECA_install'
 service_name = "ToolsAndFramework"
+installer_key = 'endeca'
+binary_key = 'tools_binary'
 
 def install_toolsAndFramework(configData, full_path): 
         
@@ -53,31 +53,27 @@ def install_toolsAndFramework(configData, full_path):
         logging.error(service_name + " config data missing from json. will not install")
         return
 
-    if installer_key in configData:
-        installerData = configData[installer_key]
-    else:
-        logging.error("installer json data missing. Cannot continue")
-        return False    
+    # get info from json on what version we are installing
+    installer_config_data = commerce_setup_helper.get_installer_config_data(configData, full_path, installer_key)
+    
+    if (not installer_config_data):
+        return False
+    
+    service_version = installer_config_data['service_version'] 
         
     logging.info("installing " + service_name)
 
-    config = ConfigParser.ConfigParser()
-    installer_props = installerData['installer_properties']
-    config_file = full_path + '/' + installer_props
-    
-    if (not os.path.exists(config_file)):
-        logging.error("Installer config " + config_file + " not found. Halting")
+    try:
+        binary_path = installer_config_data[binary_key]
+    except KeyError:
+        logging.error("Installer key " + binary_key + " not found in config file.")
         return False
-    
-    logging.info("config file is " + config_file)
-    config.read(config_file)
-    try:            
-        binary_path = config.get(service_name, 'tools_binary')
-    except ConfigParser.NoSectionError:
-        logging.error("Config section " + service_name + " not found in config file. Halting")
-        return False
+
+    if (not os.path.exists(binary_path)):
+        logging.error("Cannot find installer file " + binary_path + "   Halting")
+        return
         
-    response_files_path = full_path + "/responseFiles/endeca11.1"
+    response_files_path = full_path + "/responseFiles/" + service_version 
         
     if jsonData is not None:
         
@@ -99,9 +95,9 @@ def install_toolsAndFramework(configData, full_path):
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)        
 
         if (platform.system() == 'SunOS'):
-            startStopPath = "/startStopScripts/solaris/bootScripts/"
+            startStopPath = "/startStopScripts/" + service_version + "/solaris/"
         else:
-            startStopPath = "/startStopScripts/bootScripts/"
+            startStopPath = "/startStopScripts/" + service_version + "/"
                     
         # copy start/stop script
         ENDECA_HOME = ENDECA_ROOT + "/endeca"

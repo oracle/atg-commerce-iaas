@@ -200,6 +200,8 @@ if configData == None:
 if showDebug:
     print 'ARGV      :', sys.argv[1:]
     pprint (configData)
+    
+install_versions = commerce_setup_helper.get_json_key(configData, 'install_versions')
 
 if copy_ssh_keys:
     try:
@@ -231,6 +233,16 @@ if install_java:
 
 if install_weblogic:
     try:
+        weblogic_version = install_versions['weblogic']
+        if (weblogic_version == '12.1.2'):
+            print "12.1.2"
+        elif (weblogic_version == '12.1.3'):
+            print "12.1.3"        
+        elif (weblogic_version == '12.2.1'):
+            print "12.2.1"
+        else:
+            print "Specified version of weblogic not found. Version specified was " + weblogic_version
+          
         weblogic_helper.install_weblogic(configData, full_path)
     except:
         traceback.print_exc()

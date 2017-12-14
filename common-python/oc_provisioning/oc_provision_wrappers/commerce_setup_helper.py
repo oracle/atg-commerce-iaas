@@ -217,13 +217,72 @@ def copy_sshkeys(fromUser, toUser, toUserGroup):
     os.chmod(toHomeDir + "/authorized_keys", 0644)
     change_file_owner(toHomeDir + "/authorized_keys", toUser, toUserGroup)
     
-def get_path_to_binary(prop_key):
+def get_path_to_binary(service_name, binary_key, installer_properties):
     """
     Get the path to a product binary from properties file
     """      
     config = ConfigParser.ConfigParser()
-    installer_properties = "installer.properties"
-    installer_section = "installers"
     config.read(installer_properties)
-    return config.get(installer_section, prop_key)
+    logging.info("config file is " + installer_properties)
+    config.read(installer_properties)
+    try:            
+        binary_path = config.get(service_name, binary_key)
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_name + " not found in config file.")
+        return False
+        
+    return binary_path
+
+def get_json_key(config_data, json_key):
+    """
+    Return all data under a specific json key
+    """       
+    if json_key in config_data:
+        jsonData = config_data[json_key]
+    else:
+        logging.error(json_key + " json key not found.")
+        return False
+    return jsonData
+
+def get_installer_config_data(configData, full_path, service_name):
+    """
+    Get the config data on an installer
+    """
+    installer_data_key = 'installer_data'
+    install_properties_key = 'installer_properties'
+    install_versions_key = 'install_versions'
+    
+    # check if there is installer version data in our json
+    if installer_data_key in configData:
+        installer_prop_data = configData[installer_data_key]
+    else:
+        logging.error("installer json data missing. Cannot continue")
+        return False
+    
+    # set the specific version of a service we are looking for
+    install_versions = configData[install_versions_key]   
+    install_version = install_versions[service_name]
+    service_version = service_name + "_" + install_version      
+
+    # try to load the install property file
+    config = ConfigParser.ConfigParser()
+    installer_props = installer_prop_data[install_properties_key]
+    config_file = full_path + '/' + installer_props
+
+    if (not os.path.exists(config_file)):
+        logging.error("Installer config " + config_file + " not found. Halting")
+        return False
+
+    logging.info("Reading installer properties file " + config_file)
+    config.read(config_file)
+    
+  
+    try:            
+        service_version_data = config._sections[service_version]
+        service_version_data['service_version'] = service_version
+    except ConfigParser.NoSectionError:
+        logging.error("Config section " + service_version + " not found in config file.")
+        return False
+        
+    return service_version_data
     

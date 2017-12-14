@@ -28,14 +28,17 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import os
-import ConfigParser 
 import logging
 
 logger = logging.getLogger(__name__)
 
-installer_key = 'installer_data'
+installer_key = 'atg'
 json_key = 'ATG_install'
 service_name = "ATG"
+atg_binary_key = 'atg_binary'
+crs_binary_key = 'crs_binary'
+csa_binary_key = 'csa_binary'
+service_binary_key = 'service_binary'
 
 def install_atg(configData, full_path): 
     
@@ -45,35 +48,27 @@ def install_atg(configData, full_path):
         logging.error(json_key + " config data missing from json. will not install")
         return False
 
-    if installer_key in configData:
-        installerData = configData[installer_key]
-    else:
-        logging.error("installer json data missing. Cannot continue")
-        return False    
+    # get info from json on what version we are installing
+    installer_config_data = commerce_setup_helper.get_installer_config_data(configData, full_path, installer_key)
     
-    logging.info("installing " + service_name)
-
-    config = ConfigParser.ConfigParser()
-    installer_props = installerData['installer_properties']
-    config_file = full_path + '/' + installer_props
-    
-    if (not os.path.exists(config_file)):
-        logging.error("Installer config " + config_file + " not found. Halting")
+    if (not installer_config_data):
         return False
     
-    logging.info("config file is " + config_file)
-    config.read(config_file)
-    try:            
-        binary_path = config.get(service_name, 'atg_binary')
-    except ConfigParser.NoSectionError:
-        logging.error("Config section " + service_name + " not found in config file. Halting")
+    service_version = installer_config_data['service_version'] 
+        
+    logging.info("installing " + service_name)
+
+    try:
+        binary_path = installer_config_data[atg_binary_key]
+    except KeyError:
+        logging.error("Installer key " + atg_binary_key + " not found in config file.")
         return False
 
     if (not os.path.exists(binary_path)):
         logging.error("Cannot find installer file " + binary_path + "   Halting")
         return
-    
-    response_files_path = full_path + "/responseFiles/atg11.2"
+        
+    response_files_path = full_path + "/responseFiles/" + service_version
                                         
     requiredFields = ['dynamoRoot', 'installOwner', 'installGroup', 'rmiPort', 'javaHome', 'wl_home', 'wl_domain', 'wl_adminPort', 'install_crs', 'install_csa']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
@@ -108,11 +103,7 @@ def install_atg(configData, full_path):
     if (INSTALL_CRS == "true"):
         logging.info("installing CRS")
         
-        try:            
-            crs_binary_path = config.get(service_name, 'crs_binary')
-        except ConfigParser.NoSectionError:
-            logging.error("Config section " + service_name + " not found in config file. Halting")
-            return False
+        crs_binary_path = installer_config_data[crs_binary_key]
     
         if (not os.path.exists(crs_binary_path)):
             logging.error("Cannot find installer file " + crs_binary_path + " - will not install")
@@ -126,11 +117,7 @@ def install_atg(configData, full_path):
     if (INSTALL_CSA == "true"):
         logging.info("installing CSA")
         
-        try:            
-            csa_binary_path = config.get(service_name, 'csa_binary')
-        except ConfigParser.NoSectionError:
-            logging.error("Config section " + service_name + " not found in config file. Halting")
-            return False
+        csa_binary_path = installer_config_data[csa_binary_key]
     
         if (not os.path.exists(csa_binary_path)):
             logging.error("Cannot find installer file " + csa_binary_path + " - will not install")
@@ -145,12 +132,8 @@ def install_atg(configData, full_path):
         
         logging.info("installing Service")
         
-        try:            
-            service_binary_path = config.get(service_name, 'service_binary')
-        except ConfigParser.NoSectionError:
-            logging.error("Config section " + service_name + " not found in config file. Halting")
-            return False
-    
+        service_binary_path = installer_config_data[service_binary_key]
+
         if (not os.path.exists(service_binary_path)):
             logging.error("Cannot find installer file " + service_binary_path + " - will not install")
             return           

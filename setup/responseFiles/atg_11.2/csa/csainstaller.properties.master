@@ -1,0 +1,8 @@
+
+#Choose Install Folder
+#---------------------
+USER_INSTALL_DIR=INSTALL_HOME
+
+#Install
+#-------
+-fileOverwrite_INSTALL_HOME/CommerceAccelerator/uninstall/.CommerceAccelerator_uninstall/Uninstall Oracle Commerce Accelerator 11.2.lax=Yes

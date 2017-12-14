@@ -1,0 +1,83 @@
+import sys
+import os
+from java.lang import System
+import getopt
+
+#===============================
+#Input Values Validation Section
+#===============================
+
+if __name__=='__main__' or __name__== 'main':
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "u:p:a:", ["username=", "password=", "adminUrl="])
+
+    except getopt.GetoptError, err:
+        print str(err)
+        usage()
+
+    username = ''
+    password = ''
+    adminUrl = ''
+
+    for opt, arg in opts:
+        if opt == "-u":
+            username = arg
+        elif opt == "-p":
+            password = arg
+        elif opt == "-a":
+            adminUrl = arg
+
+    if username == "":
+        print "Missing \"-u username\" parameter.\n"
+        usage()
+    elif password == "":
+        print "Missing \"-p password\" parameter.\n"
+        usage()
+    elif adminUrl == "":
+        print "Missing \"-a adminUrl\" parameter.\n"
+        usage()
+
+
+###################################################################
+# Connect to damain
+###################################################################
+def connectToDomain():
+    try:
+        if username != "":
+            connect(username, password, adminUrl)
+            print 'Successfully connected to the domain\n'
+
+    except:
+        print 'The domain is unreacheable. Please try again\n'
+        exit()
+
+###################################################################
+# Disable EnforceValidBasicAuthCredentials
+###################################################################
+def disableBasicAuth():
+    try:
+        print 'Set EnforceValidBasicAuthCredentials to false...';
+        edit();
+        startEdit();
+
+	cd("/Servers")
+	domainName = cmo.getName()
+
+	cd('/SecurityConfiguration/'+domainName);
+
+	set('EnforceValidBasicAuthCredentials','false');
+
+        save();
+        activate();
+
+    except:
+        print 'Exception disabling EnforceValidBasicAuthCredentials !';
+        dumpStack();
+        cancelEdit('y')
+        exit();
+
+
+connectToDomain();
+disableBasicAuth();
+exit();

@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 json_key = 'WEBLOGIC_managed_server'
 common_key = 'WEBLOGIC_common'
 service_name = "WebLogic Domain Settings"
-
+service_version = 'weblogic_12.2.1'
 
 def unpack_domain(configData, full_path): 
 
@@ -91,9 +91,10 @@ def unpack_domain(configData, full_path):
     WL_DOMAIN_HOME = INSTALL_DIR + '/user_projects/domains/' + WL_DOMAIN_NAME
 
     if (platform.system() == 'SunOS'):
-        startStopPath = "/startStopScripts/solaris/bootScripts/"
+        startStopPath = "/startStopScripts/" + service_version + "/solaris/"
     else:
-        startStopPath = "/startStopScripts/bootScripts/"
+        startStopPath = "/startStopScripts/" + service_version + "/"
+        
     # copy start/stop script
     WL_DOMAIN_HOME = INSTALL_DIR + '/user_projects/domains/' + WL_DOMAIN_NAME
     wlScript_replacements = {'WL_DOMAIN_HOME':WL_DOMAIN_HOME, "WL_PROCESS_OWNER":INSTALL_OWNER}

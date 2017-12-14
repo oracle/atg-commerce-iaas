@@ -22,7 +22,7 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Michael Shanley (Oracle A-Team)"
-__copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2017  Oracle and/or its affiliates. All rights reserved."
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 json_key = 'WEBLOGIC_domain_setup'
 common_key = 'WEBLOGIC_common'
 service_name = "WebLogic Domain"
+service_version = 'weblogic_12.2.1' 
 
 def create_wl_domain(configData, full_path): 
     
@@ -54,7 +55,7 @@ def create_wl_domain(configData, full_path):
         logging.error(common_key + " config data missing from json. will not install")
         return   
 
-    response_files_path = full_path + "/responseFiles/wls-12.2.1"
+    response_files_path = full_path + "/responseFiles/" + service_version
                     
     logging.info("Creating " + service_name)               
      
@@ -100,9 +101,9 @@ def create_wl_domain(configData, full_path):
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, domainCmd)  
    
     if (platform.system() == 'SunOS'):
-        startStopPath = "/startStopScripts/solaris/bootScripts/"
+        startStopPath = "/startStopScripts/" + service_version + "/solaris/"
     else:
-        startStopPath = "/startStopScripts/bootScripts/"
+        startStopPath = "/startStopScripts/" + service_version + "/"
    
     # copy start/stop script
     WL_DOMAIN_HOME = INSTALL_DIR + '/user_projects/domains/' + WL_DOMAIN_NAME

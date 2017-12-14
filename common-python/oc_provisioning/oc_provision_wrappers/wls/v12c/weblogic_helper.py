@@ -22,7 +22,7 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Michael Shanley (Oracle A-Team)"
-__copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2017  Oracle and/or its affiliates. All rights reserved."
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -31,14 +31,14 @@ from oc_provision_wrappers import commerce_setup_helper
 import os
 import platform
 import shutil
-import ConfigParser 
 import logging
 
 logger = logging.getLogger(__name__)
 
-installer_key = 'installer_data'
 json_key = 'WEBLOGIC_common'
-service_name = "WebLogic"
+service_name = "weblogic"
+binary_key = service_name + "_binary"
+patch_key = service_name + "_patches"
 
 def install_weblogic(configData, full_path): 
     
@@ -48,36 +48,27 @@ def install_weblogic(configData, full_path):
         logging.error(json_key + " config data missing from json. will not install")
         return
 
-    if installer_key in configData:
-        installerData = configData[installer_key]
-    else:
-        logging.error("installer json data missing. Cannot continue")
-        return    
-        
-    logging.info("installing " + service_name)
-
-    config = ConfigParser.ConfigParser()
-    installer_props = installerData['installer_properties']
-    config_file = full_path + '/' + installer_props
+    # get info from json on what version we are installing
+    installer_config_data = commerce_setup_helper.get_installer_config_data(configData, full_path, service_name)
     
-    if (not os.path.exists(config_file)):
-        logging.error("Installer config " + config_file + " not found. Halting")
+    if (not installer_config_data):
         return False
     
-    logging.info("config file is " + config_file)
-    config.read(config_file)
+    service_version = installer_config_data['service_version'] 
+            
+    logging.info("installing " + service_version)
+
     try:
-        binary_path = config.get(service_name, 'wls_binary')
-        wls_version = config.get(service_name, 'wls_version')
-    except ConfigParser.NoSectionError:
-        logging.error("Config section " + service_name + " not found in config file. Halting")
+        binary_path = installer_config_data[binary_key]
+    except KeyError:
+        logging.error("Installer key " + binary_key + " not found in config file.")
         return False
 
     if (not os.path.exists(binary_path)):
         logging.error("Cannot find installer file " + binary_path + "   Halting")
         return False
         
-    response_files_path = full_path + "/responseFiles/" + wls_version                     
+    response_files_path = full_path + "/responseFiles/" + service_version                     
                     
     requiredFields = ['middlewareHome', 'installOwner', 'installGroup', 'oraInventoryDir']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
@@ -127,41 +118,23 @@ def install_weblogic(configData, full_path):
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, 'export JAVA_OPTIONS=\"' + JAVA_RAND + ' \" \n')
     
     # install patches if any were listed
-    patch_weblogic(configData, full_path)    
+    patch_weblogic(configData, full_path, installer_config_data)    
     
-def patch_weblogic(configData, full_path):
+def patch_weblogic(configData, full_path, installer_config_data):
     if json_key in configData:
         jsonData = configData[json_key]
     else:
         logging.error(json_key + " config data missing from json. will not install")
         return
-
-    if installer_key in configData:
-        installerData = configData[installer_key]
-    else:
-        logging.error("installer json data missing. Cannot continue")
-        return    
         
-    logging.info("installing " + service_name)
+    logging.info("installing weblogic patches for " + service_name)
 
-    config = ConfigParser.ConfigParser()
-    installer_props = installerData['installer_properties']
-    config_file = full_path + '/' + installer_props
-    
-    if (not os.path.exists(config_file)):
-        logging.error("Cannot load installer config data. Halting")
-        return False
-    
-    logging.info("config file is " + config_file)
-    config.read(config_file)
-    patches_path = config.get(service_name, 'wls_patches')
+    patches_path = installer_config_data[patch_key]
 
     if (not os.path.exists(patches_path)):
         logging.error("Cannot find patches directory. Halting")
         return False
     
-    # binary_path = full_path + "/binaries/wls-12.1.3"
-    # patches_path = binary_path + "/patches"
     # json key containing patch files
     patchKey = "wl_patches";
                                    

@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 installer_key = 'installer_data'
 json_key = 'JAVA_install'
-service_name = "Java"
+service_name = "java"
 
 def install_java(configData, full_path): 
         
@@ -47,31 +47,16 @@ def install_java(configData, full_path):
         logging.error(service_name + " config data missing from json. will not install")
         return False
     
-    if installer_key in configData:
-        installerData = configData[installer_key]
-    else:
-        logging.error("installer json data missing. Cannot continue")
-        return False    
+    installer_config_data = commerce_setup_helper.get_installer_config_data(configData, full_path, service_name)
+    
+    if (not installer_config_data):
+        return False
 
     logging.info("installing " + service_name)
-    
-    config = ConfigParser.ConfigParser()
-    installer_props = installerData['installer_properties']
-    config_file = full_path + '/' + installer_props
-    
-    if (not os.path.exists(config_file)):
-        logging.error("Installer config " + config_file + " not found. Halting")
-        return False
-    
-    logging.info("config file is " + config_file)
-    config.read(config_file)
-    try:            
-        binary_path = config.get(service_name, 'java_binary')
-        # java version needed to create latest symlink
-        java_version = config.get(service_name, 'java_version')
-    except ConfigParser.NoSectionError:
-        logging.error("Config section " + service_name + " not found in config file. Halting")
-        return False
+
+    binary_path = installer_config_data['java_binary']
+    # java version needed to create latest symlink
+    java_version = installer_config_data['java_version']
 
     if (not os.path.exists(binary_path)):
         logging.error("Cannot find installer file " + binary_path + "   Halting")
