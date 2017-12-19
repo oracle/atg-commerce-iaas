@@ -62,7 +62,6 @@ setup(name='oc_provision_wrappers',
       install_requires=[
           'simplejson',
           'requests',
-          'abi',
           'ConfigParser'
       ],
       cmdclass={

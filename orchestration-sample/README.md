@@ -53,7 +53,7 @@ The following is a block from the commerce_instances file with DOMAINNAME, USERN
                             "attributes": {
                                 "userdata": {
                                     "pre-bootstrap": {
-                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --endeca --copy-ssh-keys"
+                                        "script": "/opt/oracle/install/11.1/pywrapper.sh --endeca --copy-ssh-keys --configSource=file:defaultConfig_11_1_cluster.json"
                                     }
                                 }
                             }

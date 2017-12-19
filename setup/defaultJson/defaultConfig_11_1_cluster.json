@@ -67,7 +67,7 @@
             "oraInventoryDir": "/u01/oraInventory",
             "wl_adminUser": "weblogic",
             "wl_adminPassword": "Password123!",
-            "wl_adminHost": "localhost",
+            "wl_adminHost": "atgsupport",
             "wl_adminHttpPort": "7001",
             "wl_adminHttpsPort": "7002",
             "wl_domain": "base_domain",
@@ -84,29 +84,119 @@
             "wl_startNodemgr_onBoot": "true"
         },
         "WEBLOGIC_machines": [{
-            "machineName": "localhost",
-            "machineAddress": "localhost"
-        }],
+                "machineName": "atgsupport",
+                "machineAddress": "atgsupport"
+            },
+            {
+                "machineName": "atg1",
+                "machineAddress": "atg1"
+            },
+            {
+                "machineName": "atg2",
+                "machineAddress": "atg2"
+            }
+        ],
         "WEBLOGIC_managed_servers": [{
-                "managedServerName": "ATGProduction",
-                "managedServerHttpPort": "7003",
-                "managedServerHttpsPort": "7004",
-                "atgRmiPort": "8860",
-                "atgFdPort": "8810",
-                "atgDrpPort": "8850",
+                "managedServerName": "Prod1I1",
+                "managedServerHttpPort": "7010",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7110",
+                "atgFdPort": "7210",
+                "atgDrpPort": "7310",
                 "atgServerType": "page",
-                "managedServerHost": "localhost",
+                "managedServerHost": "atg1",
                 "wl_startManaged_onBoot": "false"
             },
             {
-                "managedServerName": "ATGPublishing",
-                "managedServerHttpPort": "7103",
-                "managedServerHttpsPort": "7104",
-                "atgRmiPort": "8861",
-                "atgFdPort": "8811",
-                "atgDrpPort": "8851",
+                "managedServerName": "Prod1I2",
+                "managedServerHttpPort": "7020",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7120",
+                "atgFdPort": "7220",
+                "atgDrpPort": "7320",
                 "atgServerType": "page",
-                "managedServerHost": "localhost",
+                "managedServerHost": "atg1",
+                "wl_startManaged_onBoot": "false"
+            },
+            {
+                "managedServerName": "Fulfillment",
+                "managedServerHttpPort": "7030",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7130",
+                "atgFdPort": "7210",
+                "atgDrpPort": "7310",
+                "atgServerType": "page",
+                "managedServerHost": "atg1",
+                "wl_startManaged_onBoot": "false"
+            },
+            {
+                "managedServerName": "Prod2I1",
+                "managedServerHttpPort": "7110",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7110",
+                "atgFdPort": "7210",
+                "atgDrpPort": "7310",
+                "atgServerType": "page",
+                "managedServerHost": "atg2",
+                "wl_startManaged_onBoot": "false"
+            },
+            {
+                "managedServerName": "Prod2I2",
+                "managedServerHttpPort": "7120",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7120",
+                "atgFdPort": "7210",
+                "atgDrpPort": "7310",
+                "atgServerType": "page",
+                "managedServerHost": "atg2",
+                "wl_startManaged_onBoot": "false"
+            },
+            {
+                "managedServerName": "PES",
+                "managedServerHttpPort": "7130",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7130",
+                "atgFdPort": "7210",
+                "atgDrpPort": "7310",
+                "atgServerType": "pes",
+                "managedServerHost": "atg2",
+                "wl_startManaged_onBoot": "false"
+            },
+            {
+                "managedServerName": "BCC",
+                "managedServerHttpPort": "7310",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7110",
+                "atgFdPort": "7210",
+                "atgDrpPort": "7310",
+                "atgServerType": "bcc",
+                "bccFileSyncPort": "8816",
+                "bccLockPort": "9010",
+                "managedServerHost": "atgsupport",
+                "wl_startManaged_onBoot": "false"
+            },
+            {
+                "managedServerName": "Lock1",
+                "managedServerHttpPort": "7320",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7120",
+                "atgFdPort": "7210",
+                "atgDrpPort": "7310",
+                "atgServerType": "lock",
+                "atgLockManPort": "9012",
+                "managedServerHost": "atgsupport",
+                "wl_startManaged_onBoot": "false"
+            },
+            {
+                "managedServerName": "Lock2",
+                "managedServerHttpPort": "7330",
+                "managedServerHttpsPort": "7011",
+                "atgRmiPort": "7130",
+                "atgFdPort": "7210",
+                "atgDrpPort": "7310",
+                "atgServerType": "lock",
+                "atgLockManPort": "9022",
+                "managedServerHost": "atgsupport",
                 "wl_startManaged_onBoot": "false"
             }
         ],
@@ -117,7 +207,7 @@
                 "dsDriver": "oracle.jdbc.xa.client.OracleXADataSource",
                 "dsUsername": "atgcore",
                 "dsPassword": "Password123",
-                "dsTargetNames": "ATGProduction,ATGPublishing",
+                "dsTargetNames": "Prod1I1,Prod1I2,Prod2I1,Prod2I2,Fulfillment,PES,BCC,Lock1,Lock2",
                 "dsMaxCapacity": "50"
             },
             {
@@ -127,7 +217,7 @@
                 "dsDriver": "oracle.jdbc.xa.client.OracleXADataSource",
                 "dsUsername": "atgcata",
                 "dsPassword": "Password123",
-                "dsTargetNames": "ATGProduction,ATGPublishing",
+                "dsTargetNames": "Prod1I1,Prod1I2,Prod2I1,Prod2I2,Fulfillment,PES,BCC,Lock1,Lock2",
                 "dsMaxCapacity": "30"
             },
             {
@@ -137,7 +227,7 @@
                 "dsDriver": "oracle.jdbc.xa.client.OracleXADataSource",
                 "dsUsername": "atgcatb",
                 "dsPassword": "Password123",
-                "dsTargetNames": "ATGProduction,ATGPublishing",
+                "dsTargetNames": "Prod1I1,Prod1I2,Prod2I1,Prod2I2,Fulfillment,PES,BCC,Lock1,Lock2",
                 "dsMaxCapacity": "30"
             },
             {
@@ -147,7 +237,7 @@
                 "dsDriver": "oracle.jdbc.xa.client.OracleXADataSource",
                 "dsUsername": "atgpub",
                 "dsPassword": "Password123",
-                "dsTargetNames": "ATGPublishing",
+                "dsTargetNames": "BCC",
                 "dsMaxCapacity": "30"
             }
         ],
@@ -198,7 +288,7 @@
                 "adminPassword": "Password123!",
                 "virtualServerName": "atg-servers",
                 "virtualServerPort": "9000",
-                "originServers": "localhost:7010,localhost:7020",
+                "originServers": "atg1:7010,atg1:7020,atg2:7110,atg2:7120",
                 "originPoolName": "atg-servers",
                 "originServerType": "http",
                 "loadDistribution": "round-robin",
@@ -216,7 +306,7 @@
                 "adminPassword": "Password123!",
                 "virtualServerName": "endeca-servers",
                 "virtualServerPort": "9100",
-                "originServers": "localhost:15000",
+                "originServers": "endeca1:15000,endeca2:15000",
                 "originPoolName": "endeca-servers",
                 "originServerType": "http",
                 "loadDistribution": "round-robin",

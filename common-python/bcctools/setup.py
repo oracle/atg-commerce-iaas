@@ -51,7 +51,6 @@ setup(name='bcc_rest',
       install_requires=[
           'simplejson',
           'requests',
-          'abi',
           'ConfigParser'
       ]
       )

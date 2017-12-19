@@ -1,5 +1,5 @@
 {
-    "description": "Commerce instances 11.2 v16",
+    "description": "Commerce instances 11.2 v19",
     "name": "/Compute-DOMAINNAME/USERNAME/commerce_11_2_instance_orchestration",
     "oplans": [
         {
@@ -9,7 +9,7 @@
                 {
                     "instances": [
                         {
-                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v16",
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v19",
                             "label": "endeca1",
                             "name": "/Compute-DOMAINNAME/USERNAME/endeca1",
                             "tags": [
@@ -33,13 +33,13 @@
                             "attributes": {
                                 "userdata": {
                                     "pre-bootstrap": {
-                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --endeca --copy-ssh-keys"
+                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --endeca --copy-ssh-keys --configSource=file:defaultConfig_11_2_cluster.json"
                                     }
                                 }
                             }
                         },
                         {
-                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v16",
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v19",
                             "label": "endeca2",
                             "name": "/Compute-DOMAINNAME/USERNAME/endeca2",
                             "tags": [
@@ -62,13 +62,13 @@
                             "attributes": {
                                 "userdata": {
                                     "pre-bootstrap": {
-                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --dgraph --copy-ssh-keys"
+                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --dgraph --copy-ssh-keys --configSource=file:defaultConfig_11_2_cluster.json"
                                     }
                                 }
                             }
                         },
                         {
-                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v16",
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v19",
                             "label": "atgsupport",
                             "name": "/Compute-DOMAINNAME/USERNAME/atgsupport",
                             "tags": [
@@ -103,13 +103,13 @@
                             "attributes": {
                                 "userdata": {
                                     "pre-bootstrap": {
-                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --java --weblogic --weblogicDomain --weblogicSettings --weblogicDatasources --weblogicBootFiles --advancedStorage --atg --atgpatch --copy-ssh-keys"
+                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --java --weblogic --weblogicDomain --weblogicSettings --weblogicDatasources --weblogicBootFiles --advancedStorage --atg --atgpatch --copy-ssh-keys --configSource=file:defaultConfig_11_2_cluster.json"
                                     }
                                 }
                             }
                         },								
                         {
-                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v16",
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v19",
                             "label": "atg1",
                             "name": "/Compute-DOMAINNAME/USERNAME/atg1",
                             "tags": [
@@ -133,13 +133,13 @@
                             "attributes": {
                                 "userdata": {
                                     "pre-bootstrap": {
-                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --java --weblogic --weblogicManagedServer --weblogicBootFiles --copy-ssh-keys"
+                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --java --weblogic --weblogicManagedServer --weblogicBootFiles --copy-ssh-keys --configSource=file:defaultConfig_11_2_cluster.json"
                                     }
                                 }
                             }
                         },
                         {
-                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v16",
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v19",
                             "label": "atg2",
                             "name": "/Compute-DOMAINNAME/USERNAME/atg2",
                             "tags": [
@@ -163,13 +163,13 @@
                             "attributes": {
                                 "userdata": {
                                     "pre-bootstrap": {
-                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --java --weblogic --weblogicManagedServer --weblogicBootFiles --copy-ssh-keys"
+                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --java --weblogic --weblogicManagedServer --weblogicBootFiles --copy-ssh-keys --configSource=file:defaultConfig_11_2_cluster.json"
                                     }
                                 }
                             }
                         },				
                         {
-                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v16",
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v19",
                             "label": "otd",
                             "name": "/Compute-DOMAINNAME/USERNAME/otd",
                             "tags": [
@@ -183,7 +183,7 @@
                                         "/Compute-DOMAINNAME/USERNAME/otd_server",
                                         "/Compute-DOMAINNAME/default/default"
                                     ],
-                                    "nat": "ippool:/oracle/public/ippool"
+                                    "nat": "ippool:/oracle/public/ippool"v19
                                 }
                             },
                             "sshkeys": [
@@ -192,13 +192,13 @@
                             "attributes": {
                                 "userdata": {
                                     "pre-bootstrap": {
-                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --java --otdInstall --otdConfig --copy-ssh-keys"
+                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --java --otdInstall --otdConfig --copy-ssh-keys --configSource=file:defaultConfig_11_2_cluster.json"
                                     }
                                 }
                             }
                         },						
                         {
-                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v16",
+                            "imagelist": "/Compute-DOMAINNAME/USERNAME/atg11_2_v19",
                             "label": "atgdb",
                             "name": "/Compute-DOMAINNAME/USERNAME/atgdb",
                             "tags": [
@@ -227,7 +227,7 @@
                             "attributes": {
                                 "userdata": {
                                     "pre-bootstrap": {
-                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --addstorage --db --copy-ssh-keys"
+                                        "script": "/opt/oracle/install/11.2/pywrapper.sh --addstorage --db --copy-ssh-keys --configSource=file:defaultConfig_11_2_cluster.json"
                                     }
                                 }
                             }
