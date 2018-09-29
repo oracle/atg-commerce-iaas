@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Oracle
+# Copyright (c) 2018 Oracle
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,8 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Michael Shanley (Oracle A-Team)"
-__copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights reserved."
+__copyright__ = "Copyright (c) 2018  Oracle and/or its affiliates. All rights reserved."
+__credits__ ="Hadi Javaherian (Oracle IaaS and App Dev Team)"
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -37,6 +38,68 @@ import urllib2
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def find_default_machine(configData, full_path):
+
+     #managed_key_mserver = "WEBLOGIC_managed_servers"
+    managed_key_machine = "WEBLOGIC_machines"
+
+    if  managed_key_machine in configData:
+        #jsonDataArray_mserver = configData[managed_key_mserver]
+        jsonDataArray_machine = configData[managed_key_machine]
+    else:
+        logging.error(jsonDataArray_machine + " is missing from json. will not retrieve hostname")
+        return ''
+
+    logging.info("retrieving host name")
+
+
+    for jsonData_machine in jsonDataArray_machine:
+        requiredFields = ['machineName', 'machineAddress']
+        check_required_fields(jsonData_machine, requiredFields)
+
+    return jsonDataArray_machine 
+
+    raise ValueError ("Required field missing from json")
+
+
+def find_host_from_machine(machine_name, configData, full_path):
+    """
+    find the host name from the machine name 
+    """     
+    #managed_key_mserver = "WEBLOGIC_managed_servers"
+    managed_key_machine = "WEBLOGIC_machines"
+
+    if  managed_key_machine in configData:
+        #jsonDataArray_mserver = configData[managed_key_mserver]
+        jsonDataArray_machine = configData[managed_key_machine]
+    else:
+        logging.error(jsonDataArray_machine + " is missing from json. will not retrieve hostname")
+        return ''
+    
+    logging.info("retrieving host name")
+
+    #for jsonData_mserver in jsonDataArray_mserver:             
+    #    requiredFields = ['managedServerHost']
+    #    commerce_setup_helper.check_required_fields(jsonData_mserver, requiredFields)
+    
+    #    WL_SERVER_HOST = jsonData['managedServerHost'] 
+
+
+    for jsonData_machine in jsonDataArray_machine:             
+        requiredFields = ['machineName', 'machineAddress']
+        check_required_fields(jsonData_machine, requiredFields)
+    
+        WL_MACHINE_NAME = jsonData_machine['machineName']
+        WL_MACHINE_ADDR = jsonData_machine['machineAddress']    
+
+        if (machine_name == WL_MACHINE_NAME):
+           logging.info("found host name:  " + WL_MACHINE_ADDR)
+
+           return WL_MACHINE_ADDR
+
+    raise ValueError ("Required field " + machine_name+ " missing from json")
 
 def load_json_from_url(jsonUrl, key):
     """
@@ -55,10 +118,15 @@ def load_json_from_file(jsonFile, key):
     """
     Read json data from a file on the filesystem
     """        
+    logger.info("trying to load json from file...."+ jsonFile + "  and key: " + key)
     with open(jsonFile) as data_file:    
+        logger.info("opening the file now.....")
         data = json.load(data_file)
+        logger.info("done opening the file.....")
         if key not in data:
             raise ValueError ("Root " + key + " item missing")   
+
+        logger.info("returning the key.....")
         return data[key]
        
 def check_required_fields(jsonData, requiredFields):
@@ -66,8 +134,30 @@ def check_required_fields(jsonData, requiredFields):
     check for all requiredFields in jsonData
     """     
     for field in requiredFields:
+        logger.info("checking for requiredFields:  \n" + field)
         if field not in jsonData:
             raise ValueError ("Required field " + field + " missing from json")
+
+def callPopenDefaultShell(command):
+    """
+    call external process
+    """
+    logger.info("About to call Popen with False Shell......")
+    proc = Popen(command, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+
+    logger.info("Just called the Popen......")
+
+    out, err = proc.communicate()
+    if out:
+        logger.info(out)
+    if err:
+        logger.info("we ran into an err here......")
+        logger.error(err)
+
+    logger.info("proc is returning ......")
+
+    return proc.returncode
+
  
 
 def callPopen(command):
@@ -145,6 +235,16 @@ def add_to_bashrc(user, text):
     with open(bashrc_file, "a") as myfile:
         myfile.write(text)
     myfile.close()
+
+def exec_cmd_default (command):
+    """
+    Exec command as the user who called this function
+    """
+    logger.info("exec_cmd is running in the uefault shell: " + command)
+    returncode = callPopenDefaultShell(command)
+    logger.info("exec_cmd default shell just ended......")
+    return returncode
+
 
 def exec_cmd (command): 
     """
