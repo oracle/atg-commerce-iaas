@@ -1,0 +1,129 @@
+{
+    "commerceCRSSetup": 
+    
+        {
+        	"installer_data":
+        		{
+        			"installer_properties": "installers_x86.properties"
+        		},
+                "JAVA_install": 
+                        {
+                                "javaHome": "/usr/java",
+                                "installOwner": "oracle",
+                                "installGroup": "oinstall"
+                        },
+                "copy_ssh_keys": 
+                        {
+                                "fromUser": "opc",
+                                "toUser": "oracle",
+                                "toUserGroup": "oinstall"
+                        },
+                "advanced_storage":
+                        [
+                        {
+                                "device": "/dev/sdb1",
+                                "mountPoint": "/u01",
+                                "mountOwner": "oracle",
+                                "mountGroup": "oinstall"         
+                        },
+                        {
+                                "device": "/dev/sdc1",
+                                "mountPoint": "/u02",
+                                "mountOwner": "oracle",
+                                "mountGroup": "oinstall"         
+                        }            
+                        ],
+                "ENDECA_install": 
+                        {
+                                "installOwner": "oracle",
+                                "installGroup": "oinstall",
+                                "mdex": 
+                                {
+                                    "endecaRoot": "/u02/oracle"
+                                },
+                                "platformServices": 
+                                {
+                                    "endecaRoot": "/u02/oracle",
+                                    "mdexRoot": "/u02/oracle/endeca/MDEX/11.3.0",
+                                    "eacPort": "8888",
+                                    "eacShutdownPort": "8090",
+                                    "start_onBoot": "true"
+                                },
+                                "toolsAndFramework": 
+                                {
+                                    "endecaRoot": "/u02/oracle",
+                                    "start_onBoot": "true"
+                                },                
+                                "cas": 
+                                {
+                                    "endecaRoot": "/u02/oracle",
+                                    "casPort": "8500",
+                                    "casShutdownPort": "8506",
+                                    "casHostname": "oc113instance",
+                                    "start_onBoot": "true"
+                                }
+                        },
+                "WEBLOGIC_common":
+                        {
+                                "middlewareHome": "/u01/middleware",
+                                "installOwner": "oracle",
+                                "installGroup": "oinstall",
+                                "oraInventoryDir": "/u01/oraInventory",
+                                "wl_adminUser": "weblogic",
+                                "wl_adminPassword": "Password123!",
+                                "wl_adminHost": "oc113instance",
+                                "wl_adminHttpPort": "7001",
+                                "wl_adminHttpsPort": "7002",  
+                                "wl_domain": "atg_domain",
+                                "wl_patches": "p25388866_122120_Generic.zip"
+                        },
+                "WEBLOGIC_domain_setup": 
+                        {
+                                "wl_startAdmin_onBoot": "true",
+                                "wl_startNodemgr_onBoot": "true"
+                        },
+                "WEBLOGIC_domain_settings": 
+                        {
+                                "jtaTimeout": "500"                                  
+                        },
+                "WEBLOGIC_managed_server": 
+                        {
+                                "wl_startNodemgr_onBoot": "true"                            
+                        },                
+                "WEBLOGIC_machines":
+                        [
+                        { 
+                                "machineName": "atg1",
+                                "machineAddress": "oc113instance"               
+                        }
+                        ],
+                "WEBLOGIC_managed_servers":
+                        [
+                        { 
+                                "managedServerName": "PES",
+                                "managedServerHttpPort": "7130",
+                                "managedServerHttpsPort": "7011",
+                                "atgRmiPort": "7130",
+                                "atgFdPort": "7210",
+                                "atgDrpPort": "7310",
+                                "atgServerType": "pes",
+                                "managedServerHost": "atg1"
+                       }
+                       ],                                
+                "ATG_install": 
+                       {
+                                "dynamoRoot": "/u02/atg11.3",
+                                "installOwner": "oracle",
+                                "installGroup": "oinstall",
+                                "rmiPort": "8860",
+                                "javaHome": "/usr/java/latest",
+                                "wl_home": "/u01/middleware",
+                                "wl_domain": "atg_domain",
+                                "wl_adminPort": "7001",
+                                "atg_clustername": "democluster",
+                                "install_crs": "true",
+                                "install_csa": "true",
+                                "install_service": "true"                 
+                       }
+        }
+}
