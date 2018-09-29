@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Oracle
+# Copyright (c) 2018 Oracle
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,9 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Michael Shanley (Oracle A-Team)"
-__copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights reserved."
-__version__ = "1.0.0.0"
+__copyright__ = "Copyright (c) 2018  Oracle and/or its affiliates. All rights reserved."
+__credits__ ="Hadi Javaherian (Oracle IaaS and App Dev Team)"
+__version__ = "1.0.0.1"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
@@ -83,6 +84,10 @@ def create_wl_domain(configData, full_path):
         return False   
         
     wl_replacements = {'INSTALL_DIR':INSTALL_DIR, 'WL_DOMAIN_NAME':WL_DOMAIN_NAME, 'WL_ADMIN_HTTP_PORT':WL_ADMIN_HTTP_PORT, 'WL_ADMIN_HTTPS_PORT':WL_ADMIN_HTTPS_PORT, 'WL_ADMIN_PW':WL_ADMIN_PW, 'WL_MANAGED_SERVERS':WL_MANAGED_SERVERS, 'WL_MACHINES':WL_MACHINES}
+
+    logging.info("replacements are going to print here:  " )
+    for k,v in wl_replacements.iteritems():
+       print("key: %s value:  %s" % (k, v))
     commerce_setup_helper.substitute_file_fields(response_files_path + '/basicWLSDomain.py.master', response_files_path + '/basicWLSDomain.py', wl_replacements)
 
     domainCmd = "\""
@@ -97,6 +102,7 @@ def create_wl_domain(configData, full_path):
     # create wl domain CONFIG_JVM_ARGS
     domainCmd += "export CONFIG_JVM_ARGS='" + JAVA_RAND + "'; "
     domainCmd += wlst_path + " " + response_files_path + "/basicWLSDomain.py " + "\""
+    logging.info("Create wl domain cmd here: " + domainCmd)
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, domainCmd)  
    
     if (platform.system() == 'SunOS'):
@@ -113,18 +119,39 @@ def create_wl_domain(configData, full_path):
     # pack the domain for managed servers
     weblogic_packer.pack_domain(configData, full_path)
     
+    logging.info("finished packing the domain................")
+    logging.info("about to start the Admin and Nodemanager......")
+
     # fire up the admin server and nodemgr 
     startWLCmd = "/etc/init.d/weblogicAdmin"
-    commerce_setup_helper.exec_cmd(startWLCmd + " start")
+    commerce_setup_helper.exec_cmd(startWLCmd + " restart")
     startNodeCmd = "/etc/init.d/weblogicNodemgr"
-    commerce_setup_helper.exec_cmd(startNodeCmd + " start")
+    commerce_setup_helper.exec_cmd(startNodeCmd + " restart")
+
+    logging.info("Admin and Node Manager should be running now.........zzzzzzzzzzzzz")
     
     # give admin server time to finish starting
     sleepTime = 60
     time.sleep(sleepTime)
+
+    logging.info("Waking up from napping..........")
+    
+    #commerce_setup_helper.exec_cmd_default("nohup su -c /u01/middleware/user_projects/domains/atg_domain/bin/startNodeManager.sh oracle &")
+    #sleepTime = 120
+    #time.sleep(sleepTime)
+    #logging.info("2nd nap is finished....")
+
+    #commerce_setup_helper.exec_cmd_default("nohup su -c /u01/middleware/user_projects/domains/atg_domain/startWebLogic.sh oracle &")
+    #sleepTime = 120
+    #time.sleep(sleepTime)
+
+    logging.info(".......................see if wls is running....")
+    commerce_setup_helper.exec_cmd("ps -ef | grep weblogic")
     
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "# echo 'WebLogic Admin start/stop script: '" + startWLCmd + "\n")    
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "# echo 'WebLogic NodeManager start/stop script: '" + startNodeCmd + "\n")   
+
+    logging.info("just updated the bashrc....................")
     
 def add_managed_servers(configData, full_path):
     
