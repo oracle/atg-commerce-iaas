@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Oracle
+# Copyright (c) 2018 Oracle
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,9 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Michael Shanley (Oracle A-Team)"
-__copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights reserved."
-__version__ = "1.0.0.0"
+__copyright__ = "Copyright (c) 2018  Oracle and/or its affiliates. All rights reserved."
+__credits__ ="Hadi Javaherian (Oracle IaaS and App Dev Team)"
+__version__ = "1.0.0.1"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
@@ -57,7 +58,7 @@ def create_servers(configData, full_path):
                     
     logging.info("Updating " + service_name)   
 
-    commonRequiredFields = ['middlewareHome', 'installOwner', 'wl_adminUser', 'wl_adminHttpPort', 'wl_adminHost' 'wl_adminPassword']
+    commonRequiredFields = ['middlewareHome', 'installOwner', 'wl_adminUser', 'wl_adminHttpPort', 'wl_adminHost', 'wl_adminPassword']
     commerce_setup_helper.check_required_fields(commonData, commonRequiredFields)
 
     INSTALL_DIR = commonData['middlewareHome']
