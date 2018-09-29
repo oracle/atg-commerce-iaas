@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Oracle
+# Copyright (c) 2018 Oracle
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,9 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Michael Shanley (Oracle A-Team)"
-__copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights reserved."
-__version__ = "1.0.0.0"
+__copyright__ = "Copyright (c) 2018  Oracle and/or its affiliates. All rights reserved."
+__credits__ ="Hadi Javaherian (Oracle IaaS and App Dev Team)"
+__version__ = "1.0.0.1"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
@@ -88,12 +89,20 @@ def create_managed_scripts(configData, full_path):
         # copy start/stop script
         WL_DOMAIN_HOME = INSTALL_DIR + '/user_projects/domains/' + WL_DOMAIN_NAME
         wlScript_replacements = {'WL_DOMAIN_HOME':WL_DOMAIN_HOME, "WL_PROCESS_OWNER":INSTALL_OWNER, "INSTANCE_NAME":WL_SERVER_NAME, "ADMIN_URL":ADMIN_URL}
-        
+
+
+        HOSTNAME_FROM_MACHINE = commerce_setup_helper.find_host_from_machine(WL_SERVER_HOST, configData, full_path)
+                              
+
+        logging.info("Done copying the start/stop scripts........." + HOSTNAME_FROM_MACHINE)        
                 # try to get the fqdn
         FQDN = socket.getfqdn()
+        logging.info("FQDN is:  " + FQDN)
         if (FQDN is not None):
             HOSTNAME = FQDN.split(".")[0]
-            if (FQDN == WL_SERVER_HOST or HOSTNAME == WL_SERVER_HOST):
+            logging.info("HOSTNAME is : " + HOSTNAME)
+            logging.info("WL_SERVER_HOST is : " + WL_SERVER_HOST)
+            if (FQDN == HOSTNAME_FROM_MACHINE or HOSTNAME == HOSTNAME_FROM_MACHINE):
                 SCRIPT_NAME = 'weblogicManaged-' + WL_SERVER_NAME
                 logging.info('Generating startup script for server ' + WL_SERVER_NAME)
                 commerce_setup_helper.copy_start_script(WL_SERVER_BOOT, full_path + startStopPath + 'weblogicManaged.master', wlScript_replacements, SCRIPT_NAME)
@@ -106,17 +115,10 @@ def create_managed_scripts(configData, full_path):
                 # fire up the instance 
                 logging.info('Starting up instance ' + WL_SERVER_NAME)
                 startCmd = "/etc/init.d/" + SCRIPT_NAME
-                commerce_setup_helper.exec_cmd(startCmd + " start")                   
+                commerce_setup_helper.exec_cmd(startCmd + " restart")                   
+            else:
+                logging.error("Cannot determine hostname, fqdn or wl_server_host.......")
 
         else:
             logging.error("Cannot determine hostname. Cannot create startup script")
         
-        
-        
-      
-        
-        
-        
-        
-          
-    
