@@ -31,6 +31,8 @@
 #=======================================================================================
 
 readTemplate("INSTALL_DIR/wlserver/common/templates/wls/wls.jar")
+#selectTemplate('Basic WebLogic Server Domain','12.2.1.0')
+#loadTemplates()
 
 #=======================================================================================
 # Configure the Administration Server and SSL port.
@@ -55,7 +57,7 @@ set('ListenPort', WL_ADMIN_HTTPS_PORT)
 #=======================================================================================
 
 cd('/')
-cd('Security/WL_DOMAIN_NAME/User/weblogic')
+cd('Security/base_domain/User/weblogic')
 # Please set password here before using this script, e.g. cmo.setPassword('value')
 cmo.setPassword('WL_ADMIN_PW')
 
@@ -84,7 +86,7 @@ cmo.setNodeManagerPasswordEncrypted('WL_ADMIN_PW')
 # Disable basic auth
 #=======================================================================================
 
-cd('/SecurityConfiguration/WL_DOMAIN_NAME')
+cd('/SecurityConfiguration/base_domain')
 set('EnforceValidBasicAuthCredentials', 'false');
 
 #=======================================================================================
