@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Oracle
+# Copyright (c) 2018 Oracle
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,9 @@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 __author__ = "Michael Shanley (Oracle A-Team)"
-__copyright__ = "Copyright (c) 2016  Oracle and/or its affiliates. All rights reserved."
-__version__ = "1.0.0.0"
+__copyright__ = "Copyright (c) 2018  Oracle and/or its affiliates. All rights reserved."
+__credits__ ="Hadi Javaherian (Oracle IaaS and App Dev Team)"
+__version__ = "1.0.0.1"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 from oc_provision_wrappers import commerce_setup_helper
@@ -58,8 +59,9 @@ def install_toolsAndFramework(configData, full_path):
         binary_path = full_path + "/binaries/endeca11.3/solaris"
     else:
         binary_path = full_path + "/binaries/endeca11.3"
-        
-    install_exec = "/ToolsAndFrameworkInstall/Disk1/install/silent_install.sh"
+    
+    logging.info("installing silently with the correct path.....")
+    install_exec = "/ToolsAndFrameworkInstall/cd/Disk1/install/silent_install.sh"
         
     response_files_path = full_path + "/responseFiles/endeca11.3"
     
