@@ -72,7 +72,7 @@ def alter_pub_table(configData,full_path):
    try:
        cur.execute("ALTER TABLE epub_deployment MODIFY (URI VARCHAR2(200))")
    except TypeError as e:
-      logger.info("Error altering pub table ....."
+      logger.info("Error altering pub table .....")
 
       logging.error("Error with altering table: " + e)
 
