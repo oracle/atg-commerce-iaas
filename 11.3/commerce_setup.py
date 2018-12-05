@@ -1,3 +1,5 @@
+#!/usr/bin/python2.7
+
 # The MIT License (MIT)
 #
 # Copyright (c) 2018 Oracle
@@ -102,6 +104,7 @@ managed_wl_server = None
 create_wl_domain = None
 config_wl_domain = None
 config_wl_ds = None
+config_wl_dbaas_ds = None
 create_wl_servers = None
 create_wl_machines = None
 create_wl_bootfiles = None
