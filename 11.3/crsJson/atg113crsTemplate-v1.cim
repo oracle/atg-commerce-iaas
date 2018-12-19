@@ -1,0 +1,1233 @@
+//#GROOVY 1.0
+builder.cim {
+  task(atg.cim.productconfig.productselector.ProductSelectionContextTask) {
+    selectedProductIdList "publishing,REST.JAXRSPublic.Version1,REST.Actor,endeca_reader,siteadmin,endeca,store"
+    selectedAddOnIdList "endeca,endeca_reader,merch,lock,sso,abandoned_orders,lightweightSSOAuthentication,prodLock,switchingdatasource,dcsui_siteadmin_versioned,indexBySkuEndeca,endecapreview_production,storefront_demo,international,fulfillment,mobileCRS,endeca-international,endeca_international_reader,fluoroscope,storefront-full-setup,fulfillment_using_atg,mobilecommerce-REST,mobileCRS-international,REST.Actor,REST.JAXRSPublic.Version1,publishing_management,publishing_switchingdatasource"
+  }
+  task(atg.cim.productconfig.appserver.AppServerSelectTask) {
+    type "Weblogic Online"
+  }
+  task(atg.cim.productconfig.appserver.AppServerPathTask) {
+    path "INSTALL_LOC_FMW/wlserver/"
+  }
+  task(atg.cim.productconfig.appserver.DomainPathTask) {
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+  }
+  task(atg.cim.productconfig.appserver.UrlTask) {
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+  }
+  task(atg.cim.productconfig.appserver.UsernameTask) {
+    username "WLS_NODE_MANAGER_USER"
+  }
+  task(atg.cim.productconfig.appserver.PasswordTask) {
+    password "WLS_NODE_MANAGER_PASSWORD"
+  }
+  task(atg.cim.productconfig.appserver.AppServerSelectionPersistenceTask) {
+  }
+  task(atg.cim.security.opss.OpssInitializationTask) {
+  }
+  task(atg.cim.productconfig.ResetAdminPasswordTask) {
+    newPassword "e0df5fbc011f618e41589c9522c55f9b4fa0b9705e72d4c3ade979cc9cb542de453b69a5b46f8220e49691490157c24b1ab94170753b00ed6d840843ce556ca6"
+  }
+  task(atg.cim.keystore.KeyStorePasswordTask) {
+    mapName "refStoreKeystoreMap"
+    keyName "ref-keystore"
+  }
+  task(atg.cim.keystore.KeyStorePasswordTask) {
+    mapName "refStoreKeystoreMap"
+    keyName "ref-creditcardkey"
+  }
+  task(atg.cim.productconfig.opss.OpssWalletLocationTask) {
+    path "ATG_DIR/ATG_VERSION/home/../home/security/"
+  }
+  task(atg.cim.productconfig.opss.OpssWorkbenchLoginCredentialTask) {
+    mapName "endecaToolsAndFrameworks"
+    keyName "ifcr"
+  }
+  task(atg.cim.productconfig.opss.OpssCopyFilesForDeployment) {
+  }
+  task(atg.cim.productconfig.opss.DeployOpssFilesLocalTask) {
+  }
+  task(atg.cim.database.DatasourcePropertiesTask) {
+    key "management"
+    alias "management"
+    databaseType "oraclethin"
+    username "ATG_PUBLISHING_USER"
+    password "ATG_PUBLISHING_PASSWORD"
+    hostname "DB_HOST"
+    port "DB_PORT"
+    databaseName "DB_NAME"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    driverPath "DB_DRIVER_PATH"
+    jndiName "ATG_PUB_JNDI"
+  }
+  task(atg.cim.database.CreateSchemaTask) {
+    cimDatasourceId "management"
+    datasourceProperties "url=jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME,port=DB_PORT,databaseType=oraclethin,driverPathsAsString=DB_DRIVER_PATH,username=ATG_PUBLISHING_USER,alias=management,jndiName=ATG_PUB_JNDI,databaseName=DB_NAME,hostname=DB_HOST,password=ATG_PUBLISHING_PASSWORD"
+  }
+  task(atg.cim.database.AccountPasswordTask) {
+    password "MERCH_PASSWD"
+    pwdHasherCompPathCode "merchandisingPwdHasherCompPath"
+    salt "merchandising"
+    importPath "/DCS-UI/Versioned/install/data/users.xml"
+    persistKey "merchandisingPassword"
+  }
+  task(atg.cim.database.AccountPasswordTask) {
+    password "ADMIN_PASSWD"
+    pwdHasherCompPathCode "adminPwdHasherCompPath"
+    salt "admin"
+    importPath "/WebUI/install/data/profile.xml"
+    persistKey "adminPublishingPassword"
+  }
+  task(atg.cim.database.ReplacePasswordTask) {
+  }
+  task(atg.cim.database.ImportDataTask) {
+    cimDatasourceId "management"
+  }
+  task(atg.cim.database.ReplacePasswordCleanupTask) {
+  }
+  task(atg.cim.database.DatasourcePropertiesTask) {
+    key "switchingCore"
+    alias "switchingCore"
+    databaseType "oraclethin"
+    username "ATG_PROD_USER"
+    password "ATG_PROD_PASSWORD"
+    hostname "DB_HOST"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    driverPath "DB_DRIVER_PATH"
+    jndiName "ATG_PROD_JNDI"
+  }
+  task(atg.cim.database.CreateSchemaTask) {
+    cimDatasourceId "switchingCore"
+    datasourceProperties "url=jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME,port=DB_PORT,databaseType=oraclethin,driverPathsAsString=DB_DRIVER_PATH,username=ATG_PROD_USER,alias=switchingCore,jndiName=ATG_PROD_JNDI,databaseName=PLUG_DBNAME,hostname=DB_HOST,password=ATG_PROD_PASSWORD"
+  }
+  task(atg.cim.database.ReplacePasswordTask) {
+  }
+  task(atg.cim.database.ImportDataTask) {
+    cimDatasourceId "switchingCore"
+  }
+  task(atg.cim.database.ReplacePasswordCleanupTask) {
+  }
+  task(atg.cim.database.DatasourcePropertiesTask) {
+    key "switchingA"
+    alias "switchingA"
+    databaseType "oraclethin"
+    username "ATG_SWITCH_A_USER"
+    password "ATG_SWITCH_A_PASSWORD"
+    hostname "DB_HOST"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    driverPath "DB_DRIVER_PATH"
+    jndiName "ATG_SWITCH_A_JNDI"
+  }
+  task(atg.cim.database.CreateSchemaTask) {
+    cimDatasourceId "switchingA"
+    datasourceProperties "url=jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME,port=DB_PORT,databaseType=oraclethin,driverPathsAsString=DB_DRIVER_PATH,username=ATG_SWITCH_A_USER,alias=switchingA,jndiName=ATG_SWITCH_A_JNDI,databaseName=PLUG_DBNAME,hostname=DB_HOST,password=ATG_SWITCH_A_PASSWORD"
+  }
+  task(atg.cim.database.ReplacePasswordTask) {
+  }
+  task(atg.cim.database.ImportDataTask) {
+    cimDatasourceId "switchingA"
+  }
+  task(atg.cim.database.ReplacePasswordCleanupTask) {
+  }
+  task(atg.cim.database.DatasourcePropertiesTask) {
+    key "switchingB"
+    alias "switchingB"
+    databaseType "oraclethin"
+    username "ATG_SWITCH_B_USER"
+    password "ATG_SWITCH_B_PASSWORD"
+    hostname "DB_HOST"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    driverPath "DB_DRIVER_PATH"
+    jndiName "ATG_SWITCH_B_JNDI"
+  }
+  task(atg.cim.database.CreateSchemaTask) {
+    cimDatasourceId "switchingB"
+    datasourceProperties "url=jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME,port=DB_PORT,databaseType=oraclethin,driverPathsAsString=DB_DRIVER_PATH,username=ATG_SWITCH_B_USER,alias=switchingB,jndiName=ATG_SWITCH_B_JNDI,databaseName=PLUG_DBNAME,hostname=DB_HOST,password=ATG_SWITCH_B_PASSWORD"
+  }
+  task(atg.cim.database.ReplacePasswordTask) {
+  }
+  task(atg.cim.database.ImportDataTask) {
+    cimDatasourceId "switchingB"
+  }
+  task(atg.cim.database.ReplacePasswordCleanupTask) {
+  }
+  task(atg.cim.worker.common.PropertyFileClearPersistanceTask) {
+    serverInstanceTypeId "lock"
+  }
+  task(atg.cim.productconfig.serverinstance.ServerInstanceNameTask) {
+    serverInstanceName "ATG_SLM_APPS"
+  }
+  task(atg.cim.productconfig.serverinstance.PortBindingsSelectTask) {
+    serverInstanceName "ATG_SLM_APPS"
+    portBindingsName "ports-default"
+    useDefault "true"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    httpPort "ATG_SLM_PORT"
+    httpsPort "ATG_SLM_sPORT"
+    property(name:"siteHttpServerPort^",value: "/atg/dynamo/Configuration.httpPort")
+    rmiPort "ATG_SLM_RMI"
+    drpPort "ATG_SLM_DRP"
+    property(name:"adminPort^",value: "/atg/dynamo/Configuration.httpPort")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/Configuration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    enabled "false"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/scenario/ScenarioManager.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"initialServices+",value: "/atg/dynamo/service/ServerLockManager")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/Initial.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    port "SRVR_LOCK_PORT"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/service/ServerLockManager.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/DirectJTDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/service/jdbc/JTDataSource.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_PROD_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/service/jdbc/DirectJTDataSource.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JPSConfigurationLocation("ATG_DIR/ATG_VERSION/home/../home/security/jps-config.xml")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/server/OPSSInitializer.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    initialServices- "registry/PipelineRegistry"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/Initial.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    interceptors- "VirtualContextRootInterceptor,WebAppLayeringInterceptor"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/servlet/dafpipeline/TailPipelineServlet.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    initialServices- "SiteContextPipelineServlet,/atg/dynamo/servlet/dafpipeline/SiteSessionEventTrigger,/atg/dynamo/servlet/pipeline/SiteSessionEventTrigger,/atg/dynamo/servlet/pipeline/SiteContextPipelineServlet,SiteRepository"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/multisite/Initial.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    initialServices- "SitemapRepository,SitemapGeneratorService,SitemapWriterService"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/sitemap/Initial.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"preSessionServlet^",value: "/Constants.Null")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/servlet/pipeline/DynamoHandler.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"preSessionServlet^",value: "/Constants.Null")
+    staticServlet "/atg/dynamo/servlet/dafpipeline/static/TailPipelineServlet"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/servlet/dafpipeline/DynamoHandler.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    adminContextProviders- "SiteAdminContextProvider"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/admin/context/AdminContextManager.properties"
+  }
+  task(atg.cim.productconfig.serverinstance.MakeServerInstanceFromPatternTask) {
+    serverInstancePatternId "lock_production"
+    serverInstanceName "ATG_SLM_APPS"
+    serverInstanceTypeId "lock"
+  }
+  task(atg.cim.worker.common.PropertyFileClearPersistanceTask) {
+    serverInstanceTypeId "management"
+  }
+  task(atg.cim.productconfig.serverinstance.ServerInstanceNameTask) {
+    serverInstanceName "ATG_PUB_APPS"
+  }
+  task(atg.cim.productconfig.serverinstance.PortBindingsSelectTask) {
+    serverInstanceName "ATG_PUB_APPS"
+    portBindingsName "ports-default"
+    useDefault "true"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    httpPort "ATG_PUB_PORT"
+    httpsPort "ATG_PUB_sPORT"
+    siteHttpServerPort "ATG_PUB_PORT"
+    rmiPort "ATG_PUB_RMI"
+    drpPort "ATG_PUB_DRP"
+    fileDeploymentPort "ATG_PUB_FILE"
+    fileSychronizationDeploymentPort "ATG_PUB_SYNC"
+    property(name:"adminPort^",value: "/atg/dynamo/Configuration.httpPort")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/Configuration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"initialServices+",value: "/atg/dynamo/service/ServerLockManager")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/Initial.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    port "ATG_PUB_LOCK"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/ServerLockManager.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    lockServerAddress "ATG_PUB_HOST"
+    lockServerPort "ATG_PUB_LOCK"
+    useLockServer "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/ClientLockManager.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JPSConfigurationLocation("ATG_DIR/ATG_VERSION/home/../home/security/jps-config.xml")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/server/OPSSInitializer.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/content/ContentManagementRepository_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    port "CAS_PORT"
+    host "CAS_HOST"
+    recordStoreNames "ATG_import"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/endeca/reader/EndecaReader.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/seo/SEORepository_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"logoutSuccessURL^",value: "/atg/userprofiling/sso/LightweightSSOTools.logoutSuccessURL")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/userprofiling/InternalProfileFormHandler.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"#targetName",value: "Production")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/search/StoreContentImageOutputConfig.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"#targetName",value: "Production")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/content/search/ArticleOutputConfig.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_SWITCH_B_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/jdbc/SwitchingDataSourceB.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"#targetName",value: "Production")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/search/StoreContentVideoOutputConfig.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_PUB_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/jdbc/DirectJTDataSource.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    clusterName "management"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/ClusterName.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/DirectJTDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/jdbc/JTDataSource.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    verifyBasicAuthentication "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/servlet/dafpipeline/ProfileRequestServlet.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    modules "DCS-UI.Versioned, BIZUI, PubPortlet, DafEar.Admin, ContentMgmt.Versioned, DCS.Versioned, DCS-UI, Store.EStore.Versioned, Store.Storefront, DCS-UI.SiteAdmin.Versioned, SiteAdmin.Versioned, ContentMgmt.Endeca.Index.Versioned, DCS.Endeca.Index.Versioned, DCS.Endeca.Assembler.Versioned, Store.Endeca.Index.Versioned, Store.Endeca.Assembler.Versioned, DAF.Endeca.Reader.Versioned, Store.Endeca.Reader, Store.WCSExtensions.Versioned, Store.WCSExtensions.Endeca.Index.Versioned, DCS.Endeca.Index.SKUIndexing, Store.EStore.International.Versioned, Store.Mobile, Store.Mobile.Versioned, Store.Endeca.International, Store.Endeca.International.Reader, Store.WCSExtensions.International.Versioned, Store.WCSExtensions.Endeca.International, Store.Mobile.REST.Versioned, Store.Mobile.International.Versioned"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/moduleList.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/multisite/SiteRepository_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    enabled "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/server/SQLRepositoryEventServer.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/catalog/ProductCatalog_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"#targetName",value: "Production")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/search/StoreLocationOutputConfig.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/pricing/priceLists/PriceLists_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_SWITCH_A_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/jdbc/SwitchingDataSourceA.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_PROD_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/jdbc/DirectJTDataSource_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/store/stores/StoreContentRepository_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    ssoServerPort "ATG_SSO_PORT"
+    ssoServerHost "ATG_SSO_HOST"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/userprofiling/sso/LightweightSSOTools.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    defaultMdexPort "DGRAPH_PORT"
+    defaultMdexHostName "MDEX_HOST"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/endeca/assembler/AssemblerApplicationConfiguration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    locales "en,en_US"
+    languageMap "english=en"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/search/config/LanguageDimensionService.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"accessControllers+",value: """\
+          /atg/bcc=/atg/web/assetmanager/userprofiling/NonTransientAccessController,\
+          /atg/bcc/=/atg/web/assetmanager/userprofiling/NonTransientAccessController,\
+          /ControlCenter=/atg/web/assetmanager/userprofiling/NonTransientAccessController,\
+          /atg/atgadmin=/atg/web/assetmanager/userprofiling/NonTransientAccessController,\
+          /atg/user/logout.jsp=/atg/web/assetmanager/userprofiling/NonTransientAccessController""")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/servlet/dafpipeline/AccessControlServlet.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"#targetName",value: "Production")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/search/ProductCatalogOutputConfig.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    configurationPath "AUTH_EXPORT_DIR/ENDECA_EAC_APP"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/endeca/assembler/cartridge/manager/DefaultFileStoreFactory.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"#targetName",value: "Production")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/search/StoreContentArticleOutputConfig.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/userprofiling/PersonalizationRepository_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    workbenchPort "8006"
+    workbenchHostName "WORKBENCH_HOST"
+    baseApplicationName "CRS"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/endeca/ApplicationConfiguration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"#targetName",value: "Production")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/endeca/index/CategoryToDimensionOutputConfig.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    $class "atg.userprofiling.sso.NonTransientAccessController"
+    lightweightSSOTools "/atg/userprofiling/sso/LightweightSSOTools"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/web/assetmanager/userprofiling/NonTransientAccessController.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    extractProfileFromBasicAuthentication "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/userprofiling/ProfileRequest.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/repository/dynamic/DynamicMetadataRepository_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    CASHostName("CAS_HOST")
+    EACPort("EAC_PORT_NUMBER")
+    EACHostName("EAC_HOST")
+    CASPort("CAS_PORT")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/endeca/index/IndexingApplicationConfiguration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"#targetName",value: "Production")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/content/search/MediaContentOutputConfig.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/commerce/locations/LocationRepository_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    lockServerPort "SRVR_LOCK_PORT"
+    useLockServer "true"
+    lockServerAddress "SRVR_LOCK_HOST"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/ClientLockManager_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"logoutSuccessURL^",value: "/atg/userprofiling/sso/LightweightSSOTools.logoutSuccessURL")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/remote/controlcenter/service/ControlCenterService.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/DirectJTDataSource_production"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/service/jdbc/JTDataSource_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"insertableServlets+",value: "/atg/dynamo/servlet/dafpipeline/LightweightSSOServlet")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/localconfig/atg/dynamo/servlet/dafpipeline/DynamoHandler.properties"
+  }
+  task(atg.cim.productconfig.serverinstance.MakeServerInstanceFromPatternTask) {
+    serverInstancePatternId "management_lock"
+    serverInstanceName "ATG_PUB_APPS"
+    serverInstanceTypeId "management"
+  }
+  task(atg.cim.worker.common.PropertyFileClearPersistanceTask) {
+    serverInstanceTypeId "production"
+  }
+  task(atg.cim.productconfig.serverinstance.ServerInstanceNameTask) {
+    serverInstanceName "ATG_PROD_APPS"
+  }
+  task(atg.cim.productconfig.serverinstance.PortBindingsSelectTask) {
+    serverInstanceName "ATG_PROD_APPS"
+    portBindingsName "ports-default"
+    useDefault "true"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    httpPort "ATG_PROD_PORT"
+    httpsPort "ATG_PROD_sPORT"
+    siteHttpServerPort "PREV_PORT"
+    rmiPort "ATG_PROD_RMI"
+    drpPort "ATG_PROD_DRP"
+    fileDeploymentPort "ATG_PROD_FILE"
+    property(name:"adminPort^",value: "/atg/dynamo/Configuration.httpPort")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/Configuration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    lockServerAddress "SRVR_LOCK_HOST"
+    lockServerPort "SRVR_LOCK_PORT"
+    useLockServer "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/ClientLockManager.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    useLockServer "true"
+    lockServerAddress "SRVR_LOCK_HOST"
+    lockServerPort "SRVR_LOCK_PORT"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/ClientLockManager_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JPSConfigurationLocation("ATG_DIR/ATG_VERSION/home/../home/security/jps-config.xml")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/server/OPSSInitializer.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"initialServices+",value: "/atg/tracking/UsageTrackingService")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/Initial.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/store/stores/StoreContentRepository.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_SWITCH_B_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/jdbc/SwitchingDataSourceB.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_PROD_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/jdbc/DirectJTDataSource.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/userprofiling/PersonalizationRepository.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    clusterName "production"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/ClusterName.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/DirectJTDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/jdbc/JTDataSource.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    modules "DCS.AbandonedOrderServices, DafEar.Admin, DPS, DSS, ContentMgmt, DCS.PublishingAgent, DCS.AbandonedOrderServices, ContentMgmt.Endeca.Index, DCS.Endeca.Index, DCS.Endeca.Assembler, Store.Endeca.Index, Store.Endeca.Assembler, DAF.Endeca.Assembler, Store.WCSExtensions, Store.WCSExtensions.Endeca.Index, DCS.Endeca.Index.SKUIndexing, Store.Storefront, Store.EStore.International, Store.Mobile, Store.Endeca.International, Store.WCSExtensions.International, Store.WCSExtensions.Endeca.International, Store.Fluoroscope, Store.Fulfillment, Store.Mobile.REST, Store.Mobile.International, REST.base, REST.Actor, REST.JAXRSPublic.Version1, PublishingAgent"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/moduleList.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_SWITCH_A_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/jdbc/SwitchingDataSourceA.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    componentPath "/atg/dynamo/service/jdbc/DirectJTDataSource"
+    className "atg.nucleus.GenericReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/jdbc/DirectJTDataSource_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    defaultMdexPort "DGRAPH_PORT"
+    defaultMdexHostName "MDEX_HOST"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/endeca/assembler/AssemblerApplicationConfiguration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    locales "en,en_US"
+    languageMap "english=en"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/search/config/LanguageDimensionService.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"accessControllers+",value: """/rest/model/atg/userprofiling/ProfileActor/logout=/atg/rest/userprofiling/LoggedInAccessController,\
+  /rest/model/atg/userprofiling/ProfileActor/logout-success=/atg/rest/userprofiling/AllAccessController,\
+  /rest/model/atg/userprofiling/ProfileActor/logout-error=/atg/rest/userprofiling/AllAccessController,\
+  /rest/model/atg/rest/SessionConfirmationActor/getSessionConfirmationNumber=/atg/rest/userprofiling/AllAccessController""")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/servlet/dafpipeline/AccessControlServlet.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    configurationPath "EXPORT_ARCHIVE_DIR/ENDECA_EAC_APP"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/endeca/assembler/cartridge/manager/DefaultFileStoreFactory.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/seo/SEORepository.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"switchableDataStores+",value: "/atg/dynamo/service/jdbc/SwitchingDataSource,/atg/epub/file/ConfigFileSystem")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/epub/DeploymentAgent.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    workbenchPort "8006"
+    workbenchHostName "WORKBENCH_HOST"
+    baseApplicationName "CRS"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/endeca/ApplicationConfiguration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/commerce/locations/LocationRepository.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    property(name:"updateProductCatalogsSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.updateProductCatalogsSQL")
+    property(name:"updateProductParentCategoriesForCatalogsSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.updateProductParentCategoriesForCatalogsSQL")
+    property(name:"truncateDynamicProductsSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.truncateDynamicProductsSQL")
+    property(name:"invalidatedSKUAssetIdsCountSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.invalidatedSKUAssetIdsCountSQL")
+    property(name:"categoryChildSkusSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.categoryChildSkusSQL")
+    property(name:"prodsToInvalidateSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.prodsToInvalidateSQL")
+    property(name:"categoryChildProductsSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.categoryChildProductsSQL")
+    property(name:"updateSkuCatalogsSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.updateSkuCatalogsSQL")
+    property(name:"skusToInvalidateSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.skusToInvalidateSQL")
+    property(name:"updateProductSitesSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.updateProductSitesSQL")
+    property(name:"insertDynamicProductsSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.insertDynamicProductsSQL")
+    property(name:"updateProductAncestorCategoriesSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.updateProductAncestorCategoriesSQL")
+    alwaysWalkTree "false"
+    property(name:"categoryChildSkusWithDynamicSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.categoryChildSkusWithDynamicSQL")
+    property(name:"categoryChildProductsWithDynamicSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.categoryChildProductsWithDynamicSQL")
+    property(name:"updateSkuSitesSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.updateSkuSitesSQL")
+    property(name:"invalidatedProductAssetIdsCountSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.invalidatedProductAssetIdsCountSQL")
+    property(name:"truncateInvalidProdIdsTableSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.truncateInvalidProdIdsTableSQL")
+    property(name:"truncateInvalidSkuIdsTableSQL^",value: "/atg/commerce/catalog/custom/CMSOracleSQLHolder.truncateInvalidSkuIdsTableSQL")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/commerce/catalog/custom/AncestorGeneratorService.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    CASHostName("CAS_HOST")
+    EACPort("EAC_PORT_NUMBER")
+    EACHostName("EAC_HOST")
+    CASPort("CAS_PORT")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/endeca/index/IndexingApplicationConfiguration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/multisite/SiteRepository.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    enabled "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/tracking/UsageTrackingService.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    enabled "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/service/GSAInvalidatorService.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    journaling "true"
+    scheduler "/atg/dynamo/service/Scheduler"
+    name2 "DataSourceB"
+    name1 "DataSourceA"
+    liveDirectory "{serverHomeDirResource?resourceURI=PublishingAgent/deploymentconfig/live/config}"
+    dataDirectory "{serverHomeDirResource?resourceURI=PublishingAgent/deploymentconfig/data/config}"
+    stagingDirectory "{serverHomeDirResource?resourceURI=PublishingAgent/deploymentconfig/staging/config}"
+    className "atg.vfs.switchable.SwitchableLocalFileSystem"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/epub/file/ConfigFileSystem.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    metricUsageEnabled "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/servlet/dafpipeline/DynamoHandler.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/commerce/catalog/ProductCatalog.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/repository/dynamic/DynamicMetadataRepository.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/content/ContentManagementRepository.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    metricUsageEnabled "true"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/dynamo/servlet/adminpipeline/AdminHandler.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/SwitchingDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PROD_APPS/localconfig/atg/commerce/pricing/priceLists/PriceLists.properties"
+  }
+  task(atg.cim.productconfig.serverinstance.MakeServerInstanceFromPatternTask) {
+    serverInstancePatternId "basic_production"
+    serverInstanceName "ATG_PROD_APPS"
+    serverInstanceTypeId "production"
+  }
+  task(atg.cim.worker.common.PropertyFileClearPersistanceTask) {
+    serverInstanceTypeId "sso_server"
+  }
+  task(atg.cim.productconfig.serverinstance.ServerInstanceNameTask) {
+    serverInstanceName "ATG_SSO_APPS"
+  }
+  task(atg.cim.productconfig.serverinstance.PortBindingsSelectTask) {
+    serverInstanceName "ATG_SSO_APPS"
+    portBindingsName "ports-default"
+    useDefault "true"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    httpPort "ATG_SSO_PORT"
+    httpsPort "ATG_SSO_sPORT"
+    rmiPort "ATG_SSO_RMI"
+    drpPort "ATG_SSO_DRP"
+    fileDeploymentPort "ATG_SSO_FILE"
+    fileSychronizationDeploymentPort "ATG_SSO_SYNC"
+    property(name:"adminPort^",value: "/atg/dynamo/Configuration.httpPort")
+    property(name:"siteHttpServerPort^",value: "/atg/dynamo/Configuration.httpPort")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SSO_APPS/localconfig/atg/dynamo/Configuration.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JPSConfigurationLocation("ATG_DIR/ATG_VERSION/home/../home/security/jps-config.xml")
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SSO_APPS/localconfig/atg/dynamo/server/OPSSInitializer.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_PUB_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SSO_APPS/localconfig/atg/dynamo/service/jdbc/DirectJTDataSource_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    JNDIName("ATG_PUB_JNDI")
+    className "atg.nucleus.JNDIReference"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SSO_APPS/localconfig/atg/dynamo/service/jdbc/DirectJTDataSource.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/DirectJTDataSource_production"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SSO_APPS/localconfig/atg/dynamo/service/jdbc/JTDataSource_production.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    clusterName "management"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SSO_APPS/localconfig/atg/dynamo/service/ClusterName.properties"
+  }
+  task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
+    dataSource "/atg/dynamo/service/jdbc/DirectJTDataSource"
+    propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SSO_APPS/localconfig/atg/dynamo/service/jdbc/JTDataSource.properties"
+  }
+  task(atg.cim.productconfig.serverinstance.MakeServerInstanceFromPatternTask) {
+    serverInstancePatternId "sso_server_instance"
+    serverInstanceName "ATG_SSO_APPS"
+    serverInstanceTypeId "sso_server"
+  }
+  task(atg.cim.productconfig.appassembly.EarFileNameTask) {
+    earFileName "PUB_EAR"
+    serverInstanceId "management_lock"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineCreateServerInstanceTask) {
+    serverInstanceName "ATG_PUB_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    httpPort "ATG_PUB_PORT"
+    httpsPort "ATG_PUB_sPORT"
+  }
+  task(atg.cim.productconfig.appassembly.RunAssemblerExecutorTask) {
+    moduleNames "DCS-UI.Versioned,BIZUI,PubPortlet,DafEar.Admin,ContentMgmt.Versioned,DCS.Versioned,DCS-UI,Store.EStore.Versioned,Store.Storefront,DCS-UI.SiteAdmin.Versioned,SiteAdmin.Versioned,ContentMgmt.Endeca.Index.Versioned,DCS.Endeca.Index.Versioned,DCS.Endeca.Assembler.Versioned,Store.Endeca.Index.Versioned,Store.Endeca.Assembler.Versioned,DAF.Endeca.Reader.Versioned,Store.Endeca.Reader,Store.WCSExtensions.Versioned,Store.WCSExtensions.Endeca.Index.Versioned,DCS.Endeca.Index.SKUIndexing,Store.EStore.International.Versioned,Store.Mobile,Store.Mobile.Versioned,Store.Endeca.International,Store.Endeca.International.Reader,Store.WCSExtensions.International.Versioned,Store.WCSExtensions.Endeca.International,Store.Mobile.REST.Versioned,Store.Mobile.International.Versioned"
+    antFile "ATG_DIR/ATG_VERSION/home/../CIM/plugins/Base/ant/cim-ant.xml"
+    earFileName "PUB_EAR"
+    serverInstanceName "ATG_PUB_APPS"
+    path "ATG_DIR/ATG_VERSION/home/../home/cimEars/"
+    args "-standalone -overwrite "
+    layerArg ""
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineDeployEarTask) {
+    serverInstanceName "ATG_PUB_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    earFileName "PUB_EAR"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.CreateWeblogicServerStartScriptTask) {
+    serverInstanceName "ATG_PUB_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineRegisterDatasourcePrologueTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    serverInstanceName "ATG_PUB_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_PUB_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_SWITCH_B_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_SWITCH_B_USER"
+    password "ATG_SWITCH_B_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_PUB_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_PUB_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "DB_NAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_PUBLISHING_USER"
+    password "ATG_PUBLISHING_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_PUB_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_SWITCH_A_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_SWITCH_A_USER"
+    password "ATG_SWITCH_A_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_PUB_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_PROD_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_PROD_USER"
+    password "ATG_PROD_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourcePostludeTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    serverInstanceName "ATG_PUB_APPS"
+    antTarget "wl-online-jdbc-postlude"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OfflineRegisterDatasourceExecuteTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    serverInstanceName "ATG_PUB_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.UpdateClasspathTask) {
+    classPathAdditions "DB_DRIVER_PATH:"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    comment "CIM - Adding Database Driver to CLASSPATH"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OptimizeWeblogicJVMTask) {
+    initialHeapSize "1152"
+    maxHeapSize "2048"
+    newSize "128"
+    maxNewSize "256"
+    filesToUpdate "[ATG_DIR/ATG_VERSION/home/../home/servers/ATG_PUB_APPS/startServerOnWeblogic.sh]"
+    serverInstanceName "ATG_PUB_APPS"
+  }
+  task(atg.cim.worker.common.CopyFileTask) {
+    srcFilePath "ATG_DIR/ATG_VERSION/home/../DAS/lib/protocol.jar"
+    targetFilePath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/lib/protocol.jar"
+  }
+  task(atg.cim.productconfig.appserver.weblogic.PrependClasspathTask) {
+    classPathAdditions "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/lib/protocol.jar"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    nodeManagerPath "INSTALL_LOC_FMW/WLS_VERSION/server/bin/"
+    comment "CIM - Prepending protocol.jar CLASSPATH"
+  }
+  task(atg.cim.productconfig.appassembly.EarFileNameTask) {
+    earFileName "PROD_EAR"
+    serverInstanceId "basic_production"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineCreateServerInstanceTask) {
+    serverInstanceName "ATG_PROD_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    httpPort "ATG_PROD_PORT"
+    httpsPort "ATG_PROD_sPORT"
+  }
+  task(atg.cim.productconfig.appassembly.RunAssemblerExecutorTask) {
+    moduleNames "DCS.AbandonedOrderServices,DafEar.Admin,DPS,DSS,ContentMgmt,DCS.PublishingAgent,DCS.AbandonedOrderServices,ContentMgmt.Endeca.Index,DCS.Endeca.Index,DCS.Endeca.Assembler,Store.Endeca.Index,Store.Endeca.Assembler,DAF.Endeca.Assembler,Store.WCSExtensions,Store.WCSExtensions.Endeca.Index,DCS.Endeca.Index.SKUIndexing,Store.Storefront,Store.EStore.International,Store.Mobile,Store.Endeca.International,Store.WCSExtensions.International,Store.WCSExtensions.Endeca.International,Store.Fluoroscope,Store.Fulfillment,Store.Mobile.REST,Store.Mobile.International,REST.base,REST.Actor,REST.JAXRSPublic.Version1,PublishingAgent"
+    antFile "ATG_DIR/ATG_VERSION/home/../CIM/plugins/Base/ant/cim-ant.xml"
+    earFileName "PROD_EAR"
+    serverInstanceName "ATG_PROD_APPS"
+    path "ATG_DIR/ATG_VERSION/home/../home/cimEars/"
+    args "-standalone -overwrite "
+    layerArg ""
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineDeployEarTask) {
+    serverInstanceName "ATG_PROD_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    earFileName "PROD_EAR"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.CreateWeblogicServerStartScriptTask) {
+    serverInstanceName "ATG_PROD_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineRegisterDatasourcePrologueTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    serverInstanceName "ATG_PROD_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_PROD_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_SWITCH_B_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_SWITCH_B_USER"
+    password "ATG_SWITCH_B_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_PROD_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_SWITCH_A_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_SWITCH_A_USER"
+    password "ATG_SWITCH_A_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_PROD_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_PROD_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_PROD_USER"
+    password "ATG_PROD_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourcePostludeTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    serverInstanceName "ATG_PROD_APPS"
+    antTarget "wl-online-jdbc-postlude"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OfflineRegisterDatasourceExecuteTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    serverInstanceName "ATG_PROD_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.UpdateClasspathTask) {
+    classPathAdditions "DB_DRIVER_PATH:"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    comment "CIM - Adding Database Driver to CLASSPATH"
+  }
+  task(atg.cim.worker.common.CopyFileTask) {
+    srcFilePath "ATG_DIR/ATG_VERSION/home/../DAS/lib/protocol.jar"
+    targetFilePath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/lib/protocol.jar"
+  }
+  task(atg.cim.productconfig.appserver.weblogic.PrependClasspathTask) {
+    classPathAdditions "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/lib/protocol.jar"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    nodeManagerPath "INSTALL_LOC_FMW/WLS_VERSION/server/bin/"
+    comment "CIM - Prepending protocol.jar CLASSPATH"
+  }
+  task(atg.cim.productconfig.appassembly.EarFileNameTask) {
+    earFileName "SLM_EAR"
+    serverInstanceId "lock_production"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineCreateServerInstanceTask) {
+    serverInstanceName "ATG_SLM_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    httpPort "ATG_SLM_PORT"
+    httpsPort "ATG_SLM_sPORT"
+  }
+  task(atg.cim.productconfig.appassembly.RunAssemblerExecutorTask) {
+    moduleNames "DAS,DafEar.Admin"
+    antFile "ATG_DIR/ATG_VERSION/home/../CIM/plugins/Base/ant/cim-ant.xml"
+    earFileName "SLM_EAR"
+    serverInstanceName "ATG_SLM_APPS"
+    path "ATG_DIR/ATG_VERSION/home/../home/cimEars/"
+    args "-standalone -overwrite "
+    layerArg ""
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineDeployEarTask) {
+    serverInstanceName "ATG_SLM_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    earFileName "SLM_EAR"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.CreateWeblogicServerStartScriptTask) {
+    serverInstanceName "ATG_SLM_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineRegisterDatasourcePrologueTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    serverInstanceName "ATG_SLM_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_SLM_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_PROD_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "PLUG_DBNAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_PROD_USER"
+    password "ATG_PROD_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourcePostludeTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    serverInstanceName "ATG_SLM_APPS"
+    antTarget "wl-online-jdbc-postlude"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OfflineRegisterDatasourceExecuteTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    serverInstanceName "ATG_SLM_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.UpdateClasspathTask) {
+    classPathAdditions "DB_DRIVER_PATH:"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    comment "CIM - Adding Database Driver to CLASSPATH"
+  }
+  task(atg.cim.worker.common.CopyFileTask) {
+    srcFilePath "ATG_DIR/ATG_VERSION/home/../DAS/lib/protocol.jar"
+    targetFilePath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/lib/protocol.jar"
+  }
+  task(atg.cim.productconfig.appserver.weblogic.PrependClasspathTask) {
+    classPathAdditions "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/lib/protocol.jar"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    nodeManagerPath "INSTALL_LOC_FMW/WLS_VERSION/server/bin/"
+    comment "CIM - Prepending protocol.jar CLASSPATH"
+  }
+  task(atg.cim.productconfig.appassembly.EarFileNameTask) {
+    earFileName "SSO_EAR"
+    serverInstanceId "sso_server_instance"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineCreateServerInstanceTask) {
+    serverInstanceName "ATG_SSO_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    httpPort "ATG_SSO_PORT"
+    httpsPort "ATG_SSO_sPORT"
+  }
+  task(atg.cim.productconfig.appassembly.RunAssemblerExecutorTask) {
+    moduleNames "DafEar.Admin,SSO,DafEar"
+    antFile "ATG_DIR/ATG_VERSION/home/../CIM/plugins/Base/ant/cim-ant.xml"
+    earFileName "SSO_EAR"
+    serverInstanceName "ATG_SSO_APPS"
+    path "ATG_DIR/ATG_VERSION/home/../home/cimEars/"
+    args ""
+    layerArg ""
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineDeployEarTask) {
+    serverInstanceName "ATG_SSO_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    earFileName "SSO_EAR"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.CreateWeblogicServerStartScriptTask) {
+    serverInstanceName "ATG_SSO_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineCreateServerInstanceTask) {
+    serverInstanceName "ATG_SSO_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    httpPort "ATG_SSO_PORT"
+    httpsPort "ATG_SSO_sPORT"
+  }
+  task(atg.cim.productconfig.appassembly.RunAssemblerExecutorTask) {
+    moduleNames "DafEar.Admin,SSO,DafEar"
+    antFile "ATG_DIR/ATG_VERSION/home/../CIM/plugins/Base/ant/cim-ant.xml"
+    earFileName "SSO_EAR"
+    serverInstanceName "ATG_SSO_APPS"
+    path "ATG_DIR/ATG_VERSION/home/../home/cimEars/"
+    args "-standalone -overwrite "
+    layerArg ""
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineDeployEarTask) {
+    serverInstanceName "ATG_SSO_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    earFileName "SSO_EAR"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.CreateWeblogicServerStartScriptTask) {
+    serverInstanceName "ATG_SSO_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OnlineRegisterDatasourcePrologueTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    serverInstanceName "ATG_SSO_APPS"
+    username "WLS_NODE_MANAGER_USER"
+    password "WLS_NODE_MANAGER_PASSWORD"
+    url "t3://WLS_HOST:WLS_LISTEN_PORT"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourceAppendTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    serverInstanceName "ATG_SSO_APPS"
+    databaseType "oraclethin"
+    jndiName "ATG_PUB_JNDI"
+    url "jdbc:oracle:thin:@DB_HOST:DB_PORT/PLUG_DBNAME"
+    port "DB_PORT"
+    databaseName "DB_NAME"
+    hostname "DB_HOST"
+    driverClassName "oracle.jdbc.xa.client.OracleXADataSource"
+    username "ATG_PUBLISHING_USER"
+    password "ATG_PUBLISHING_PASSWORD"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.RegisterDatasourcePostludeTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    serverInstanceName "ATG_SSO_APPS"
+    antTarget "wl-online-jdbc-postlude"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.OfflineRegisterDatasourceExecuteTask) {
+    scriptFilePath "ATG_DIR/ATG_VERSION/home/../CIM/tmp/registerdatasources.py"
+    beaHomePath "INSTALL_LOC_FMW/WLS_VERSION/"
+    serverInstanceName "ATG_SSO_APPS"
+  }
+  task(atg.cim.productconfig.deploy.weblogic.UpdateClasspathTask) {
+    classPathAdditions "DB_DRIVER_PATH:"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    comment "CIM - Adding Database Driver to CLASSPATH"
+  }
+  task(atg.cim.worker.common.CopyFileTask) {
+    srcFilePath "ATG_DIR/ATG_VERSION/home/../DAS/lib/protocol.jar"
+    targetFilePath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/lib/protocol.jar"
+  }
+  task(atg.cim.productconfig.appserver.weblogic.PrependClasspathTask) {
+    classPathAdditions "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/lib/protocol.jar"
+    domainPath "WLS_DOMAIN_DIR/WLS_DOMAIN_NAME/"
+    nodeManagerPath "INSTALL_LOC_FMW/WLS_VERSION/server/bin/"
+    comment "CIM - Prepending protocol.jar CLASSPATH"
+  }
+  task(atg.cim.worker.common.PropertyFileClearPersistanceTask) {
+    serverInstanceTypeId "production-edeca-deploy"
+  }
+  task(atg.cim.worker.common.PropertyFileClearPersistanceTask) {
+    serverInstanceTypeId "production-edeca-deploy"
+  }
+  task(atg.cim.productconfig.endeca.EndecaDeployConfigWriterTask) {
+    appName "CRS"
+    deploymentPath "EAC_APP_DEPLOY_PATH"
+    baseDeploy "false"
+    eacPort "EAC_PORT_NUMBER"
+    dgraphPort "DGRAPH_PORT"
+    authoringPort "AUTH_DGRAPH_PRT"
+    logserverPort "ENDECA_LOG_SERVER_PORT"
+    casHost "CAS_HOST"
+    casPort "CAS_PORT"
+    casPath "ENDECA_DIR//CAS/CAS_VERSION"
+    casJarVersion "CAS_VERSION"
+    languageId "en"
+    host "WORKBENCH_HOST"
+    workbenchPort "WORKBENCH_PORT"
+    workbenchEnabled "true"
+    productionAppServerHost "WLS_HOST"
+    productionAppServerPort "PREV_PORT"
+    previewHost "PREV_HOST"
+    previewPort "PREV_PORT"
+    previewContextRoot "PREV_CONTEXT_ROOT"
+    userSegmentsHost "USER_SEG_HOST"
+    userSegmentsPort "USER_SEG_PORT"
+    jpsConfigFileLocation "ORACLE_WALLET_DIR"
+    applicationConfigExportArchive "EXPORT_ARCHIVE_DIR"
+    authoringApplicationExportDirectory "AUTH_EXPORT_DIR"
+    baseDeployTemplateFile "ATG_DIR/ATG_VERSION/home/../CIM//plugins/Base/filetemplate/endeca/deploy-prompt-basemodule.xml"
+    inputPath "ATG_DIR/ATG_VERSION/home/../CIM//plugins/Base/filetemplate/endeca/deploy-prompt.xml"
+    outputPath "ATG_DIR/ATG_VERSION/home/../CIM//data/tmp/deploy-prompt.xml"
+  }
+  task(atg.cim.productconfig.endeca.EndecaDeployTask) {
+    deployXMLPath "ATG_DIR/ATG_VERSION/home/../CIM//../CommerceReferenceStore/Store/Storefront/deploy/deploy.xml"
+    toolsAndFrameworksRootPath "ENDECA_DIR/ToolsAndFrameworks/TOOLS_VERSION"
+    endecaMDEXRootPath "ENDECA_DIR/MDEX/MDEX_VERSION"
+    endecaPlatformServicesRootPath "ENDECA_DIR/PlatformServices/PLATFORM_VERSION"
+    promptXMLPath "ATG_DIR/ATG_VERSION/home/../CIM//data/tmp/deploy-prompt.xml"
+  }
+  task(atg.cim.productconfig.endeca.EndecaDeployConfigWriterTask) {
+    appName "CRS"
+    deploymentPath "EAC_APP_DEPLOY_PATH"
+    baseDeploy "false"
+    eacPort "EAC_PORT_NUMBER"
+    workbenchPort "WORKBENCH_PORT"
+    workbenchEnabled "true"
+    dgraphPort "DGRAPH_PORT"
+    authoringPort "AUTH_DGRAPH_PRT"
+    logserverPort "ENDECA_LOG_SERVER_PORT"
+    casHost "CAS_HOST"
+    casPort "CAS_PORT"
+    casPath "ENDECA_DIR//CAS/CAS_VERSION"
+    casJarVersion "CAS_VERSION"
+    languageId "en"
+    host "CAS_HOST"
+    inputPath "ATG_DIR/ATG_VERSION/home/../CIM//plugins/Base/filetemplate/endeca/deploy-prompt.xml"
+    outputPath "ATG_DIR/ATG_VERSION/home/../CIM//data/tmp/deploy-prompt.xml"
+    productionAppServerHost "WLS_HOST"
+    productionAppServerPort "PREV_PORT"
+    previewHost "PREV_HOST"
+    previewPort "PREV_PORT"
+    previewContextRoot "PREV_CONTEXT_ROOT"
+    jpsConfigFileLocation "ORACLE_WALLET_DIR"
+    applicationConfigExportArchive "EXPORT_ARCHIVE_DIR"
+    authoringApplicationExportDirectory "AUTH_EXPORT_DIR"
+  }
+  task(atg.cim.productconfig.endeca.EndecaDeployTask) {
+    deployXMLPath "ATG_DIR/ATG_VERSION/home/../CIM//../CommerceReferenceStore/Store/Mobile/Endeca/deploy/deploy.xml"
+    toolsAndFrameworksRootPath "ENDECA_DIR/ToolsAndFrameworks/TOOLS_VERSION"
+    promptXMLPath "ATG_DIR/ATG_VERSION/home/../CIM//data/tmp/deploy-prompt.xml"
+    endecaMDEXRootPath "ENDECA_DIR/MDEX/MDEX_VERSION"
+    endecaPlatformServicesRootPath "ENDECA_DIR/PlatformServices/PLATFORM_VERSION"
+  }
+  task(atg.cim.productconfig.endeca.EndecaInitializeTask) {
+    endecaAppRootPath "EAC_APP_DEPLOY_PATH/CRS"
+    endecaMDEXRootPath "ENDECA_DIR/MDEX/MDEX_VERSION"
+    endecaPlatformServicesRootPath "ENDECA_DIR/PlatformServices/PLATFORM_VERSION"
+  }
+}
