@@ -239,7 +239,7 @@ def config_cim(configCIMData, full_path):
 
     logging.info("configuring " + service_name)
     #binary_path = full_path + "/binaries/atg11.3"
-    cim_files_path = "/home/oracle"
+    cim_files_path = "/opt/oracle/install/11.3/crsJson"
     #install_exec = "/linux/OCPlatform11.3.bin"
     #full_exec_path = binary_path + install_exec
 
