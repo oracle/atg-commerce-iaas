@@ -223,7 +223,7 @@ def crs_configuration(full_path):
         print 'ARGV      :', sys.argv[1:]
         pprint (configData)
 
-    #try:
+    try:
         #java8_helper.install_java(configData, full_path)
         #take out the comment
         java_generic.install_java(configData, full_path)
