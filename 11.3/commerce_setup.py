@@ -219,8 +219,8 @@ def crs_configuration(full_path):
     logger.info("setup the ATG schema in DBaaS..")
     
     #TODO: move this below before the CIM Config 
-    create_atg_schema.schema_definition(configCIMData, full_path)
-    sys.exit()
+    #create_atg_schema.schema_definition(configCIMData, full_path)
+    #sys.exit()
     
     logger.info("Now we start instlling the components...")
  
@@ -228,18 +228,19 @@ def crs_configuration(full_path):
         print 'ARGV      :', sys.argv[1:]
         pprint (configData)
 
-    try:
+    #try:
         #java8_helper.install_java(configData, full_path)
-        java_generic.install_java(configData, full_path)
-    except:
-        traceback.print_exc()
-        pass
+        #take out the comment
+        #java_generic.install_java(configData, full_path)
+    #except:
+    #    traceback.print_exc()
+    #    pass
 
-    try:
-        advanced_storage_helper.advanced_storage(configData, full_path)
-    except:
-        traceback.print_exc()
-        pass
+    #try:
+    #    advanced_storage_helper.advanced_storage(configData, full_path)
+    #except:
+    #    traceback.print_exc()
+    #    pass
     
 
     try:
@@ -294,6 +295,12 @@ def crs_configuration(full_path):
             atgpatch_helper.install_atgpatch(configData, full_path)
         except:
             traceback.print_exc()
+        pass
+
+    try:
+        create_atg_schema.schema_definition(configCIMData, full_path)
+    except:
+        traceback.print_exc()
         pass
  
     try:
