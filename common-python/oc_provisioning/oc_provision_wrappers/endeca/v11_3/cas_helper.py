@@ -104,7 +104,7 @@ def install_cas(configData, full_path):
         commerce_setup_helper.exec_cmd(toolsCmd + " start")        
         # start cas
         startCmd = "/etc/init.d/endecaCAS"
-        commerce_setup_helper.exec_cmd(startCmd + " start")
+        commerce_setup_helper.exec_cmd(startCmd + " restart")
            
         commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "# echo Endeca " + service_name + " start/stop script: " + startCmd + "\n")
 
