@@ -59,7 +59,7 @@
                                     "endecaRoot": "/u02/oracle",
                                     "casPort": "8500",
                                     "casShutdownPort": "8506",
-                                    "casHostname": "oc113instance",
+                                    "casHostname": "appserverautotest1",
                                     "start_onBoot": "true"
                                 }
                         },
@@ -71,7 +71,7 @@
                                 "oraInventoryDir": "/u01/oraInventory",
                                 "wl_adminUser": "weblogic",
                                 "wl_adminPassword": "Password123!",
-                                "wl_adminHost": "oc113instance",
+                                "wl_adminHost": "appserverautotest1",
                                 "wl_adminHttpPort": "7001",
                                 "wl_adminHttpsPort": "7002",  
                                 "wl_domain": "atg_domain",
@@ -94,7 +94,7 @@
                         [
                         { 
                                 "machineName": "atg1",
-                                "machineAddress": "oc113instance"               
+                                "machineAddress": "appserverautotest1"               
                         }
                         ],
                 "WEBLOGIC_managed_servers":
