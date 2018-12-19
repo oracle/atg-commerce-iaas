@@ -210,17 +210,12 @@ def crs_configuration(full_path):
 
     #testing
     logger.info("testing the crs_configuration method.....now exiting.................. \n")
-    #sys.exit()
 
     configData = commerce_setup_helper.load_json_from_file(json_ds, root_json_key)
 
     configCIMData = commerce_setup_helper.load_json_from_file(json_cim_ds, root_cim_json_key)
 
     logger.info("setup the ATG schema in DBaaS..")
-    
-    #TODO: move this below before the CIM Config 
-    #create_atg_schema.schema_definition(configCIMData, full_path)
-    #sys.exit()
     
     logger.info("Now we start instlling the components...")
  
@@ -231,17 +226,10 @@ def crs_configuration(full_path):
     #try:
         #java8_helper.install_java(configData, full_path)
         #take out the comment
-        #java_generic.install_java(configData, full_path)
-    #except:
-    #    traceback.print_exc()
-    #    pass
-
-    #try:
-    #    advanced_storage_helper.advanced_storage(configData, full_path)
-    #except:
-    #    traceback.print_exc()
-    #    pass
-    
+        java_generic.install_java(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass
 
     try:
         mdex_helper.install_mdex(configData, full_path)
