@@ -45,6 +45,7 @@ from oc_provision_wrappers.atg.v11_3 import atg_helper
 from oc_provision_wrappers.atg.v11_3 import atgpatch_helper
 from oc_provision_wrappers.atg.v11_3 import cim_setup_helper
 from oc_provision_wrappers.database.v12c import create_atg_schema
+from oc_provision_wrappers.database.v12c import oracle_pdb_connect
 from oc_provision_wrappers.database.v12c import oracle_rdbms_install
 from oc_provision_wrappers.endeca.v11_3 import cas_helper
 from oc_provision_wrappers.endeca.v11_3 import mdex_helper
@@ -112,6 +113,7 @@ pack_wl_domain = None
 install_oracle_db = None
 showDebug = None
 install_crs_store = None
+cim_batch_file = None
 testing = None
 
 
@@ -121,9 +123,6 @@ try:
                                                   'weblogicPackDomain', 'weblogicSettings', 'weblogicDatasources', 'weblogicDBaaSDatasources', 'weblogicServers', 'weblogicMachines', 'atg', 'atgpatch',
                                                   'mdex', 'platformServices', 'toolsAndFramework', 'cas', 'endeca', 'dgraph', 'otdInstall', 'otdConfig',
                                                   'copy-ssh-keys', 'db', 'debug', 'configSource=', 'crs', 'atest'])
-
-
-
 
 except getopt.GetoptError as err:
     print "Argument error", err
@@ -202,6 +201,7 @@ logger = setup_logger.setup_shared_logger('')
 def crs_configuration(full_path):
     logger.info("reading the crs files \n")
     json_cim_ds = full_path + '/crsJson/CIM_113_template.json'
+    batchFile = full_path + '/crsJson/atg113crsTemplate-v1_converted.cim'
     json_ds = full_path + '/crsJson/crsConfig.json'
     root_json_key = 'commerceCRSSetup'
     root_cim_json_key = 'CIMSetup'
@@ -292,11 +292,15 @@ def crs_configuration(full_path):
         pass
  
     try:
+        logger.info("Calling pre_cim_setup.....")
+        cim_setup_helper.pre_cim_setup(configData, full_path)
         logger.info("Calling config_cim.....")
-        cim_setup_helper.config_cim(configCIMData, full_path)
-        logger.info("Just created the CIM file......")
+        cim_setup_helper.config_cim(batchFile, configData, configCIMData, full_path)
+        logger.info("Calling exec_cim_batch.....")
+        cim_setup_helper.exec_cim_batch(batchFile, configCIMData, full_path)
+        logger.info("Just created the CIM file..now running post cim configs....")
         cim_setup_helper.post_cim_setup(configData, full_path)
-        logger.info("config_cim id Done.....")
+        logger.info("config_cim is Done.....")
         #alterh the epub tables here
         create_atg_schema.alter_pub_table(configCIMData, full_path)
         logger.info("Done altering ebpub table.....")
@@ -591,5 +595,40 @@ if install_oracle_db:
 
 if testing:
    logger.info("This is ONLY a test.....")
+   logger.info("Testing begins.....")
+
+   configCIMData = commerce_setup_helper.load_json_from_file('/opt/oracle/install/11.3/crsJson/CIM_113_template.json', 'CIMSetup')
+   full_path = '/opt/oracle/install/11.3'
+
+   configData = commerce_setup_helper.load_json_from_file('/opt/oracle/install/11.3/crsJson/crsConfig.json', 'commerceCRSSetup')
+
+   #batchFile = full_path + '/crsJson/atg113crsTemplate-v1_converted.cim'
+   batchFile = full_path + '/crsJson/test.cim'
+#   try:
+#      create_atg_schema.schema_definition(configCIMData, full_path)
+#   except:
+#      traceback.print_exc()
+#      pass
+
+   try:
+      #logger.info("Calling pre_cim_setup.....")
+      #cim_setup_helper.pre_cim_setup(configData, full_path)
+      #logger.info("Calling config_cim.....")
+      #cim_setup_helper.config_cim(batchFile, configData, configCIMData, full_path)
+      #logger.info("cim file created.....")
+      logger.info("Calling exec_cim_batch.....")
+      cim_setup_helper.exec_cim_batch(batchFile, configData, full_path)
+      logger.info("Just created the CIM file....about to do the post cim configs..")
+      #cim_setup_helper.post_cim_setup(configData, full_path)
+      #logger.info("config_cim testing is Done.....")
+      #alter the epub tables here
+      #create_atg_schema.alter_pub_table(configCIMData, full_path)
+      #logger.info("Done altering ebpub table.....")
+   except:
+      traceback.print_exc()
+      pass
+
+ 
+   logger.info("Testing ends.....")
 
 logger.info("Setup Complete")      
