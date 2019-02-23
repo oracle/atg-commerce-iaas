@@ -27,7 +27,8 @@ __credits__ ="Hadi Javaherian (Oracle IaaS and App Dev Team)"
 __version__ = "1.0.0.0"
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-import ConfigParser
+#import ConfigParser
+import configparser
 import fileinput
 import json
 import os
