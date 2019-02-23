@@ -54,6 +54,9 @@ SLMAPP = None
 instances = []
 
 INSTALL_DIR = None
+ATG_INSTALL_DIR = None
+ATG_INSTALL_OWNER = None
+ATG_INSTALL_GROUP = None
 INSTALL_OWNER = None
 INSTALL_GROUP = None
 WL_DOMAIN_HOME = None
@@ -69,15 +72,23 @@ def pre_cim_setup(configData, full_path):
 
     logging.info("making config changes before CIM runs" )
 
-    DAS_tag = "cp " + jsonData + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar"
+    global ATG_INSTALL_DIR
+   
+    ATG_INSTALL_DIR = jsonData['dynamoRoot']
 
-    fluoroscope_tag = jsonData + "/CommerceReferenceStore/Store/Fluoroscope/j2ee-apps/Fluoroscope/fluoroscope.war/WEB-INF/lib/"
-    merchandising_tag = jsonData + "/CommerceReferenceStore/Store/EStore/Versioned/j2ee-apps/Versioned/store-merchandising.war/WEB-INF/lib/"
-    store_tag = jsonData + "/CommerceReferenceStore/Store/Storefront/j2ee-apps/Storefront/store.war/WEB-INF/lib/"
+    logging.info("ATG_INSTALL_DIR is: " + ATG_INSTALL_DIR)
+
+    DAS_tag = "cp " + ATG_INSTALL_DIR + "/DAS/taglib/dspjspTaglib/1.0/lib/dspjspTaglib1_0.jar"
+
+    fluoroscope_tag = ATG_INSTALL_DIR + "/CommerceReferenceStore/Store/Fluoroscope/j2ee-apps/Fluoroscope/fluoroscope.war/WEB-INF/lib/"
+    merchandising_tag = ATG_INSTALL_DIR + "/CommerceReferenceStore/Store/EStore/Versioned/j2ee-apps/Versioned/store-merchandising.war/WEB-INF/lib/"
+    store_tag = ATG_INSTALL_DIR + "/CommerceReferenceStore/Store/Storefront/j2ee-apps/Storefront/store.war/WEB-INF/lib/"
 
     commerce_setup_helper.exec_cmd(DAS_tag + " " + fluoroscope_tag)
     commerce_setup_helper.exec_cmd(DAS_tag + " " + merchandising_tag)
     commerce_setup_helper.exec_cmd(DAS_tag + " " + store_tag)
+
+    logging.info("pre_cim_setup complete.. execd the DAS tags...." )
 
 def post_cim_setup(configData, full_path):
     if json_key in configData:
@@ -219,10 +230,42 @@ def create_cim_managed(full_path):
         #startCmd = "/etc/init.d/" + SCRIPT_NAME
         #commerce_setup_helper.exec_cmd(startCmd + " restart") 
 
+def exec_cim_batch(batchFile, configData, full_path):
 
+    global ATG_INSTALL_DIR
+    global ATG_INSTALL_OWNER
+
+    if atg_key in configData:
+        jsonData = configData[atg_key]
+    else:
+        logging.error(atg_key + "exec_cim_batch config data missing from json. will not continue....")
+        return False
+
+    ATG_INSTALL_DIR = jsonData['dynamoRoot']
+    ATG_INSTALL_OWNER = jsonData['installOwner']
+
+    atg_path = ATG_INSTALL_DIR + "/home/bin/cim.sh"
+
+    atgCmd = "\"" + atg_path + " " + "-batch" + " " + batchFile + "\""
+#    atgCmd =  atg_path + " " + "-batch" + " " + batchFile
+
+    logging.info("This is the cim batch command: " + atgCmd)
+    commerce_setup_helper.exec_as_user(ATG_INSTALL_OWNER, atgCmd)
+    logging.info("just called the cim command.....")
     
-def config_cim(configCIMData, full_path):
-    
+def config_cim(batchFile, configData, configCIMData, full_path):
+
+    global ATG_INSTALL_OWNER
+    global ATG_INSTALL_GROUP
+    if atg_key in configData:
+        jsonData = configData[atg_key]
+    else:
+        logging.error(atg_key + "exec_cim_batch config data missing from json. will not continue....")
+        return False
+
+    ATG_INSTALL_OWNER = jsonData['installOwner']
+    ATG_INSTALL_GROUP = jsonData['installGroup']
+
     if json_cim_key in configCIMData:
         jsonCIMData = configCIMData[json_cim_key]
     else:
@@ -391,9 +434,9 @@ def config_cim(configCIMData, full_path):
 
     if (CONFIG_CIM ):
         logging.info("writing new cim file")
-        commerce_setup_helper.substitute_file_fields(cim_files_path + '/atg113crsTemplate-v1.cim', cim_files_path + '/atg113crsTemplate-v1_converted.cim', field_replacements)
+        commerce_setup_helper.substitute_file_fields(cim_files_path + '/atg113crsTemplate-v1.cim', batchFile , field_replacements)
+        commerce_setup_helper.change_file_owner(batchFile, ATG_INSTALL_OWNER, ATG_INSTALL_GROUP)
+        os.chmod(batchFile, 0755)
     else:
        logger.info("The file was NOT written.....")
-
-        
 
