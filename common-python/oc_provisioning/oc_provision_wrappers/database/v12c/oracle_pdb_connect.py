@@ -37,7 +37,7 @@ import logging
 import cx_Oracle
 #con = cx_Oracle.connect('TEST', 'WelcomeA##11', 'atg113db.sub07240245012.ocnetwork.oraclevcn.com:1521/atgpdb.sub07240245012.ocnetwork.oraclevcn.com')
 
-con = cx_Oracle.connect('system', 'AtgT_01111#', 'atg113db.sub07240245012.ocnetwork.oraclevcn.com:1521/atgpdb.sub07240245012.ocnetwork.oraclevcn.com')
+con = cx_Oracle.connect('system', 'AutoT1_1111669#', 'dbautotest1.autosubnetest3.autovcntest1.oraclevcn.com:1521/AT1PDB.autosubnetest3.autovcntest1.oraclevcn.com')
   
 print con.version
 
