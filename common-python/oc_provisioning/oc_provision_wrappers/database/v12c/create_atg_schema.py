@@ -175,8 +175,7 @@ def schema_definition(configData, full_path):
    logger.info("This is the grantProdCommand : " + grantProdCommand)
 
 
-
-   """
+---
    try:
       cur.execute("drop user SWITCH_B cascade")
       cur.execute("drop user SWITCH_A cascade")
@@ -186,6 +185,7 @@ def schema_definition(configData, full_path):
       "users don't exist...."
    pass
 
+logger.info("Dropped all the ATG users...")
 
    try:
       cur.execute("create user SWITCH_A identified by AtgT_01111# default tablespace ATGAUTOMATE")
@@ -199,6 +199,7 @@ def schema_definition(configData, full_path):
       logging.error("Error with usre creation: " + e)
       #print(e)
 
+logger.info("Created all the ATG users...")
 
    try:
       cur.execute("grant connect,resource,dba to SWITCH_A")
@@ -212,9 +213,8 @@ def schema_definition(configData, full_path):
       logging.error("Error with permissions: " + e)
       #print(e)
 
-   """
-
-   #cur.execute(SQL)
+logger.info("Granted permissions to all the ATG users...")
+---
 
    cur.execute('select username from dba_users where username = \'TEST\'')
    for result in cur:
