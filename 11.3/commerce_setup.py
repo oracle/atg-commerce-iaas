@@ -297,7 +297,7 @@ def crs_configuration(full_path):
         logger.info("Calling config_cim.....")
         cim_setup_helper.config_cim(batchFile, configData, configCIMData, full_path)
         logger.info("Calling exec_cim_batch.....")
-        cim_setup_helper.exec_cim_batch(batchFile, json_ds, full_path)
+        cim_setup_helper.exec_cim_batch(batchFile, configData, full_path)
         logger.info("Just created the CIM file..now running post cim configs....")
         cim_setup_helper.post_cim_setup(configData, full_path)
         logger.info("config_cim is Done.....")
