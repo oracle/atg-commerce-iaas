@@ -113,5 +113,5 @@ def config_wl_dbaas__datasources(configData, configCIMData, full_path):
         dsCmd = "\"" + wlst_path + " " + response_files_path + "/create_datasources.py " + cmd_flags + "\""
 
         logging.info("dsCmd....." + dsCmd)
-        #commerce_setup_helper.exec_as_user(INSTALL_OWNER, dsCmd)  
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, dsCmd)  
 
