@@ -461,7 +461,7 @@ if config_wl_domain:
 if config_wl_ds:
     config_wl_dbaas_ds = False
     logger.info("We are configuring the WLS datasources for IaaS \n")
-    sys.exit()
+    #sys.exit()
     try:
         weblogic_create_datasources.config_wl_datasources(configData, full_path)
     except:
