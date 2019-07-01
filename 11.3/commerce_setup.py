@@ -171,7 +171,7 @@ for opt, arg in opts:
     if opt == '--weblogicDBaaSDatasources':
         config_wl_ds = False
         config_wl_dbaas_ds = True
-        root_cim_json_key = 'CIMSetup'
+        root_cim_json_key = 'DBSetup'
     if opt == '--weblogicServers':
         create_wl_servers = True
     if opt == '--weblogicMachines':
@@ -194,6 +194,7 @@ for opt, arg in opts:
 
 configData = None
 configCIMData = None
+configDBaaSData = None
 
 logger = setup_logger.setup_shared_logger('')
 
@@ -321,11 +322,11 @@ if json_ds == None:
 
     configData = commerce_setup_helper.load_json_from_file(json_ds, root_json_key) 
 
-    #Here we also load the CIM config file to get the datasource information for the weblogic datasources
+    #Here we also load the DB config file for DBaaS to get the datasource information for the weblogic datasources
     if (config_wl_dbaas_ds):
-        #in this case we have both configData and configCIMData
-        json_ds = full_path + '/crsJson/CIM_113_template.json'
-        configCIMData = commerce_setup_helper.load_json_from_file(json_ds, root_cim_json_key)
+        #in this case we have both configData and configDBaaSData
+        json_ds = full_path + '/dbaasJson/DBaaS_template.json'
+        configDBaaSData = commerce_setup_helper.load_json_from_file(json_ds, root_dbaas_json_key)
 
 elif json_ds == "user-data":
     logger.info("loading json from user metadata")
@@ -358,8 +359,14 @@ else:
         logger.info("loading json from external URL")
         configData = commerce_setup_helper.load_json_from_url(json_ds, root_json_key)    
 
-if (configCIMData == None and configData == None):
-    logger.error("no configution data could be loading. Exiting")
+if (configData == None):
+     logger.error("no configution data could be loading. Exiting")
+     sys.exit()
+elif (config_wl_dbaas_ds and configDBaaSData == None):
+     logger.error("no configution data for DBaaS could be loading. Exiting")
+     sys.exit()
+elif (install_crs_store and configCIMData == None):
+    logger.error("no CRS configution data could be loading. Exiting")
     sys.exit()
 
 
