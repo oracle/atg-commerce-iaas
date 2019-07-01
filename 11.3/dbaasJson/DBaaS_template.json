@@ -1,0 +1,26 @@
+{
+    "DBSetup":
+    {
+        "DBaaSConfig":
+        {
+            "DB_PORT": "1521",
+            "DB_HOST": "dbcustomtest1.custDBsubnetst3.ocnetwork.oraclevcn.com",
+            "DB_NAME": "CUSTCDB1",
+            "PLUG_DBNAME": "ATG1PDB.custDBsubnetst3.ocnetwork.oraclevcn.com",
+            "SYSTEM_PASSWD":"AutoT1_1111669#",
+            "ATG_TABLESPACE":"ATGAUTOMATE",
+            "DB_DRIVER_PATH": "/u01/middleware/oracle_common/modules/oracle.jdbc/ojdbc7.jar",
+            "ATG_PUB_JNDI": "ATGPublishingDS",
+            "ATG_PROD_USER": "CORE",
+            "ATG_PROD_PASSWORD": "AtgT_01111#",
+            "ATG_SWITCH_A_USER": "SWITCH_A",
+            "ATG_SWITCH_A_PASSWORD": "AtgT_01111#",
+            "ATG_SWITCH_B_USER": "SWITCH_B",
+            "ATG_SWITCH_B_PASSWORD": "AtgT_01111#",
+            "ATG_PROD_JNDI": "ATGProductionDS",
+            "ATG_SWITCH_A_JNDI": "ATGSwitchingDS_A",
+            "ATG_SWITCH_B_JNDI": "ATGSwitchingDS_B",
+        }
+    }
+}
+
