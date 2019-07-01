@@ -32,13 +32,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-#json_key = 'WEBLOGIC_datasources'
 json_key = 'WEBLOGIC_datasources'
-json_cim_key = 'CIMConfig'
+json_dbass_key = 'DBaaSConfig'
 common_key = 'WEBLOGIC_common'
 service_name = "WebLogic Datasources"
 
-def config_wl_dbaas__datasources(configData, configCIMData, full_path): 
+def config_wl_dbaas__datasources(configData, configDBaaSData, full_path): 
 
     """
     Modify settings in a running domain
@@ -52,10 +51,10 @@ def config_wl_dbaas__datasources(configData, configCIMData, full_path):
         return
  
     #we need the connect string from this config    
-    if json_cim_key in configCIMData:
-        jsonCIMData = configCIMData[json_cim_key]
+    if json_dbass_key in configDBaaSData:
+        jsonDBaaSData = configDBaaSData[json_dbass_key]
     else:
-        logging.error(json_key + " config data missing from CIM json. will not install")
+        logging.error(json_key + " config data missing from DB json. will not install")
         return
     #We are suing the weblogic data here
     if common_key in configData:
@@ -85,12 +84,12 @@ def config_wl_dbaas__datasources(configData, configCIMData, full_path):
         return False   
         
     requiredFields = ["DB_HOST", "DB_PORT", "PLUG_DBNAME"] 
-    commerce_setup_helper.check_required_fields(jsonCIMData, requiredFields)    
+    commerce_setup_helper.check_required_fields(jsonDBaaSData, requiredFields)    
 
-    dsURL = "jdbc:oracle:thin:@" + jsonCIMData['DB_HOST'] + ":" + jsonCIMData['DB_PORT'] + "/" + jsonCIMData['PLUG_DBNAME']
+    dsURL = "jdbc:oracle:thin:@" + jsonDBaaSData['DB_HOST'] + ":" + jsonDBaaSData['DB_PORT'] + "/" + jsonDBaaSData['PLUG_DBNAME']
 
 
-    # datasource is an array type. look through them all from the CIM file
+    # datasource is an array type. look through them all from the DBaaS file
     for jsonData in dsData:
         requiredFields = ["dsName", "dsJNDIName", "dsDriver", "dsUsername", "dsPassword", "dsTargetNames", "dsMaxCapacity"]
         commerce_setup_helper.check_required_fields(jsonData, requiredFields)
