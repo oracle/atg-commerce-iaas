@@ -19,7 +19,7 @@
             "ATG_SWITCH_B_PASSWORD": "AtgT_01111#",
             "ATG_PROD_JNDI": "ATGProductionDS",
             "ATG_SWITCH_A_JNDI": "ATGSwitchingDS_A",
-            "ATG_SWITCH_B_JNDI": "ATGSwitchingDS_B",
+            "ATG_SWITCH_B_JNDI": "ATGSwitchingDS_B"
         }
     }
 }
