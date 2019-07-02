@@ -171,7 +171,7 @@ for opt, arg in opts:
     if opt == '--weblogicDBaaSDatasources':
         config_wl_ds = False
         config_wl_dbaas_ds = True
-        root_cim_json_key = 'DBSetup'
+        root_dbaas_json_key = 'DBSetup'
     if opt == '--weblogicServers':
         create_wl_servers = True
     if opt == '--weblogicMachines':
@@ -326,6 +326,7 @@ if json_ds == None:
     if (config_wl_dbaas_ds):
         #in this case we have both configData and configDBaaSData
         json_ds = full_path + '/dbaasJson/DBaaS_template.json'
+    #
         configDBaaSData = commerce_setup_helper.load_json_from_file(json_ds, root_dbaas_json_key)
 
 elif json_ds == "user-data":
