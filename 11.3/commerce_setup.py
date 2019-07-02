@@ -481,7 +481,7 @@ if config_wl_dbaas_ds:
     logger.info("We are configuring the WLS datasources for DBaaS \n")
     #sys.exit()
     try:
-        weblogic_create_dbaas_datasources.config_wl_dbaas__datasources(configData, configCIMData, full_path)
+        weblogic_create_dbaas_datasources.config_wl_dbaas__datasources(configData, configDBaaSData, full_path)
     except:
         traceback.print_exc()
         pass
