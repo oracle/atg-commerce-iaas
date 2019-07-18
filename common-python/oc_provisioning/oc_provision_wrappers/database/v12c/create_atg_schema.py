@@ -122,18 +122,11 @@ def schema_definition(configData, full_path):
 
    con = cx_Oracle.connect('system', SYSPASSWD, DBHOST + ':' + DBPORT + '/' + PLUGDBNAME)
 
-   #con = cx_Oracle.connect('system', 'AtgT_01111#', 'atg113db.sub07240245012.ocnetwork.oraclevcn.com:1521/atgpdb.sub07240245012.ocnetwork.oraclevcn.com')
-  
-   #print con.version
    logger.info("con version: " + con.version)
 
    cur = con.cursor()
 
    cur.execute("SELECT 'Hello world!' FROM dual")
-
-   #SQL = "create bigfile tablespace ATGTABLESPACE DATAFILE SIZE 1G autoextend on next 1G maxsize 20G"
-   #SQL = "create bigfile tablespace ATGAUTOMATE DATAFILE SIZE 1G autoextend on next 1G maxsize 20G"
-
 
    createTableSpaceCommand = "\"create bigfile tablespace " + ATGTABLESPACE + " DATAFILE SIZE 1G autoextend on next 1G maxsize 20G \""
    logger.info("This is the createTableSpaceCommand : " + createTableSpaceCommand)
@@ -173,53 +166,6 @@ def schema_definition(configData, full_path):
 
    grantProdCommand = "\"grant connect,resource,dba to " + PRODUSR + "\""
    logger.info("This is the grantProdCommand : " + grantProdCommand)
-
-
-   """
-   try:
-      cur.execute("drop user SWITCH_B cascade")
-      cur.execute("drop user SWITCH_A cascade")
-      cur.execute("drop user CORE cascade")
-      cur.execute("drop user PUBLISHING cascade")
-   except:
-      "users don't exist...."
-   pass
-
-   logger.info("Dropped all the ATG users...")
-
-   try:
-      cur.execute("create user SWITCH_A identified by AtgT_01111# default tablespace ATGAUTOMATE")
-      cur.execute("create user SWITCH_B identified by AtgT_01111# default tablespace ATGAUTOMATE")
-      cur.execute("create user CORE identified by AtgT_01111# default tablespace ATGAUTOMATE")
-      cur.execute("create user PUBLISHING identified by AtgT_01111# default tablespace ATGAUTOMATE")
-   except TypeError as e:
-      #print "Error creating users...."
-      logger.info("Error creating users...")
-
-      logging.error("Error with usre creation: " + e)
-      #print(e)
-
-   logger.info("Created all the ATG users...")
-
-   try:
-      cur.execute("grant connect,resource,dba to SWITCH_A")
-      cur.execute("grant connect,resource,dba to SWITCH_B")
-      cur.execute("grant connect,resource,dba to CORE")
-      cur.execute("grant connect,resource,dba to PUBLISHING")
-   except TypeError as e:
-      #print "Error grating permissions to users...."
-      logger.info("Error creating permissions to users....."
-
-      logging.error("Error with permissions: " + e)
-      #print(e)
-
-   logger.info("Granted permissions to all the ATG users...")
-   """
-
-   cur.execute('select username from dba_users where username = \'TEST\'')
-   for result in cur:
-      #logger.info("Result is: " + result)
-      print result
 
    cur.close()
 
