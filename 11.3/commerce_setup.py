@@ -45,7 +45,7 @@ from oc_provision_wrappers.atg.v11_3 import atg_helper
 from oc_provision_wrappers.atg.v11_3 import atgpatch_helper
 from oc_provision_wrappers.atg.v11_3 import cim_setup_helper
 from oc_provision_wrappers.database.v12c import create_atg_schema
-from oc_provision_wrappers.database.v12c import oracle_pdb_connect
+#from oc_provision_wrappers.database.v12c import oracle_pdb_connect
 from oc_provision_wrappers.database.v12c import oracle_rdbms_install
 from oc_provision_wrappers.endeca.v11_3 import cas_helper
 from oc_provision_wrappers.endeca.v11_3 import mdex_helper
@@ -287,6 +287,7 @@ def crs_configuration(full_path):
         pass
 
     try:
+        #TODO: Need to make sure this works for both custom and cim scenarios
         create_atg_schema.schema_definition(configCIMData, full_path)
     except:
         traceback.print_exc()
