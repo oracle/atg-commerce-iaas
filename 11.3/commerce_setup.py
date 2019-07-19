@@ -215,8 +215,10 @@ def crs_configuration(full_path):
     configData = commerce_setup_helper.load_json_from_file(json_ds, root_json_key)
 
     configCIMData = commerce_setup_helper.load_json_from_file(json_cim_ds, root_cim_json_key)
-
-    logger.info("setup the ATG schema in DBaaS..")
+  
+    if (configCIMData == None):
+        logger.error("no CRS configution data could be loading. Exiting")
+        sys.exit()
     
     logger.info("Now we start instlling the components...")
  
@@ -317,9 +319,7 @@ if json_ds == None:
     logger.info("using default json configs \n")
     json_ds = full_path + '/defaultJson/defaultConfig.json'
 
-    #testing
-    logger.info("testing the null or any other args....now exiting.................. \n")
-    #sys.exit()
+    logger.info("loading the defaultConfig json file.................. \n")
 
     configData = commerce_setup_helper.load_json_from_file(json_ds, root_json_key) 
 
@@ -327,7 +327,7 @@ if json_ds == None:
     if (config_wl_dbaas_ds):
         #in this case we have both configData and configDBaaSData
         json_ds = full_path + '/dbaasJson/DBaaS_template.json'
-    #
+        logger.info("loading the dbaas json file.................. \n") 
         configDBaaSData = commerce_setup_helper.load_json_from_file(json_ds, root_dbaas_json_key)
 
 elif json_ds == "user-data":
@@ -367,9 +367,6 @@ if (configData == None):
 elif (config_wl_dbaas_ds and configDBaaSData == None):
      logger.error("no configution data for DBaaS could be loading. Exiting")
      sys.exit()
-elif (install_crs_store and configCIMData == None):
-    logger.error("no CRS configution data could be loading. Exiting")
-    sys.exit()
 
 
 #first test is for the crs
