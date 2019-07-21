@@ -128,7 +128,7 @@ def copykeystore(configData, full_path):
 
     rsyncCmd = "\"" + "rsync -a " + libDIR + "/atg/cim " + tempDIR + "/atg/cim" + "\""
 
-    jarCmd = "\"" + "jar -cfM "+ tempDIR + "/classes.jar " +  tempDIR+ "/atg" + "\""
+    jarCmd = "\"" + "jar -cfM "+ tempDIR + "/classes.jar " + "-C " +  tempDIR + " atg" + "\""
 
     mv_newclasses_cmd = "\"" + "mv " + tempDIR + "/classes.jar " + libDIR + "\""
 
