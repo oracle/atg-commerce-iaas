@@ -29,6 +29,7 @@ __version__ = "1.0.0.0"
 
 from oc_provision_wrappers import commerce_setup_helper
 import os
+import shutil
 import logging
 
 logger = logging.getLogger(__name__)
@@ -71,4 +72,76 @@ def install_atgpatch(configData, full_path):
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipCommand)
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, chmodCmd)
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCmd)
-    
+
+#This is a workaround due to a bug in CIM   
+def copykeystore(configData, full_path):
+    logging.info("copykeystore starting....")
+    atginstall = "ATG_install"
+
+    if atginstall in configData:
+        jsonData = configData[atginstall]
+    else:
+        logging.error(atginstall + " config data missing from json. keystore will not get copied")
+        return
+    requiredFields = ['dynamoRoot', 'installOwner']
+    commerce_setup_helper.check_required_fields(jsonData, requiredFields)
+
+    INSTALL_DIR = jsonData['dynamoRoot']
+    INSTALL_OWNER = jsonData['installOwner']
+
+
+    fromDIR= INSTALL_DIR + "/CommerceReferenceStore/Store/EStore/cim/classes"
+    libDIR= INSTALL_DIR + "/CIM/lib"
+    tempDIR= libDIR + "/temp"
+
+    logging.info("fromDIR: " + fromDIR)
+    logging.info("libDIR: " + libDIR)
+    logging.info("tempDIR: " + tempDIR)
+
+    commerce_setup_helper.mkdir_with_perms(tempDIR, 'oracle', 'oinstall')
+
+    cpatgCmd = "\"" + "cp -R " + fromDIR + "/atg " + libDIR + "\""
+
+    logging.info("copied atg to the lib dir....cpatgCmd: " + cpatgCmd)
+
+    commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpatgCmd)
+
+    cpclassesCmd = "\"" + "cp " + libDIR + "/classes.jar " + libDIR + "/classes.jar.ootb" + "\""
+
+    logging.info("copied atg to the lib dir....cpclassesCmd: " + cpclassesCmd)
+
+    commerce_setup_helper.exec_as_user(INSTALL_OWNER, cpclassesCmd)
+
+    mv_oldclasses_cmd = "\"" + "mv " + libDIR + "/classes.jar " + tempDIR + "\""
+
+    commerce_setup_helper.exec_as_user(INSTALL_OWNER, mv_oldclasses_cmd)
+
+    classes_path = tempDIR + "/classes.jar"
+
+    if not os.path.exists(classes_path):
+        logging.error("classes jar file " + classes_path + " does not exist - keystore will not get copied")
+        return False
+
+    unzipClassesCommand = "\"" + "unzip " + classes_path + " -d " + tempDIR + "\""
+
+    commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipClassesCommand)
+
+    rsyncCmd = "\"" + "rsync -a " + libDIR + "/atg/cim " + tempDIR + "/atg/cim" + "\""
+
+    jarCmd = "\"" + "jar -cfM "+ tempDIR + "/classes.jar " +  tempDIR+ "/atg" + "\""
+
+    mv_newclasses_cmd = "\"" + "mv " + tempDIR + "/classes.jar " + libDIR + "\""
+
+    if os.path.exists(libDIR + "/atg") and os.path.exists(tempDIR + "/atg"):
+        os.remove(classes_path)
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, rsyncCmd)
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, jarCmd)
+        commerce_setup_helper.exec_as_user(INSTALL_OWNER, mv_newclasses_cmd)
+
+    else:
+        logging.error("classes jar file " + classes_path + " does not exist - keystore will not get copied")
+        return False
+
+    shutil.rmtree(tempDIR)
+    shutil.rmtree(libDIR + "/atg")
+ 
