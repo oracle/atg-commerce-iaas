@@ -204,7 +204,7 @@ builder.cim {
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/server/OPSSInitializer.properties"
   }
   task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
-    initialServices- "registry/PipelineRegistry"
+   property(name:"initialServices-",value: "registry/PipelineRegistry") 
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/Initial.properties"
   }
   task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
@@ -212,11 +212,11 @@ builder.cim {
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/servlet/dafpipeline/TailPipelineServlet.properties"
   }
   task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
-    initialServices- "SiteContextPipelineServlet,/atg/dynamo/servlet/dafpipeline/SiteSessionEventTrigger,/atg/dynamo/servlet/pipeline/SiteSessionEventTrigger,/atg/dynamo/servlet/pipeline/SiteContextPipelineServlet,SiteRepository"
+    property(name:"initialServices-",value: "SiteContextPipelineServlet,/atg/dynamo/servlet/dafpipeline/SiteSessionEventTrigger,/atg/dynamo/servlet/pipeline/SiteSessionEventTrigger,/atg/dynamo/servlet/pipeline/SiteContextPipelineServlet,SiteRepository")
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/multisite/Initial.properties"
   }
   task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
-    initialServices- "SitemapRepository,SitemapGeneratorService,SitemapWriterService"
+    property(name:"initialServices-",value: "SitemapRepository,SitemapGeneratorService,SitemapWriterService")
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/sitemap/Initial.properties"
   }
   task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
@@ -229,7 +229,7 @@ builder.cim {
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/servlet/dafpipeline/DynamoHandler.properties"
   }
   task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
-    adminContextProviders- "SiteAdminContextProvider"
+    property(name:"adminContextProviders-",value: "SiteAdminContextProvider")
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/admin/context/AdminContextManager.properties"
   }
   task(atg.cim.productconfig.serverinstance.MakeServerInstanceFromPatternTask) {
