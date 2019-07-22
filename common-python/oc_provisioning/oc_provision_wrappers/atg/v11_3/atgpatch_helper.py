@@ -126,7 +126,7 @@ def copykeystore(configData, full_path):
 
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipClassesCommand)
 
-    rsyncCmd = "\"" + "rsync -a " + libDIR + "/atg/cim " + tempDIR + "/atg/cim" + "\""
+    rsyncCmd = "\"" + "rsync -a " + libDIR + "/atg/cim/ " + tempDIR + "/atg/cim/" + "\""
 
     jarCmd = "\"" + "jar -cfM "+ tempDIR + "/classes.jar " + "-C " +  tempDIR + " atg" + "\""
 
