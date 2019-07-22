@@ -208,7 +208,7 @@ builder.cim {
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/Initial.properties"
   }
   task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
-    interceptors- "VirtualContextRootInterceptor,WebAppLayeringInterceptor"
+    property(name:"interceptors-",value: "VirtualContextRootInterceptor,WebAppLayeringInterceptor")
     propertiesFile "ATG_DIR/ATG_VERSION/home/../home/servers/ATG_SLM_APPS/localconfig/atg/dynamo/servlet/dafpipeline/TailPipelineServlet.properties"
   }
   task(atg.cim.worker.common.MapPropertyFileCreatorTask) {
