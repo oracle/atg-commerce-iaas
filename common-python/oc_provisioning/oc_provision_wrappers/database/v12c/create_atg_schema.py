@@ -126,46 +126,138 @@ def schema_definition(configData, full_path):
 
    cur = con.cursor()
 
-   cur.execute("SELECT 'Hello world!' FROM dual")
-
-   createTableSpaceCommand = "\"create bigfile tablespace " + ATGTABLESPACE + " DATAFILE SIZE 1G autoextend on next 1G maxsize 20G \""
+   createTableSpaceCommand = 'create bigfile tablespace %s DATAFILE SIZE 1G autoextend on next 1G maxsize 20G' % ATGTABLESPACE
    logger.info("This is the createTableSpaceCommand : " + createTableSpaceCommand)
 
-   dropSwitchACommand = "\"drop usere " + SWITCHAUSR + " cascade\""
+   try:
+      cur.execute(createTableSpaceCommand)
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
+
+   dropSwitchACommand = 'drop user %s cascade' % SWITCHAUSR
    logger.info("This is the dropSwitchACommand : " + dropSwitchACommand)
 
-   dropSwitchBCommand = "\"drop user " + SWITCHBUSR + " cascade\""
+   try:
+      cur.execute(dropSwitchACommand)
+   except cx_Oracle.DatabaseError as e:
+      error, = e.args
+      logger.info("SwitchA does not exist: " + error.message)
+      pass
+
+   dropSwitchBCommand = 'drop user %s cascade' % SWITCHBUSR
    logger.info("This is the dropSwitchBCommand : " + dropSwitchBCommand)
 
-   dropPubCommand = "\"drop user " + PUBUSR + " cascade\""
+   try:
+      cur.execute(dropSwitchBCommand )
+   except cx_Oracle.DatabaseError as e:
+      error, = e.args
+      logger.info("SwitchB does not exist: " + error.message)
+      pass
+
+   dropPubCommand = 'drop user %s cascade' % PUBUSR
    logger.info("This is the dropPubCommand : " + dropPubCommand)
 
-   dropProdCommand = "\"drop user " + PRODUSR + " cascade\""
+   try:
+      cur.execute(dropPubCommand )
+   except cx_Oracle.DatabaseError as e:
+      error, = e.args
+      logger.info("PUB does not exist: " + error.message)
+      pass
+
+   dropProdCommand = 'drop user %s cascade' % PRODUSR
    logger.info("This is the dropProdCommand : " + dropProdCommand)
-   
-   createSwitchACommand = "\"create user " + SWITCHAUSR + " identified by " + SWITCHAPASSWD + " default tablespace " +  ATGTABLESPACE + "\""
+
+   try:
+      cur.execute(dropProdCommand )
+   except cx_Oracle.DatabaseError as e:
+      error, = e.args
+      logger.info("Prod does not exist: " + error.message)
+      pass
+
+   createSwitchACommand = 'create user %s identified by %s default tablespace %s' % (SWITCHAUSR, SWITCHAPASSWD, ATGTABLESPACE)
    logger.info("This is the createSwitchACommand : " + createSwitchACommand)
 
-   createSwitchBCommand = "\"create user " + SWITCHBUSR + " identified by " + SWITCHBPASSWD + " default tablespace " +  ATGTABLESPACE + "\""
+   try:
+      cur.execute(createSwitchACommand )
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
+   createSwitchBCommand = 'create user %s identified by %s default tablespace %s' % (SWITCHBUSR, SWITCHBPASSWD, ATGTABLESPACE)
    logger.info("This is the createSwitchBCommand : " + createSwitchBCommand)
 
-   createPubCommand = "\"create user " + PUBUSR + " identified by " + PUBPASSWD + " default tablespace " +  ATGTABLESPACE + "\""
+   try:
+      cur.execute(createSwitchBCommand )
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
+   createPubCommand = 'create user %s identified by %s default tablespace %s' % (PUBUSR, PUBPASSWD, ATGTABLESPACE)
    logger.info("This is the createPubCommand : " + createPubCommand)
 
-   createProdCommand = "\"create user " + PRODUSR + " identified by " + PRODPASSWD + " default tablespace " +  ATGTABLESPACE + "\""
+   try:
+      cur.execute(createPubCommand )
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
+   createProdCommand = 'create user %s identified by %s default tablespace %s' % (PRODUSR, PRODPASSWD, ATGTABLESPACE)
    logger.info("This is the createProdCommand : " + createProdCommand)
 
-   grantSwitchACommand = "\"grant connect,resource,dba to " + SWITCHAUSR + "\""
+   try:
+      cur.execute(createProdCommand )
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
+
+   grantSwitchACommand = 'grant connect,resource,dba to %s' % SWITCHAUSR
    logger.info("This is the grantSwitchACommand : " + grantSwitchACommand)
 
-   grantSwitchBCommand = "\"grant connect,resource,dba to " + SWITCHBUSR + "\""
+   try:
+      cur.execute(grantSwitchACommand )
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
+   grantSwitchBCommand = 'grant connect,resource,dba to %s' % SWITCHBUSR
    logger.info("This is the grantSwitchBCommand : " + grantSwitchBCommand)
 
-   grantPubCommand = "\"grant connect,resource,dba to " + PUBUSR + "\""
+   try:
+      cur.execute(grantSwitchBCommand )
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
+   grantPubCommand = 'grant connect,resource,dba to %s' % PUBUSR
    logger.info("This is the grantPubCommand : " + grantPubCommand)
 
-   grantProdCommand = "\"grant connect,resource,dba to " + PRODUSR + "\""
+   try:
+      cur.execute(grantPubCommand )
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
+   grantProdCommand = 'grant connect,resource,dba to %s' % PRODUSR
    logger.info("This is the grantProdCommand : " + grantProdCommand)
+
+   try:
+      cur.execute(grantProdCommand )
+   except Exception as e:
+      logger.error(e)
+      cur.close()
+      return
+
 
    cur.close()
 
