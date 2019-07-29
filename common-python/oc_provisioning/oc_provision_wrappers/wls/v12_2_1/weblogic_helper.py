@@ -50,7 +50,8 @@ def install_weblogic(configData, full_path):
     
     binary_path = full_path + "/binaries/wls-12.2.1"
     response_files_path = full_path + "/responseFiles/wls-12.2.1"
-    install_exec = "fmw_12.2.1.2.0_wls.jar"
+    #install_exec = "fmw_12.2.1.2.0_wls.jar"
+    install_exec = "fmw_12.2.1.3.0_wls.jar"
     full_exec_path = binary_path + "/" + install_exec
     
     if not os.path.exists(full_exec_path):
