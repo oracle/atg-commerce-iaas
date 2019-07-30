@@ -9,7 +9,7 @@
             "PLUG_DBNAME": "ATG1PDB.custDBsubnetst3.ocnetwork.oraclevcn.com",
             "SYSTEM_PASSWD":"AutoT1_1111669#",
             "ATG_TABLESPACE":"ATGAUTOMATE",
-            "DB_DRIVER_PATH": "/u01/middleware/oracle_common/modules/oracle.jdbc/ojdbc7.jar",
+            "DB_DRIVER_PATH": "/u01/middleware/oracle_common/modules/oracle.jdbc/ojdbc8.jar",
             "ATG_PUBLISHING_USER": "PUBLISHING",
             "ATG_PUBLISHING_PASSWORD": "AtgT_01111#",
             "ATG_PROD_USER": "CORE",
