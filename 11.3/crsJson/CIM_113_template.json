@@ -49,7 +49,7 @@
             "PLUG_DBNAME": "AT1PDB.autosubnetest3.autovcntest1.oraclevcn.com",
             "SYSTEM_PASSWD":"AutoT1_01234#",
             "ATG_TABLESPACE":"ATGAUTOMATE",
-            "DB_DRIVER_PATH": "/u01/middleware/oracle_common/modules/oracle.jdbc/ojdbc7.jar",
+            "DB_DRIVER_PATH": "/u01/middleware/oracle_common/modules/oracle.jdbc/ojdbc8.jar",
             "ATG_PUB_JNDI": "ATGPublishingDS",
             "MERCH_PASSWD": "Admin123",
             "ADMIN_PASSWD": "Admin123",
