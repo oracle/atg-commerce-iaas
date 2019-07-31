@@ -65,9 +65,9 @@ def install_java(configData, full_path):
     if (platform.system() == "SunOS"):
         install64bitCommand = "\"" + "cd " + JAVA_HOME + "; tar zxf " + binary_path + "/jdk-8u73-solaris-sparcv9.tar.gz " + "\""
     else:
-        installCommand = "\"" + "tar zxf " + binary_path + "/jdk-8u131-linux-x64.tar.gz -C " + JAVA_HOME + "\""
+        installCommand = "\"" + "tar zxf " + binary_path + "/jdk-8u191-linux-x64.tar.gz -C " + JAVA_HOME + "\""
         
-    linkCommand = "\"" + "ln -sf " + JAVA_HOME + "/jdk1.8.0_131 " + JAVA_HOME + "/latest" + "\""    
+    linkCommand = "\"" + "ln -sf " + JAVA_HOME + "/jdk1.8.0_191 " + JAVA_HOME + "/latest" + "\""    
     
     if (platform.system() == "SunOS"):
         commerce_setup_helper.exec_as_user(INSTALL_OWNER, install64bitCommand)
@@ -76,7 +76,7 @@ def install_java(configData, full_path):
         
     if (os.path.exists(JAVA_HOME + "/latest") or  os.path.islink(JAVA_HOME + "/latest")):
         os.remove(JAVA_HOME + "/latest")
-    os.symlink(JAVA_HOME + "/jdk1.8.0_131", JAVA_HOME + "/latest")
+    os.symlink(JAVA_HOME + "/jdk1.8.0_191", JAVA_HOME + "/latest")
                
     # commerce_setup_helper.exec_as_user(INSTALL_OWNER, linkCommand)
     if (platform.system() != "SunOS"):
