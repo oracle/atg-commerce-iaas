@@ -66,7 +66,7 @@
                     "wl_adminHttpPort": "7001",
                     "wl_adminHttpsPort": "7002",  
                     "wl_domain": "base_domain",
-                    "wl_patches": "p25388866_122120_Generic.zip"                            
+                    "wl_patches": "p29909359_139400_Generic.zip,p29814665_122130_Generic.zip"                            
                 },
             "WEBLOGIC_domain_setup": 
                 {
