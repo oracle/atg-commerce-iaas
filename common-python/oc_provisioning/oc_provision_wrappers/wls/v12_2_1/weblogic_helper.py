@@ -107,7 +107,7 @@ def install_weblogic(configData, full_path):
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, 'export JAVA_OPTIONS=\"' + JAVA_RAND + ' \" \n')
 
     #add variable for the opatch utility
-    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "OPATCH_NO_FUSER=TRUE \n")
+    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export OPATCH_NO_FUSER=TRUE \n")
 
     # apply Opatch before applying the WLS PSU
     opatch_weblogic(configData, full_path)
@@ -144,7 +144,7 @@ def opatch_weblogic(configData, full_path):
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipCommand)
 
     installCommand = "\"" + "java -jar "
-    installCommand = installCommand + patches_path + "/" + OPATCH_FILE + " -silent " + "oracle_home=" + INSTALL_DIR + "\""
+    installCommand = installCommand + patches_path + "/" + "6880880" + "/" + "opatch_generic.jar" + " -silent " + "oracle_home=" + INSTALL_DIR + "\""
     commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
     
 def patch_weblogic(configData, full_path):
@@ -158,7 +158,7 @@ def patch_weblogic(configData, full_path):
     binary_path = full_path + "/binaries/wls-12.2.1"
     patches_path = binary_path + "/patches"
     # json key containing patch files
-    patchKey = "wl_patches";
+    patchKey = "wl_patches"
                                    
     requiredFields = ['middlewareHome', 'installOwner', 'installGroup']
     commerce_setup_helper.check_required_fields(jsonData, requiredFields)
