@@ -105,9 +105,47 @@ def install_weblogic(configData, full_path):
             
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, 'export CONFIG_JVM_ARGS=\"' + JAVA_RAND + ' \" \n')
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, 'export JAVA_OPTIONS=\"' + JAVA_RAND + ' \" \n')
+
+    #add variable for the opatch utility
+    commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "OPATCH_NO_FUSER=TRUE \n")
+
+    # apply Opatch before applying the WLS PSU
+    opatch_weblogic(configData, full_path)
     
     # install patches if any were listed
     patch_weblogic(configData, full_path)    
+
+def opatch_weblogic(configData, full_path):
+    if json_key in configData:
+        jsonData = configData[json_key]
+    else:
+        logging.error(json_key + " config data for opatch missing from json. will not install")
+        return
+
+    logging.info("patching the OPatch... " )
+    binary_path = full_path + "/binaries/wls-12.2.1"
+    patches_path = binary_path + "/patches"
+
+    requiredFields = ['middlewareHome', 'installOwner', 'installGroup']
+    commerce_setup_helper.check_required_fields(jsonData, requiredFields)
+
+    INSTALL_DIR = jsonData['middlewareHome']
+    INSTALL_OWNER = jsonData['installOwner']
+    OPATCH_FILE = "p28186730_139400_Generic.zip"
+    
+    # if the opatch key was provided, get the opatch to apply
+    if not os.path.exists(patches_path + "/" + OPATCH_FILE):
+        logging.error("opatch file " + patches_path + "/" + OPATCH_FILE + " missing - will not install")
+        return
+
+
+    patchScript = INSTALL_DIR + "/OPatch/opatch"
+    unzipCommand = "\"" + "unzip " + patches_path + "/" + OPATCH_FILE + " -d " + patches_path + "\""
+    commerce_setup_helper.exec_as_user(INSTALL_OWNER, unzipCommand)
+
+    installCommand = "\"" + "java -jar "
+    installCommand = installCommand + patches_path + "/" + OPATCH_FILE + " -silent " + "oracle_home=" + INSTALL_DIR + "\""
+    commerce_setup_helper.exec_as_user(INSTALL_OWNER, installCommand)
     
 def patch_weblogic(configData, full_path):
     if json_key in configData:
@@ -116,6 +154,7 @@ def patch_weblogic(configData, full_path):
         logging.error(json_key + " config data missing from json. will not install")
         return
 
+    logging.info("patching the PSU Patches... " )
     binary_path = full_path + "/binaries/wls-12.2.1"
     patches_path = binary_path + "/patches"
     # json key containing patch files
