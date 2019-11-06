@@ -300,6 +300,7 @@ def crs_configuration(full_path):
         cim_setup_helper.pre_cim_setup(configData, full_path)
         logger.info("Calling a patch helper to copy keystore....")
         atgpatch_helper.copykeystore(configData, full_path)
+        atgpatch_helper.cim_debug_file(configData)
         logger.info("Calling config_cim.....")
         cim_setup_helper.config_cim(batchFile, configData, configCIMData, full_path)
         logger.info("Calling exec_cim_batch.....")
