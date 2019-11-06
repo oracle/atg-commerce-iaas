@@ -144,4 +144,27 @@ def copykeystore(configData, full_path):
 
     shutil.rmtree(tempDIR)
     shutil.rmtree(libDIR + "/atg")
- 
+
+def cim_debug_file(configData)
+    logging.info("cim_debug_file starting....")
+    atginstall = "ATG_install"
+
+    if atginstall in configData:
+        jsonData = configData[atginstall]
+    else:
+        logging.error(atginstall + " config data missing from json. keystore will not get copied")
+        return
+    requiredFields = ['dynamoRoot', 'installOwner']
+    commerce_setup_helper.check_required_fields(jsonData, requiredFields)
+
+    INSTALL_DIR = jsonData['dynamoRoot']
+
+    #Turning on the debug in the ProductCatalog 
+    properties_file= INSTALL_DIR + "/home/localconfig/atg/commerce/catalog/ProductCatalog.properties
+
+    debugfile = open(properties_file, "w")
+    debugfile.write("loggingDebug=true\n")
+    debugfile.write("debugLevel=10")
+
+    debugfile.close()
+
