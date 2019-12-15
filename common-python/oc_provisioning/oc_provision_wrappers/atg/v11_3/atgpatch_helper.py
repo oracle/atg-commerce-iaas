@@ -159,10 +159,11 @@ def cim_debug_file(configData):
 
     INSTALL_DIR = jsonData['dynamoRoot']
 
-    #Turning on the debug in the ProductCatalog 
+    #Turning on the debug in the ProductCatalog
+    commerce_setup_helper.mkdir_with_perms(INSTALL_DIR + "/home/localconfig/atg/commerce/catalog", 'oracle', 'oinstall')
     properties_file= INSTALL_DIR + "/home/localconfig/atg/commerce/catalog/ProductCatalog.properties"
 
-    debugfile = open(properties_file, "w")
+    debugfile = open(properties_file, "w+")
     debugfile.write("loggingDebug=true\n")
     debugfile.write("debugLevel=10")
 
