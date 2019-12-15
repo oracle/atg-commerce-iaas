@@ -145,7 +145,7 @@ def copykeystore(configData, full_path):
     shutil.rmtree(tempDIR)
     shutil.rmtree(libDIR + "/atg")
 
-def cim_debug_file(configData)
+def cim_debug_file(configData):
     logging.info("cim_debug_file starting....")
     atginstall = "ATG_install"
 
