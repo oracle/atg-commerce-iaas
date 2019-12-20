@@ -105,7 +105,7 @@ def create_wl_domain(configData, full_path):
 
     if not os.path.exists(registryfile_path):
         logging.error("The registry file:  " + registryfile_path + " does not exist - which is why we have a bug")
-    else
+    else:
         logging.error("The registry file:  " + registryfile_path + " does exist but we still have a bug and trying to create domain anyway!")
 
  
