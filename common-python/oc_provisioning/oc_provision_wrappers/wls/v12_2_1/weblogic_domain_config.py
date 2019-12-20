@@ -98,7 +98,17 @@ def create_wl_domain(configData, full_path):
         JAVA_RAND = "-Djava.security.egd=file:///dev/urandom"
     else:
         JAVA_RAND = "-Djava.security.egd=file:/dev/./urandom"
-        
+   
+    logging.info("We are creating the domain after installing patches................but see if we can fix this bug") 
+
+    registryfile_path = INSTALL_DIR + "/inventory/registry.xml"
+
+    if not os.path.exists(registryfile_path):
+        logging.error("The registry file:  " + registryfile_path + " does not exist - which is why we have a bug")
+    else
+        logging.error("The registry file:  " + registryfile_path + " does exist but we still have a bug and trying to create domain anyway!")
+
+ 
     # create wl domain CONFIG_JVM_ARGS
     domainCmd += "export CONFIG_JVM_ARGS='" + JAVA_RAND + "'; "
     domainCmd += wlst_path + " " + response_files_path + "/basicWLSDomain.py " + "\""
