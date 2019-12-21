@@ -109,11 +109,12 @@ def install_weblogic(configData, full_path):
     #add variable for the opatch utility
     commerce_setup_helper.add_to_bashrc(INSTALL_OWNER, "export OPATCH_NO_FUSER=TRUE \n")
 
+#as a workaround to a bug install patches after domain gets created
     # apply Opatch before applying the WLS PSU
-    opatch_weblogic(configData, full_path)
+    #opatch_weblogic(configData, full_path)
     
     # install patches if any were listed
-    patch_weblogic(configData, full_path)    
+    #patch_weblogic(configData, full_path)    
 
 def opatch_weblogic(configData, full_path):
     if json_key in configData:
