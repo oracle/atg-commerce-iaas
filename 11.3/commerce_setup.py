@@ -272,6 +272,15 @@ def crs_configuration(full_path):
         traceback.print_exc()
         pass
 
+#Patching weblogic after domain has been created as a workaround to a bug
+    try:
+        logger.info("*********************************  Patching weblogic as a bug workaround********************* \n")
+        weblogic_helper.opatch_weblogic(configData, full_path)
+        weblogic_helper.patch_weblogic(configData, full_path)
+    except:
+        traceback.print_exc()
+        pass
+#end workaround
     
     try:
         atg_helper.install_atg(configData, full_path)
