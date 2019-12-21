@@ -30,9 +30,9 @@
 # Open a domain template.
 #=======================================================================================
 
-#readTemplate("INSTALL_DIR/wlserver/common/templates/wls/wls.jar")
-selectTemplate('Basic WebLogic Server Domain','12.2.1.0')
-loadTemplates()
+readTemplate("INSTALL_DIR/wlserver/common/templates/wls/wls.jar")
+#selectTemplate('Basic WebLogic Server Domain','12.2.1.0')
+#loadTemplates()
 
 #=======================================================================================
 # Configure the Administration Server and SSL port.
